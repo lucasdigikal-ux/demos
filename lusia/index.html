@@ -165,6 +165,11 @@ input,select{font:600 15px var(--body);color:var(--tinta);background:var(--creme
 .selos{display:flex;flex-wrap:wrap;gap:8px}
 .selo{font:700 13px var(--mao);border:2px solid var(--laranja);border-radius:999px;padding:4px 12px}
 .rodape{font:600 12.5px var(--body);color:var(--muted);text-align:center}
+/* Botões de ação no plano (ideia 2): o clique vira aviso no Telegram do dono. */
+.cta{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.link-cli{font:700 13.5px var(--mao);color:var(--laranja);margin-left:auto}
+.cta-res{display:grid;gap:10px;font:600 15px/1.45 var(--body)}.cta-res:empty{display:none}
+.cta-res .ok{background:var(--verde-t);color:var(--verde);border-radius:14px;padding:12px 14px;font-weight:700}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 
@@ -177,9 +182,11 @@ input,select{font:600 15px var(--body);color:var(--tinta);background:var(--creme
 
   <nav class="rail" aria-label="Passos">
     <button class="dot" data-p="0" aria-current="step"><b>1</b>Experimente</button>
+    <!-- proposta:inicio -->
     <button class="dot" data-p="1"><b>2</b>Onde costuma travar</button>
     <button class="dot" data-p="2"><b>3</b>Já construí isto</button>
     <button class="dot" data-p="3"><b>4</b>Plano e preço</button>
+    <!-- proposta:fim -->
   </nav>
 
   <!-- PASSO 1 -->
@@ -248,6 +255,7 @@ input,select{font:600 15px var(--body);color:var(--tinta);background:var(--creme
     </div>
   </section>
 
+  <!-- proposta:inicio -->
   <!-- PASSO 2 -->
   <section class="palco" id="p1" hidden>
     <div class="topo"><p class="fala">Os dois pontos que atrasam este projeto, já resolvidos.</p></div>
@@ -319,9 +327,16 @@ input,select{font:600 15px var(--body);color:var(--tinta);background:var(--creme
       <b>US$800</b>
     </div>
     <div class="selos"><span class="selo">contas em seu nome</span><span class="selo">se passar das horas, é por minha conta</span><span class="selo">tudo em português</span></div>
+    <div class="cta">
+      <button class="btn lar" type="button" id="cta-quero" data-cta="quero">Quero avançar</button>
+      <button class="btn" type="button" id="cta-marcar" data-cta="marcar">Marcar 15 minutos</button>
+      <a class="link-cli" href="clientes/" data-cta="versao-clientes">Versão sem preço para os seus clientes →</a>
+    </div>
+    <div class="cta-res" id="cta-res" aria-live="polite"></div>
   </section>
 
   <p class="rodape">Feito por Lucas para o projeto LusIA · as respostas do agente seguem regras escritas, sem IA paga nesta página</p>
+  <!-- proposta:fim -->
 </div>
 
 <script>
@@ -569,7 +584,8 @@ input,select{font:600 15px var(--body);color:var(--tinta);background:var(--creme
     desenharFicha('a recolher', ''); gravar();
   });
 
-  // ---------- passo 2 ----------
+  // ---------- passos 2 a 4: só na versão da proposta ----------
+  if ($('#p1')) {
   function wa(teste) {
     $('#w-teste').setAttribute('aria-pressed', teste); $('#w-esperar').setAttribute('aria-pressed', !teste);
     const s = $('#seg-wa');
@@ -597,6 +613,23 @@ input,select{font:600 15px var(--body);color:var(--tinta);background:var(--creme
     const aberto = b.getAttribute('aria-expanded') === 'true';
     b.setAttribute('aria-expanded', !aberto); b.nextElementSibling.hidden = aberto;
   }));
+
+  // ideia 2: botões de ação. A página não envia nada sozinha; o registro de visitas
+  // (só no endereço próprio) leva o data-cta pro Telegram do dono.
+  const DIAS_LONGOS = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+  $('#cta-quero').addEventListener('click', () => {
+    $('#cta-res').innerHTML = '<div class="ok">Combinado. Escreva «avançar» na conversa do Upwork e envio hoje o contrato com as três entregas.</div>';
+  });
+  $('#cta-marcar').addEventListener('click', () => {
+    const d = new Date(); const horas = ['14:00', '16:00', '18:00']; const ops = [];
+    while (ops.length < 3) { d.setDate(d.getDate() + 1); if (d.getDay() === 0 || d.getDay() === 6) continue; ops.push({ curto: DIAS[d.getDay()] + ' ' + p2(d.getDate()) + '/' + p2(d.getMonth() + 1) + ' ' + horas[ops.length], longo: DIAS_LONGOS[d.getDay()] + ', ' + p2(d.getDate()) + '/' + p2(d.getMonth() + 1) + ' às ' + horas[ops.length] }); }
+    $('#cta-res').innerHTML = '<span>Escolha um horário (hora de Lisboa):</span><div class="chips">' + ops.map((o) => '<button class="chip" type="button" data-cta="marcar ' + o.curto + '" data-longo="' + o.longo + '">' + o.longo + '</button>').join('') + '</div>';
+  });
+  $('#cta-res').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-longo]'); if (!b) return;
+    $('#cta-res').innerHTML = '<div class="ok">Fica anotado: ' + b.dataset.longo + ' (Lisboa). Confirme na conversa do Upwork e envio o convite.</div>';
+  });
+  }
 
   // ---------- abre parada; a conversa de exemplo só toca no botão ----------
   // 15/10: tocava sozinha ao abrir e o dono leu como "começou sozinho". A página
@@ -628,6 +661,7 @@ input,select{font:600 15px var(--body);color:var(--tinta);background:var(--creme
 <script>
 // registro de visitas: sem nome, sem e-mail; só a demo, o evento, o passo e o tempo.
 (() => {
+  if (location.protocol === 'file:') return;
   const DEMO = "lusia", URL = "https://n8n-kf1l.srv1863913.hstgr.cloud/webhook/demo-visita";
   let eu = false;
   try { if (new URLSearchParams(location.search).has('eu')) localStorage.setItem('demo_eu', '1'); eu = localStorage.getItem('demo_eu') === '1'; } catch (e) {}

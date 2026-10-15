@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Assistente de atendimento</title>
+<meta name="description" content="Veja o assistente a responder, qualificar e marcar a visita, com a equipa avisada na hora.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lucasdigikal-ux.github.io/demos/lusia/clientes/">
+<meta property="og:title" content="Assistente de atendimento">
+<meta property="og:description" content="Veja o assistente a responder, qualificar e marcar a visita, com a equipa avisada na hora.">
+<meta property="og:image" content="https://lucasdigikal-ux.github.io/demos/lusia/clientes/capa.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://lucasdigikal-ux.github.io/demos/lusia/clientes/capa.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Montserrat:wght@400;500;600;700;800&family=Shantell+Sans:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+<style>
+/* Layout: caderno quadriculado; trilho de 4 passos; um palco por passo. No passo 1, a conversa do agente à esquerda e os bastidores (base, folha, WhatsApp, email) a encherem-se à direita. Design system claro do Lucas Digital. */
+:root{
+  --papel:#F5EFE7; --grade:#E7D3C4; --creme:#FFFDF9; --tinta:#1C1B18; --muted:#6B6459; --laranja:#D97757;
+  --verde:#2F7D4F; --verde-t:#E3F0E6; --vermelho:#B4402F; --vermelho-t:#F7E1DB; --marca:#F6D3A8; --wa:#DCF3D6; --moldura:#1C1B18; --wa-topo:#0B6E61; --wa-fundo:#EFE7DE; --wa-eu:#D9FDD3;
+  --display:"Archivo Black",Impact,system-ui,sans-serif; --body:"Montserrat",system-ui,sans-serif; --mao:"Shantell Sans","Comic Sans MS",cursive; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--papel:#1D1A16;--grade:#2E2822;--creme:#26221D;--tinta:#F2ECE3;--muted:#B5AA9C;--laranja:#E58A6B;--verde:#6CC08E;--verde-t:#1E3326;--vermelho:#F08A78;--vermelho-t:#3B211C;--marca:#6B4A22;--wa:#20361F;--moldura:#0E0D0B;--wa-topo:#1F2C34;--wa-fundo:#0B141A;--wa-eu:#005C4B;color-scheme:dark}}
+:root[data-theme="dark"]{--papel:#1D1A16;--grade:#2E2822;--creme:#26221D;--tinta:#F2ECE3;--muted:#B5AA9C;--laranja:#E58A6B;--verde:#6CC08E;--verde-t:#1E3326;--vermelho:#F08A78;--vermelho-t:#3B211C;--marca:#6B4A22;--wa:#20361F;--moldura:#0E0D0B;--wa-topo:#1F2C34;--wa-fundo:#0B141A;--wa-eu:#005C4B;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;color:var(--tinta);font:16px/1.5 var(--body);background-color:var(--papel);
+  background-image:linear-gradient(var(--grade) 2px,transparent 2px),linear-gradient(90deg,var(--grade) 2px,transparent 2px);background-size:56px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.wrap{max-width:1120px;margin:0 auto;display:grid;gap:22px}
+.tag{display:inline-block;background:var(--laranja);color:#1C1B18;font:700 clamp(18px,2.4vw,24px)/1.15 var(--mao);padding:8px 16px;border-radius:8px;transform:rotate(-1.5deg);box-shadow:0 3px 0 rgba(0,0,0,.08)}
+.caps{font:800 12px var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+h1{font:400 clamp(30px,5vw,52px)/1.04 var(--display);margin:6px 0 0;text-wrap:balance}
+.rail{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.dot{border:3px solid var(--laranja);background:var(--creme);color:var(--tinta);font:800 14px var(--body);cursor:pointer;border-radius:999px;padding:9px 16px;display:flex;gap:8px;align-items:center}
+.dot b{width:24px;height:24px;border-radius:50%;background:var(--laranja);color:#1C1B18;display:grid;place-items:center;font-size:13px}
+.dot[aria-current="step"]{background:var(--laranja);color:#1C1B18}.dot[aria-current="step"] b{background:var(--creme);color:var(--tinta)}
+.dot:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--tinta);outline-offset:3px}
+.palco{background:var(--creme);border:6px solid var(--grade);border-radius:28px;padding:clamp(14px,3vw,30px);display:grid;gap:18px}
+.topo{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.fala{font:700 clamp(19px,2.4vw,26px)/1.25 var(--mao);margin:0;max-width:34ch}
+.btn{font:800 14px var(--body);border:3px solid var(--tinta);background:var(--creme);color:var(--tinta);border-radius:14px;padding:10px 18px;cursor:pointer}
+.btn:active{transform:translateY(2px)}
+.clique{font:700 13px var(--mao)}
+.chamar{animation:chama 1.8s ease-in-out infinite}
+@keyframes chama{0%,100%{box-shadow:0 0 0 0 var(--marca)}50%{box-shadow:0 0 0 7px var(--marca)}}
+.msg.escrevendo{font:600 13px var(--mao);color:var(--muted);font-style:italic}.btn.lar{background:var(--laranja);border-color:var(--laranja);color:#1C1B18}
+.sim{display:grid;grid-template-columns:minmax(0,390px) minmax(0,1fr);gap:22px;align-items:start}@media (max-width:860px){.sim{grid-template-columns:1fr}}
+/* Moldura de celular (15/10, ideia 4): o cliente vê o que o cliente DELE recebe. Chave WhatsApp/Site troca a pele. */
+.lado-cel{display:grid;gap:10px;justify-items:center;min-width:0}
+.celular{width:100%;max-width:390px;background:var(--moldura);border-radius:44px;padding:26px 10px 14px;position:relative;box-shadow:0 22px 44px -20px rgba(0,0,0,.5)}
+.celular::before{content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);width:84px;height:7px;border-radius:99px;background:var(--grade)}
+.celular .site{border:0;border-radius:30px}
+.ava{width:34px;height:34px;border-radius:50%;background:var(--laranja);color:#1C1B18;display:grid;place-items:center;font:800 13px var(--body);flex:none}
+.site-top strong small{display:block;text-align:left;font:500 11.5px var(--body);letter-spacing:0;opacity:.8}
+.site:not(.pele-wa) .ava,.site:not(.pele-wa) .online{display:none}
+.site.pele-wa .site-top{background:var(--wa-topo);color:#FFFFFF;justify-content:flex-start}
+.site.pele-wa .site-top strong{font:700 16px var(--body)}
+.site.pele-wa .abas,.site.pele-wa .hero{display:none}
+.site.pele-wa .chat{background:var(--wa-fundo)}
+.site.pele-wa .msg.eu{background:var(--wa-eu);color:var(--tinta);font-weight:500}
+.site.pele-wa .msg.ag{border-color:transparent;box-shadow:0 1px 1px rgba(0,0,0,.12)}
+.site.pele-wa .entrada{background:var(--wa-fundo);border-top-color:transparent}
+.site{border:3px solid var(--tinta);border-radius:20px;overflow:hidden;background:var(--papel);display:grid;min-width:0}
+.site-top{background:var(--tinta);color:var(--creme);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.site-top strong{font:400 18px var(--display);letter-spacing:.02em}
+.abas{display:flex;gap:6px}
+.aba{font:700 13px var(--body);border:2px solid var(--creme);background:transparent;color:var(--creme);border-radius:999px;padding:5px 12px;cursor:pointer}
+.aba[aria-selected="true"]{background:var(--creme);color:var(--tinta)}
+.hero{padding:14px 16px 4px;font:700 15px/1.35 var(--body)}.hero small{display:block;font:500 12px var(--mono);color:var(--muted)}
+.chat{height:430px;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+.msg{max-width:86%;padding:9px 13px;border-radius:16px;font:500 15px/1.45 var(--body);animation:entra .3s ease-out both;overflow-wrap:anywhere}
+.msg.ag{background:var(--creme);border:2px solid var(--grade);border-bottom-left-radius:4px;align-self:flex-start}
+.msg.eu{background:var(--laranja);color:#1C1B18;border-bottom-right-radius:4px;align-self:flex-end;font-weight:600}
+.msg.sis{align-self:center;background:transparent;font:600 12px var(--mono);color:var(--vermelho);padding:2px}
+.opcoes{display:flex;flex-wrap:wrap;gap:6px;align-self:flex-start}
+.chip{font:700 13.5px var(--body);border:2px solid var(--laranja);background:var(--creme);color:var(--tinta);border-radius:999px;padding:6px 12px;cursor:pointer}
+.chip:hover{background:var(--marca)}
+.entrada{display:flex;gap:8px;padding:10px;border-top:3px solid var(--grade);background:var(--creme)}
+.entrada input{flex:1;min-width:0}
+input,select{font:600 15px var(--body);color:var(--tinta);background:var(--creme);border:3px solid var(--grade);border-radius:12px;padding:9px 12px;width:100%}
+.form{padding:14px 16px;display:grid;gap:10px}.form label{font:700 13px var(--body);display:grid;gap:4px}
+.erro{color:var(--vermelho);font:700 13px var(--body);min-height:1em}
+.bast{display:grid;gap:12px;min-width:0}
+.fluxo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font:700 12.5px var(--body)}
+.fluxo span{border:2px solid var(--grade);border-radius:999px;padding:4px 10px;background:var(--papel);transition:background .3s,border-color .3s}
+.fluxo span.on{background:var(--laranja);border-color:var(--laranja);color:#1C1B18}
+.fluxo i{font-style:normal;color:var(--muted)}
+.board{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media (max-width:560px){.board{grid-template-columns:1fr}}
+.pn{background:var(--papel);border:3px solid var(--grade);border-radius:16px;padding:12px;display:grid;gap:8px;align-content:start;min-width:0;transition:border-color .3s,box-shadow .3s}
+.pn.largo{grid-column:1/-1}
+.pn h3{margin:0;font:800 13px var(--body);display:flex;justify-content:space-between;gap:8px;align-items:center}
+.pn h3 em{font:500 11.5px var(--mono);font-style:normal;color:var(--muted)}
+.pulso{border-color:var(--laranja);box-shadow:0 0 0 4px var(--marca);animation:pulsa .9s ease-out}
+@keyframes pulsa{0%{transform:scale(.985)}60%{transform:scale(1.01)}100%{transform:none}}
+/* Holofote: o lugar que acabou de mudar acende e os outros painéis recuam, pra levar o olhar junto com o fluxo. */
+.pn{transition:border-color .35s,box-shadow .35s,opacity .35s,transform .35s}
+.pn.foco{border-color:var(--laranja);box-shadow:0 0 0 5px var(--marca),0 14px 30px -10px var(--laranja);transform:translateY(-3px)}
+.bast.holofote .pn:not(.foco){opacity:.42}
+.fluxo span{transition:background .3s,border-color .3s,transform .3s,box-shadow .3s}
+.fluxo span.agora{transform:scale(1.1);box-shadow:0 0 0 4px var(--marca)}
+.ficha .acende{animation:acende 2.2s ease-out both;border-radius:4px}
+@keyframes acende{0%{background:var(--laranja);color:#1C1B18}100%{background:transparent}}
+.estado{transition:background .3s,color .3s}
+@keyframes entra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.ficha{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font:500 13px var(--mono);margin:0}
+.ficha dt{color:var(--muted)}.ficha dd{margin:0;overflow-wrap:anywhere}
+.estado{font:700 11px var(--body);letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:6px;background:var(--marca)}
+.estado.ok{background:var(--verde-t);color:var(--verde)}.estado.no{background:var(--vermelho-t);color:var(--vermelho)}
+.folha-wrap{overflow-x:auto}
+.folha{border-collapse:collapse;font:500 12.5px var(--mono);width:100%;font-variant-numeric:tabular-nums}
+.folha th,.folha td{border:1px solid var(--grade);padding:4px 7px;text-align:left;white-space:nowrap}
+.folha th{background:var(--creme);font-weight:700}
+.folha tr.ex td{color:var(--muted)}.folha tr.novo td{background:var(--marca);animation:entra .4s both}
+#was,#mails{display:grid;gap:10px}
+.wa{background:var(--wa);border-radius:12px 12px 12px 3px;padding:9px 12px;font:500 13.5px/1.4 var(--body);animation:entra .4s both;display:grid;gap:3px}
+.wa .cab,.mail .cab{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-weight:800}
+.temp{font:800 10.5px var(--body);letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:6px;background:var(--grade);color:var(--tinta)}
+.temp.quente{background:var(--laranja);color:#1C1B18}.temp.morno{background:var(--marca)}
+.tel{font:500 12.5px var(--mono);white-space:nowrap}
+.wa.ex,.mail.ex{opacity:.55}.wa small,.mail small{display:block;text-align:right;font:500 11px var(--mono);color:var(--muted)}
+.mail{font:500 13px/1.45 var(--body);background:var(--creme);border:2px solid var(--grade);border-radius:10px;padding:9px 11px;animation:entra .4s both;display:grid;gap:3px}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--papel);border:3px solid var(--grade);border-radius:18px;padding:16px;display:grid;gap:12px;align-content:start;min-width:0}
+.card h2{margin:0;font:400 22px/1.1 var(--display)}
+.linha{display:grid;gap:6px}
+.sem{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;font:700 11.5px var(--body);color:var(--muted);text-align:center}
+.barra{position:relative;height:30px;border:2px solid var(--grade);border-radius:999px;background:var(--creme);overflow:hidden}
+.barra .seg{position:absolute;top:0;bottom:0;display:flex;align-items:center;padding-inline:10px;font:700 12px var(--body);white-space:nowrap;transition:left .6s cubic-bezier(.2,.8,.2,1),width .6s cubic-bezier(.2,.8,.2,1)}
+.seg.ok{background:var(--laranja);color:#1C1B18}
+.seg.duv{background:repeating-linear-gradient(45deg,var(--marca) 0 8px,var(--creme) 8px 16px);color:var(--tinta)}
+.rot{font:800 13px var(--body)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip[aria-pressed="true"]{background:var(--laranja);color:#1C1B18}
+.carimbo{display:inline-block;border:4px solid currentColor;border-radius:10px;padding:4px 12px;font:700 19px var(--mao);transform:rotate(-6deg);animation:carimbo .35s ease-out both}
+.carimbo.ok{color:var(--verde)}.carimbo.no{color:var(--vermelho)}
+@keyframes carimbo{0%{opacity:0;transform:scale(1.6) rotate(-14deg)}100%{opacity:1;transform:scale(1) rotate(-6deg)}}
+.res{min-height:70px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font:600 14px var(--body)}
+.par{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.par li{display:grid;grid-template-columns:1fr 34px 1fr;gap:8px;align-items:center;cursor:pointer}
+.par .a,.par .b{background:var(--creme);border:3px solid var(--grade);border-radius:12px;padding:8px 12px;font:600 14px var(--body);transition:border-color .25s,background .25s;min-width:0}
+.par .s{font:700 20px var(--mao);color:var(--laranja);text-align:center}
+.par li.on .a,.par li.on .b{border-color:var(--laranja);background:var(--marca)}
+@media (max-width:620px){.par li{grid-template-columns:1fr}.par .s{transform:rotate(90deg)}}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.num{background:var(--creme);border:3px solid var(--grade);border-radius:14px;padding:10px;display:grid;gap:2px}
+.num b{font:400 30px/1 var(--display);font-variant-numeric:tabular-nums}.num span{font:600 12.5px var(--body);color:var(--muted)}
+.ent{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ent button{width:100%;text-align:left;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:var(--creme);border:3px solid var(--grade);border-radius:16px;padding:12px 14px;cursor:pointer;color:var(--tinta);font:700 15px var(--body)}
+.ent button[aria-expanded="true"]{border-color:var(--laranja)}
+.ent .n{font:400 22px var(--display);color:var(--laranja)}
+.ent .v{font:400 20px var(--display);font-variant-numeric:tabular-nums}
+.ent .q{font:500 14px/1.5 var(--body);padding:8px 14px 2px;color:var(--tinta)}
+.ent .q b{font:700 13px var(--mao);color:var(--laranja)}
+.total{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:baseline;justify-content:space-between;border-top:3px dashed var(--grade);padding-top:12px}
+.total b{font:400 34px var(--display)}
+.selos{display:flex;flex-wrap:wrap;gap:8px}
+.selo{font:700 13px var(--mao);border:2px solid var(--laranja);border-radius:999px;padding:4px 12px}
+.rodape{font:600 12.5px var(--body);color:var(--muted);text-align:center}
+/* Botões de ação no plano (ideia 2): o clique vira aviso no Telegram do dono. */
+.cta{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.link-cli{font:700 13.5px var(--mao);color:var(--laranja);margin-left:auto}
+.cta-res{display:grid;gap:10px;font:600 15px/1.45 var(--body)}.cta-res:empty{display:none}
+.cta-res .ok{background:var(--verde-t);color:var(--verde);border-radius:14px;padding:12px 14px;font-weight:700}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+  <header style="display:grid;gap:10px;justify-items:center;text-align:center">
+    <span class="tag">Assistente de atendimento</span>
+    <h1>Atende, qualifica e marca. Sozinho.</h1>
+    <span class="caps">Empresa fictícia · dados de exemplo</span>
+  </header>
+
+  <nav class="rail" aria-label="Passos">
+    <button class="dot" data-p="0" aria-current="step"><b>1</b>Experimente</button>
+    
+  </nav>
+
+  <!-- PASSO 1 -->
+  <section class="palco" id="p0">
+    <div class="topo">
+      <p class="fala">Fale com o agente como um cliente. Os bastidores enchem-se sozinhos.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn lar chamar" id="exemplo">Ver um exemplo <span class="clique">(clique aqui)</span></button><button class="btn" id="recomecar">Recomeçar</button></div>
+    </div>
+    <div class="sim">
+      <div class="lado-cel">
+      <div class="chips canal" role="group" aria-label="Ver como">
+        <button class="chip" type="button" id="c-wa" aria-pressed="true">WhatsApp</button>
+        <button class="chip" type="button" id="c-site" aria-pressed="false">Site</button>
+      </div>
+      <div class="celular">
+      <div class="site pele-wa" id="site">
+        <div class="site-top">
+          <span class="ava" aria-hidden="true">LT</span><strong>Limpezas Tejo<small class="online">online</small></strong>
+          <div class="abas" role="tablist">
+            <button class="aba" role="tab" id="aba-chat" aria-selected="true">Assistente</button>
+            <button class="aba" role="tab" id="aba-form" aria-selected="false">Formulário</button>
+          </div>
+        </div>
+        <div class="hero">Limpeza de casas e escritórios na Grande Lisboa<small>página de entrada · versão de teste</small></div>
+        <div id="vista-chat">
+          <div class="chat" id="chat" aria-live="polite"></div>
+          <form class="entrada" id="f-chat">
+            <input id="txt" autocomplete="off" placeholder="Escreva aqui… (ex.: quanto custa?)" aria-label="Mensagem">
+            <button class="btn lar" type="submit">Enviar</button>
+          </form>
+        </div>
+        <form class="form" id="vista-form" hidden>
+          <label>Nome<input id="ff-nome" autocomplete="off" value="Joana Ferreira"></label>
+          <label>Telemóvel<input id="ff-tel" autocomplete="off" value="936 112 448"></label>
+          <label>O que precisa?<select id="ff-tipo"><option>Limpeza de casa</option><option>Limpeza de escritório</option><option>Limpeza pós-obra</option></select></label>
+          <div class="erro" id="ff-erro"></div>
+          <button class="btn lar" type="submit">Pedir contacto</button>
+        </form>
+      </div>
+      </div>
+      </div>
+
+      <div class="bast">
+        <div class="fluxo" aria-label="Caminho do lead">
+          <span id="fx0">Voiceflow</span><i>→</i><span id="fx1">Make.com</span><i>→</i><span id="fx2">Supabase</span><i>+</i><span id="fx3">Google Sheets</span><i>+</i><span id="fx4">WhatsApp e email</span>
+        </div>
+        <div class="board">
+          <div class="pn largo" id="pn-base">
+            <h3>Ficha do lead <span class="estado" id="estado">a recolher</span></h3>
+            <dl class="ficha" id="ficha"></dl>
+          </div>
+          <div class="pn largo" id="pn-folha">
+            <h3>Folha de leads <em>Google Sheets</em></h3>
+            <div class="folha-wrap"><table class="folha"><thead><tr><th>Data</th><th>Nome</th><th>Telemóvel</th><th>Pedido</th><th>Lead</th><th>Visita</th></tr></thead><tbody id="linhas"></tbody></table></div>
+          </div>
+          <div class="pn" id="pn-wa">
+            <h3>WhatsApp do comercial <em>aviso</em></h3>
+            <div id="was"></div>
+          </div>
+          <div class="pn" id="pn-mail">
+            <h3>Email e agenda <em>aviso</em></h3>
+            <div id="mails"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+</div>
+
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  // ---------- passos ----------
+  const passos = [...document.querySelectorAll('.palco')];
+  document.querySelectorAll('.dot').forEach((d) => d.addEventListener('click', () => {
+    const i = +d.dataset.p;
+    passos.forEach((p, k) => { p.hidden = k !== i; });
+    document.querySelectorAll('.dot').forEach((x) => x.removeAttribute('aria-current'));
+    d.setAttribute('aria-current', 'step');
+  }));
+
+  // ---------- telemóvel ----------
+  function conferirTel(s) {
+    const d = String(s).replace(/[\s.\-()]/g, '').replace(/^(\+|00)351/, '');
+    if (/^9[1236]\d{7}$/.test(d)) return { ok: true, num: d.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') };
+    if (/^2\d{8}$/.test(d)) return { ok: false, motivo: 'É um fixo. O aviso segue por WhatsApp, por isso preciso do telemóvel.' };
+    return { ok: false, motivo: 'Não parece um telemóvel português (9 dígitos, começa por 91, 92, 93 ou 96).' };
+  }
+
+  // ---------- datas de visita ----------
+  const DIAS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
+  const p2 = (n) => String(n).padStart(2, '0');
+  function vagas() {
+    const out = []; const d = new Date(); const horas = ['10:00', '14:30', '17:00'];
+    while (out.length < 3) {
+      d.setDate(d.getDate() + 1);
+      if (d.getDay() === 0 || d.getDay() === 6) continue;
+      out.push(`${DIAS[d.getDay()]}, ${p2(d.getDate())}/${p2(d.getMonth() + 1)} às ${horas[out.length]}`);
+    }
+    return out;
+  }
+  const hojeTxt = () => { const d = new Date(); return `${p2(d.getDate())}/${p2(d.getMonth() + 1)}`; };
+
+  // ---------- bastidores ----------
+  const EXEMPLOS = [
+    { data: '13/10', nome: 'Rui Matos', tel: '913 554 210', pedido: 'Escritório, semanal', lead: 'quente', visita: 'ter 10:00' },
+    { data: '14/10', nome: 'Ana Costa', tel: '962 870 031', pedido: 'Casa T2, uma vez', lead: 'morno', visita: '—' },
+  ];
+  function resetBast() {
+    $('#linhas').innerHTML = EXEMPLOS.map((r) => `<tr class="ex"><td>${r.data}</td><td>${r.nome}</td><td>${r.tel}</td><td>${r.pedido}</td><td>${r.lead}</td><td>${r.visita}</td></tr>`).join('');
+    const rui = { temp: 'quente', nome: 'Rui Matos', pedido: 'Escritório · semanal · Oeiras', visita: 'ter, 14/10 às 10:00', tel: '913 554 210' };
+    $('#was').innerHTML = cartaoWa(rui, 'exemplo', true);
+    $('#mails').innerHTML = cartaoMail(rui, 'exemplo', true);
+    for (let i = 0; i < 5; i++) $('#fx' + i).classList.remove('on');
+    $('#fx0').classList.add('on');
+    lead = {}; desenharFicha('a recolher', '');
+  }
+  const ROT = { nome: 'nome', tel: 'telemóvel', servico: 'serviço', tamanho: 'tamanho', freq: 'frequência', zona: 'zona', temp: 'lead', visita: 'visita', origem: 'origem' };
+  let lead = {};
+  // 15/10: o aviso era uma frase corrida e quebrava no meio do telefone; agora
+  // cada informação tem a sua linha (selo, nome, pedido, visita, telefone).
+  const resumo = () => ({
+    temp: lead.temp, nome: lead.nome, tel: lead.tel, visita: lead.visita,
+    pedido: [lead.servico, lead.tamanho, lead.freq, lead.zona].filter(Boolean).join(' · '),
+  });
+  function cartaoWa(o, quando, ex) {
+    return `<div class="wa${ex ? ' ex' : ''}"><div class="cab"><span class="temp ${o.temp}">${o.temp}</span>${esc(o.nome)}</div>`
+      + `<div>${esc(o.pedido)}</div><div>${o.visita ? 'Visita: ' + esc(o.visita) : 'Sem visita marcada: ligar'}</div>`
+      + `<div>Tel. <span class="tel">${esc(o.tel)}</span></div><small>${quando}</small></div>`;
+  }
+  function cartaoMail(o, quando, ex) {
+    return `<div class="mail${ex ? ' ex' : ''}"><div class="cab">Novo lead: ${esc(o.nome)}</div>`
+      + `<div>${o.visita ? 'Visita na agenda: ' + esc(o.visita) : 'Pedido de contacto, sem visita'}</div><small>${quando}</small></div>`;
+  }
+  let fichaAnt = [];
+  function desenharFicha(estado, cls) {
+    const ks = Object.keys(ROT).filter((k) => lead[k]);
+    const novos = ks.filter((k) => !fichaAnt.includes(k));
+    $('#ficha').innerHTML = ks.length ? ks.map((k) => { const a = novos.includes(k) ? ' class="acende"' : ''; return `<dt${a}>${ROT[k]}</dt><dd${a}>${esc(lead[k])}</dd>`; }).join('') : '<dt>—</dt><dd>à espera da conversa</dd>';
+    const e = $('#estado'); e.textContent = estado; e.className = 'estado ' + cls;
+    if (novos.length) holofote('#pn-base', ritmo().bastidor * 1.6);
+    fichaAnt = ks;
+  }
+  // acende um painel por `ms` e esmaece os outros enquanto ele está aceso
+  const timers = new Map();
+  function holofote(sel, ms) {
+    const el = $(sel); const bast = el.closest('.bast');
+    clearTimeout(timers.get(sel));
+    el.classList.add('foco'); if (bast) bast.classList.add('holofote');
+    timers.set(sel, setTimeout(() => {
+      el.classList.remove('foco');
+      if (bast && !bast.querySelector('.pn.foco')) bast.classList.remove('holofote');
+    }, ms));
+  }
+  function acender(fx) {
+    document.querySelectorAll('.fluxo span').forEach((s) => s.classList.remove('agora'));
+    if (fx) $(fx).classList.add('on', 'agora');
+  }
+  function gravar() {
+    const pedido = [lead.servico, lead.tamanho, lead.freq].filter(Boolean).join(', ') || lead.servico || '—';
+    const visitaCurta = lead.visita ? lead.visita.replace(', ', ' ').replace(' às ', ' ') : '—';
+    const passos = [
+      () => { acender('#fx1'); },
+      () => { acender('#fx2'); desenharFicha('gravado', 'ok'); holofote('#pn-base', fica); },
+      () => { acender('#fx3'); $('#linhas').insertAdjacentHTML('beforeend', `<tr class="novo"><td>${hojeTxt()}</td><td>${esc(lead.nome)}</td><td>${esc(lead.tel)}</td><td>${esc(pedido)}</td><td>${lead.temp}</td><td>${esc(visitaCurta)}</td></tr>`); holofote('#pn-folha', fica); },
+      () => {
+        acender('#fx4');
+        $('#was').insertAdjacentHTML('afterbegin', cartaoWa(resumo(), 'agora'));
+        holofote('#pn-wa', fica);
+      },
+      () => {
+        $('#mails').insertAdjacentHTML('afterbegin', cartaoMail(resumo(), 'agora'));
+        holofote('#pn-mail', fica * 2); setTimeout(() => acender(null), fica * 2);
+      },
+    ];
+    const passo = ritmo().bastidor; const fica = passo;
+    passos.forEach((f, i) => setTimeout(f, passo * (i + 1)));
+  }
+
+  // ---------- conversa ----------
+  const chat = $('#chat');
+  // 15/10: o exemplo corria rápido demais pra acompanhar (pedido do dono). No
+  // exemplo cada fala espera ~3 s e cada aviso nos bastidores ~1 s; quem digita
+  // à mão recebe resposta em meio segundo.
+  let modoExemplo = false;
+  const ritmo = () => (modoExemplo ? { resposta: 1400, bastidor: 1100, turno: 3200 } : { resposta: 550, bastidor: 700, turno: 0 });
+  let etapa = 'livre'; let motivo = '';
+  function diz(texto, opcoes) {
+    const m = document.createElement('div'); m.className = 'msg ag'; m.textContent = texto; chat.appendChild(m);
+    if (opcoes && opcoes.length) {
+      const o = document.createElement('div'); o.className = 'opcoes';
+      opcoes.forEach((t) => { const b = document.createElement('button'); b.className = 'chip'; b.type = 'button'; b.textContent = t; b.addEventListener('click', () => responder(t)); o.appendChild(b); });
+      chat.appendChild(o);
+    }
+    chat.scrollTop = chat.scrollHeight;
+  }
+  function eu(texto) {
+    chat.querySelectorAll('.opcoes').forEach((o) => o.remove());
+    const m = document.createElement('div'); m.className = 'msg eu'; m.textContent = texto; chat.appendChild(m);
+    chat.scrollTop = chat.scrollHeight;
+  }
+  function sistema(texto) { const m = document.createElement('div'); m.className = 'msg sis'; m.textContent = texto; chat.appendChild(m); }
+
+  const FAQ = [
+    [/pre[cç]o|custa|valor|quanto|or[cç]amento|caro/i, 'Uma limpeza regular de um T2 costuma ficar entre 45 € e 60 €, conforme a área e a frequência. O valor certo sai na visita de orçamento, que é gratuita.'],
+    [/zona|onde|lisboa|oeiras|cascais|almada|amadora|sintra|loures|seixal/i, 'Trabalhamos em Lisboa, Oeiras, Cascais, Amadora e Almada.'],
+    [/hor[aá]rio|que horas|s[aá]bado|domingo|fim de semana|quando/i, 'Fazemos limpezas de segunda a sábado, das 8h às 19h.'],
+    [/produto|aspirador|equipamento|material|detergente/i, 'Levamos os produtos e o equipamento. Se preferir que usemos os seus, é só dizer.'],
+    [/fatura|factura|nif|recibo|seguro/i, 'Sim, passamos fatura com NIF e temos seguro de responsabilidade civil.'],
+  ];
+  const MENU = ['Quanto custa?', 'Em que zonas trabalham?', 'Quero marcar uma visita'];
+
+  function iniciar() {
+    chat.innerHTML = ''; etapa = 'livre'; motivo = ''; resetBast();
+    diz('Olá! Sou a assistente da Limpezas Tejo. Posso esclarecer dúvidas ou marcar uma visita de orçamento gratuita. Em que posso ajudar?', MENU);
+  }
+  function perguntarServico() { etapa = 'servico'; diz('Com todo o gosto. Que tipo de limpeza procura?', ['Casa', 'Escritório', 'Pós-obra']); }
+
+  function responder(t) {
+    t = t.trim(); if (!t) return; eu(t);
+    const e = document.createElement('div'); e.className = 'msg ag escrevendo'; e.textContent = 'a escrever…'; chat.appendChild(e); chat.scrollTop = chat.scrollHeight;
+    setTimeout(() => { e.remove(); processar(t); }, ritmo().resposta);
+  }
+  function processar(t) {
+    if (etapa === 'fim') { if (/recome/i.test(t)) iniciar(); else diz('Já fica tudo registado. Quer recomeçar a demo?', ['Recomeçar']); return; }
+    if (etapa === 'nome') {
+      if (!/[A-Za-zÀ-ÿ]{2,}/.test(t)) { diz('Desculpe, não percebi o nome. Como se chama?'); return; }
+      lead.nome = t.replace(/\b\p{L}/gu, (c) => c.toUpperCase()); desenharFicha('a recolher', '');
+      etapa = 'tel'; diz(`Obrigada, ${lead.nome.split(' ')[0]}. E qual é o seu telemóvel? O nosso comercial usa-o para confirmar.`); return;
+    }
+    if (etapa === 'tel') {
+      const r = conferirTel(t);
+      if (!r.ok) { sistema('recusado em código: nada foi gravado'); diz(r.motivo + ' Pode confirmar?'); return; }
+      lead.tel = r.num; desenharFicha('a recolher', '');
+      if (motivo === 'humano' || motivo === 'fora') {
+        lead.temp = motivo === 'fora' ? 'frio' : 'morno'; lead.origem = 'assistente';
+        etapa = 'fim';
+        diz(motivo === 'fora' ? 'Ficou registado. Avisamos assim que chegarmos à sua zona. Obrigada!' : 'Combinado. Um colega liga-lhe ainda hoje. Obrigada!', ['Recomeçar']);
+        gravar(); return;
+      }
+      etapa = 'slot'; diz('Tenho estas vagas para a visita de orçamento:', vagas()); return;
+    }
+    if (etapa === 'slot') {
+      const v = vagas().find((x) => x === t);
+      if (!v) { diz('Escolha uma das vagas, por favor:', vagas()); return; }
+      lead.visita = v; lead.origem = 'assistente'; etapa = 'fim';
+      diz(`Está marcado: ${v}. O Rui, da nossa equipa, liga-lhe na véspera para confirmar. Obrigada, ${lead.nome.split(' ')[0]}!`, ['Recomeçar']);
+      gravar(); return;
+    }
+    if (etapa === 'servico') {
+      const s = ['Casa', 'Escritório', 'Pós-obra'].find((x) => x.toLowerCase() === t.toLowerCase());
+      if (!s) return faqOuNada(t, () => perguntarServico());
+      lead.servico = s; desenharFicha('a recolher', ''); etapa = 'tamanho';
+      diz(s === 'Escritório' ? 'Qual é a área do escritório?' : 'Qual é a tipologia da casa?', s === 'Escritório' ? ['Até 100 m²', '100 a 300 m²', 'Mais de 300 m²'] : ['T0 ou T1', 'T2 ou T3', 'T4 ou maior']);
+      return;
+    }
+    if (etapa === 'tamanho') { lead.tamanho = t; desenharFicha('a recolher', ''); etapa = 'freq'; diz('E com que frequência?', ['Só uma vez', 'Semanal', 'Quinzenal']); return; }
+    if (etapa === 'freq') { lead.freq = t.toLowerCase(); desenharFicha('a recolher', ''); etapa = 'zona'; diz('Em que zona fica?', ['Lisboa', 'Oeiras', 'Cascais', 'Amadora', 'Almada', 'Outra zona']); return; }
+    if (etapa === 'zona') {
+      const dentro = ['Lisboa', 'Oeiras', 'Cascais', 'Amadora', 'Almada'].find((x) => x.toLowerCase() === t.toLowerCase());
+      if (!dentro) {
+        lead.zona = t === 'Outra zona' ? 'fora da área' : t; lead.temp = 'frio'; motivo = 'fora'; desenharFicha('a recolher', '');
+        etapa = 'nome'; diz('Ainda não trabalhamos aí. Posso deixar o seu contacto registado para quando chegarmos? Como se chama?'); return;
+      }
+      lead.zona = dentro; lead.temp = /semanal|quinzenal/.test(lead.freq) ? 'quente' : 'morno'; desenharFicha('a recolher', '');
+      etapa = 'nome'; diz('Perfeito, trabalhamos aí. Para marcar a visita, como se chama?'); return;
+    }
+    if (etapa === 'humano?') {
+      if (/^s/i.test(t)) { motivo = 'humano'; lead.servico = 'pedido de contacto'; etapa = 'nome'; diz('Claro. Como se chama?'); return; }
+      etapa = 'livre'; diz('Sem problema. Posso ajudar com mais alguma coisa?', MENU); return;
+    }
+    // livre
+    if (/marcar|visita|agendar|reuni|contratar|quero (uma )?limpeza/i.test(t)) return perguntarServico();
+    if (/pessoa|humano|falar com|ligar|telefonar/i.test(t)) { motivo = 'humano'; lead.servico = 'pedido de contacto'; etapa = 'nome'; diz('Claro, um colega liga-lhe. Como se chama?'); return; }
+    faqOuNada(t, () => diz('Quer marcar a visita de orçamento?', ['Quero marcar uma visita', 'Tenho outra dúvida']));
+  }
+  function faqOuNada(t, depois) {
+    const f = FAQ.find(([re]) => re.test(t));
+    if (f) { diz(f[1]); depois(); return; }
+    if (/outra d[uú]vida/i.test(t)) { diz('Diga, por favor.'); return; }
+    etapa = 'humano?';
+    diz('Essa não sei responder com certeza, e prefiro não inventar. Quer que um colega lhe ligue?', ['Sim, liguem-me', 'Não, obrigado']);
+  }
+
+  $('#f-chat').addEventListener('submit', (e) => { e.preventDefault(); const v = $('#txt').value; $('#txt').value = ''; responder(v); });
+  $('#recomecar').addEventListener('click', iniciar);
+
+  // abas
+  function aba(chatOn) {
+    $('#aba-chat').setAttribute('aria-selected', chatOn); $('#aba-form').setAttribute('aria-selected', !chatOn);
+    $('#vista-chat').hidden = !chatOn; $('#vista-form').hidden = chatOn;
+  }
+  // chave WhatsApp/Site: só muda a pele; a conversa e os bastidores são os mesmos
+  function canal(wa) {
+    $('#site').classList.toggle('pele-wa', wa); $('#c-wa').setAttribute('aria-pressed', wa); $('#c-site').setAttribute('aria-pressed', !wa);
+    if (wa) aba(true);
+  }
+  $('#c-wa').addEventListener('click', () => canal(true));
+  $('#c-site').addEventListener('click', () => canal(false));
+  $('#aba-chat').addEventListener('click', () => aba(true));
+  $('#aba-form').addEventListener('click', () => aba(false));
+  $('#vista-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const nome = $('#ff-nome').value.trim(); const r = conferirTel($('#ff-tel').value);
+    if (nome.length < 2) { $('#ff-erro').textContent = 'Falta o nome.'; return; }
+    if (!r.ok) { $('#ff-erro').textContent = r.motivo; return; }
+    $('#ff-erro').textContent = '';
+    resetBast();
+    lead = { nome, tel: r.num, servico: $('#ff-tipo').value.replace('Limpeza de ', '').replace(/^./, (c) => c.toUpperCase()), temp: 'morno', origem: 'formulário' };
+    desenharFicha('a recolher', ''); gravar();
+  });
+
+  // ---------- passos 2 a 4: só na versão da proposta ----------
+  if ($('#p1')) {
+  function wa(teste) {
+    $('#w-teste').setAttribute('aria-pressed', teste); $('#w-esperar').setAttribute('aria-pressed', !teste);
+    const s = $('#seg-wa');
+    if (teste) { s.className = 'seg ok'; s.style.left = '0'; s.style.width = '100%'; s.textContent = 'até 5 telemóveis: o seu e 3 clientes'; }
+    else { s.className = 'seg duv'; s.style.left = '34%'; s.style.width = '66%'; s.textContent = 'quando a Meta aprovar?'; }
+  }
+  $('#w-teste').addEventListener('click', () => wa(true));
+  $('#w-esperar').addEventListener('click', () => wa(false));
+  function testarTel(v) {
+    const r = conferirTel(v);
+    $('#tel-res').innerHTML = r.ok
+      ? `<span class="carimbo ok">gravado</span><span>${esc(r.num)} segue para a folha e para o comercial.</span>`
+      : `<span class="carimbo no">recusado</span><span>${esc(r.motivo)} Nada foi gravado.</span>`;
+  }
+  $('#tel-ex').addEventListener('click', (e) => { const b = e.target.closest('[data-t]'); if (b) { $('#tel-in').value = b.dataset.t; testarTel(b.dataset.t); } });
+  $('#f-tel').addEventListener('submit', (e) => { e.preventDefault(); testarTel($('#tel-in').value); });
+  testarTel('21 345 6789'); $('#tel-in').value = '21 345 6789';
+
+  // ---------- passo 3 ----------
+  $('#par').addEventListener('click', (e) => { const li = e.target.closest('li'); if (!li) return; document.querySelectorAll('#par li').forEach((x) => x.classList.toggle('on', x === li)); });
+  document.querySelector('#par li').classList.add('on');
+
+  // ---------- passo 4 ----------
+  document.querySelectorAll('#ent button').forEach((b) => b.addEventListener('click', () => {
+    const aberto = b.getAttribute('aria-expanded') === 'true';
+    b.setAttribute('aria-expanded', !aberto); b.nextElementSibling.hidden = aberto;
+  }));
+
+  // ideia 2: botões de ação. A página não envia nada sozinha; o registro de visitas
+  // (só no endereço próprio) leva o data-cta pro Telegram do dono.
+  const DIAS_LONGOS = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+  $('#cta-quero').addEventListener('click', () => {
+    $('#cta-res').innerHTML = '<div class="ok">Combinado. Escreva «avançar» na conversa do Upwork e envio hoje o contrato com as três entregas.</div>';
+  });
+  $('#cta-marcar').addEventListener('click', () => {
+    const d = new Date(); const horas = ['14:00', '16:00', '18:00']; const ops = [];
+    while (ops.length < 3) { d.setDate(d.getDate() + 1); if (d.getDay() === 0 || d.getDay() === 6) continue; ops.push({ curto: DIAS[d.getDay()] + ' ' + p2(d.getDate()) + '/' + p2(d.getMonth() + 1) + ' ' + horas[ops.length], longo: DIAS_LONGOS[d.getDay()] + ', ' + p2(d.getDate()) + '/' + p2(d.getMonth() + 1) + ' às ' + horas[ops.length] }); }
+    $('#cta-res').innerHTML = '<span>Escolha um horário (hora de Lisboa):</span><div class="chips">' + ops.map((o) => '<button class="chip" type="button" data-cta="marcar ' + o.curto + '" data-longo="' + o.longo + '">' + o.longo + '</button>').join('') + '</div>';
+  });
+  $('#cta-res').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-longo]'); if (!b) return;
+    $('#cta-res').innerHTML = '<div class="ok">Fica anotado: ' + b.dataset.longo + ' (Lisboa). Confirme na conversa do Upwork e envio o convite.</div>';
+  });
+  }
+
+  // ---------- abre parada; a conversa de exemplo só toca no botão ----------
+  // 15/10: tocava sozinha ao abrir e o dono leu como "começou sozinho". A página
+  // já abre com a saudação e as linhas de exemplo nos bastidores, então não fica vazia.
+  iniciar();
+  const roteiro = ['Quanto custa?', 'Quero marcar uma visita', 'Casa', 'T2 ou T3', 'Semanal', 'Oeiras', 'Maria Silva', '912 345 678'];
+  let rodada = 0;
+  const parar = () => { rodada++; modoExemplo = false; };
+  $('#recomecar').addEventListener('click', parar, { capture: true });
+  $('#f-chat').addEventListener('submit', parar, { capture: true });
+  chat.addEventListener('click', (e) => { if (e.isTrusted) parar(); }, { capture: true });
+  $('#exemplo').addEventListener('click', () => {
+    $('#exemplo').classList.remove('chamar');
+    const minha = ++rodada; let i = 0; aba(true); iniciar(); modoExemplo = true;
+    (function proximo() {
+      if (minha !== rodada) return;
+      if (i < roteiro.length) { responder(roteiro[i++]); setTimeout(proximo, ritmo().turno); }
+      else setTimeout(() => {
+        if (minha !== rodada) return;
+        const o = chat.querySelector('.opcoes .chip'); if (o) o.click();
+        // os avisos ainda usam o ritmo lento; volta ao normal depois deles
+        setTimeout(() => { if (minha === rodada) modoExemplo = false; }, 1400 + 1100 * 6);
+      }, 2000);
+    })();
+  });
+})();
+</script>
+
+<script>
+// registro de visitas: sem nome, sem e-mail; só a demo, o evento, o passo e o tempo.
+(() => {
+  if (location.protocol === 'file:') return;
+  const DEMO = "lusia-clientes", URL = "https://n8n-kf1l.srv1863913.hstgr.cloud/webhook/demo-visita";
+  let eu = false;
+  try { if (new URLSearchParams(location.search).has('eu')) localStorage.setItem('demo_eu', '1'); eu = localStorage.getItem('demo_eu') === '1'; } catch (e) {}
+  const sessao = Math.random().toString(36).slice(2, 10), t0 = Date.now(), vistos = new Set(); let maior = 0;
+  function manda(evento, passo) {
+    const d = new URLSearchParams({ demo: DEMO, evento, passo: String(passo || 0), sessao, interno: eu ? '1' : '0', segundos: String(Math.round((Date.now() - t0) / 1000)) });
+    try { navigator.sendBeacon(URL, new Blob([d.toString()], { type: 'application/x-www-form-urlencoded' })); } catch (e) {}
+  }
+  const umaVez = (k, f) => { if (!vistos.has(k)) { vistos.add(k); f(); } };
+  manda('abriu', 0);
+  document.addEventListener('click', (e) => {
+    const dot = e.target.closest('.dot[data-p]');
+    if (dot) { const n = +dot.dataset.p; maior = Math.max(maior, n); umaVez('p' + n, () => manda('passo', n)); }
+    if (e.target.closest('#exemplo')) umaVez('ex', () => manda('exemplo', maior));
+    if (e.target.closest('#chat .chip')) umaVez('conversa', () => manda('conversou', maior));
+    const cta = e.target.closest('[data-cta]'); if (cta) manda('cta-' + cta.dataset.cta, maior);
+  }, true);
+  document.addEventListener('submit', () => umaVez('conversa', () => manda('conversou', maior)), true);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') manda('saiu', maior); });
+})();
+</script>
+</body>
+</html>
