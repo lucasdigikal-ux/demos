@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Dispatch Assistant demo</title>
+<meta name="description" content="Ask in Slack, watch a draft load appear in your TMS. Lookups, approval before anything is saved, and failures that never go silent.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lucasdigikal-ux.github.io/demos/dispatch-slack/">
+<meta property="og:title" content="Dispatch Assistant">
+<meta property="og:description" content="Ask in Slack, watch a draft load appear in your TMS. Lookups, approval before anything is saved, and failures that never go silent.">
+<meta property="og:image" content="https://lucasdigikal-ux.github.io/demos/dispatch-slack/capa.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://lucasdigikal-ux.github.io/demos/dispatch-slack/capa.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Montserrat:wght@400;500;600;700;800&family=Shantell+Sans:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+<style>
+/* Layout: caderno quadriculado; trilho de 4 passos. Passo 1: Slack numa moldura de celular à esquerda, bastidores (busca no EasyLoader, carga rascunho, confirmações, registro) a encherem-se à direita. Design system claro do Lucas Digital. */
+:root{
+  --papel:#F5EFE7; --grade:#E7D3C4; --creme:#FFFDF9; --tinta:#1C1B18; --muted:#6B6459; --laranja:#D97757;
+  --verde:#2F7D4F; --verde-t:#E3F0E6; --vermelho:#B4402F; --vermelho-t:#F7E1DB; --marca:#F6D3A8; --moldura:#1C1B18; --sl-topo:#3F0E40; --sl-fundo:#FFFFFF;
+  --display:"Archivo Black",Impact,system-ui,sans-serif; --body:"Montserrat",system-ui,sans-serif; --mao:"Shantell Sans","Comic Sans MS",cursive; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--papel:#1D1A16;--grade:#2E2822;--creme:#26221D;--tinta:#F2ECE3;--muted:#B5AA9C;--laranja:#E58A6B;--verde:#6CC08E;--verde-t:#1E3326;--vermelho:#F08A78;--vermelho-t:#3B211C;--marca:#6B4A22;--moldura:#0E0D0B;--sl-topo:#2B0C2C;--sl-fundo:#1A1D21;color-scheme:dark}}
+:root[data-theme="dark"]{--papel:#1D1A16;--grade:#2E2822;--creme:#26221D;--tinta:#F2ECE3;--muted:#B5AA9C;--laranja:#E58A6B;--verde:#6CC08E;--verde-t:#1E3326;--vermelho:#F08A78;--vermelho-t:#3B211C;--marca:#6B4A22;--moldura:#0E0D0B;--sl-topo:#2B0C2C;--sl-fundo:#1A1D21;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;color:var(--tinta);font:16px/1.5 var(--body);background-color:var(--papel);
+  background-image:linear-gradient(var(--grade) 2px,transparent 2px),linear-gradient(90deg,var(--grade) 2px,transparent 2px);background-size:56px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.wrap{max-width:1120px;margin:0 auto;display:grid;gap:22px}
+.tag{display:inline-block;background:var(--laranja);color:#1C1B18;font:700 clamp(18px,2.4vw,24px)/1.15 var(--mao);padding:8px 16px;border-radius:8px;transform:rotate(-1.5deg);box-shadow:0 3px 0 rgba(0,0,0,.08)}
+.caps{font:800 12px var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+h1{font:400 clamp(30px,5vw,52px)/1.04 var(--display);margin:6px 0 0;text-wrap:balance}
+.rail{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.dot{border:3px solid var(--laranja);background:var(--creme);color:var(--tinta);font:800 14px var(--body);cursor:pointer;border-radius:999px;padding:9px 16px;display:flex;gap:8px;align-items:center}
+.dot b{width:24px;height:24px;border-radius:50%;background:var(--laranja);color:#1C1B18;display:grid;place-items:center;font-size:13px}
+.dot[aria-current="step"]{background:var(--laranja);color:#1C1B18}.dot[aria-current="step"] b{background:var(--creme);color:var(--tinta)}
+.dot:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--tinta);outline-offset:3px}
+.palco{background:var(--creme);border:6px solid var(--grade);border-radius:28px;padding:clamp(14px,3vw,30px);display:grid;gap:18px}
+.topo{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.fala{font:700 clamp(19px,2.4vw,26px)/1.25 var(--mao);margin:0;max-width:34ch}
+.btn{font:800 14px var(--body);border:3px solid var(--tinta);background:var(--creme);color:var(--tinta);border-radius:14px;padding:10px 18px;cursor:pointer}
+.btn:active{transform:translateY(2px)}
+.clique{font:700 13px var(--mao)}
+.chamar{animation:chama 1.8s ease-in-out infinite}
+@keyframes chama{0%,100%{box-shadow:0 0 0 0 var(--marca)}50%{box-shadow:0 0 0 7px var(--marca)}}
+.msg.escrevendo{font:600 13px var(--mao);color:var(--muted);font-style:italic}.btn.lar{background:var(--laranja);border-color:var(--laranja);color:#1C1B18}
+.sim{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:22px;align-items:start}@media (max-width:860px){.sim{grid-template-columns:1fr}}
+.lado-cel{display:grid;gap:10px;justify-items:center;min-width:0}
+.celular{width:100%;max-width:400px;background:var(--moldura);border-radius:44px;padding:26px 10px 14px;position:relative;box-shadow:0 22px 44px -20px rgba(0,0,0,.5)}
+.celular::before{content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);width:84px;height:7px;border-radius:99px;background:var(--grade)}
+.site{border:0;border-radius:30px;overflow:hidden;background:var(--sl-fundo);display:grid;min-width:0}
+.site-top{background:var(--sl-topo);color:#fff;padding:12px 16px;display:flex;gap:10px;align-items:center}
+.site-top strong{font:800 16px var(--body)}.site-top small{display:block;font:500 11.5px var(--body);opacity:.8}
+.ava{width:34px;height:34px;border-radius:8px;background:var(--laranja);color:#1C1B18;display:grid;place-items:center;font:800 13px var(--body);flex:none}
+.chat{height:460px;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth;background:var(--sl-fundo)}
+.msg{max-width:90%;padding:9px 13px;border-radius:12px;font:500 14.5px/1.45 var(--body);animation:entra .3s ease-out both;overflow-wrap:anywhere}
+.msg.ag{background:var(--creme);border:2px solid var(--grade);align-self:flex-start;color:var(--tinta)}
+.msg.eu{background:var(--laranja);color:#1C1B18;align-self:flex-end;font-weight:600}
+.msg.sis{align-self:center;background:transparent;font:600 12px var(--mono);color:var(--vermelho);padding:2px}
+.opcoes{display:flex;flex-wrap:wrap;gap:6px;align-self:flex-start}
+.chip{font:700 13.5px var(--body);border:2px solid var(--laranja);background:var(--creme);color:var(--tinta);border-radius:999px;padding:6px 12px;cursor:pointer;text-align:left}
+.chip:hover{background:var(--marca)}
+.chip[aria-pressed="true"]{background:var(--laranja);color:#1C1B18}
+.entrada{display:flex;gap:8px;padding:10px;border-top:3px solid var(--grade);background:var(--creme)}
+.entrada input{flex:1;min-width:0}
+input{font:600 15px var(--body);color:var(--tinta);background:var(--creme);border:3px solid var(--grade);border-radius:12px;padding:9px 12px;width:100%}
+.bast{display:grid;gap:12px;min-width:0}
+.fluxo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font:700 12.5px var(--body)}
+.fluxo span{border:2px solid var(--grade);border-radius:999px;padding:4px 10px;background:var(--papel);transition:background .3s,border-color .3s,transform .3s,box-shadow .3s}
+.fluxo span.on{background:var(--laranja);border-color:var(--laranja);color:#1C1B18}
+.fluxo span.agora{transform:scale(1.1);box-shadow:0 0 0 4px var(--marca)}
+.fluxo i{font-style:normal;color:var(--muted)}
+.board{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media (max-width:560px){.board{grid-template-columns:1fr}}
+.pn{background:var(--papel);border:3px solid var(--grade);border-radius:16px;padding:12px;display:grid;gap:8px;align-content:start;min-width:0;transition:border-color .35s,box-shadow .35s,opacity .35s,transform .35s}
+.pn.largo{grid-column:1/-1}
+.pn h3{margin:0;font:800 13px var(--body);display:flex;justify-content:space-between;gap:8px;align-items:center}
+.pn h3 em{font:500 11.5px var(--mono);font-style:normal;color:var(--muted)}
+.pn.foco{border-color:var(--laranja);box-shadow:0 0 0 5px var(--marca),0 14px 30px -10px var(--laranja);transform:translateY(-3px)}
+.bast.holofote .pn:not(.foco){opacity:.42}
+.ficha .acende{animation:acende 2.2s ease-out both;border-radius:4px}
+@keyframes acende{0%{background:var(--laranja);color:#1C1B18}100%{background:transparent}}
+@keyframes entra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.ficha{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font:500 13px var(--mono);margin:0}
+.ficha dt{color:var(--muted)}.ficha dd{margin:0;overflow-wrap:anywhere}
+.estado{font:700 11px var(--body);letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:6px;background:var(--marca);transition:background .3s,color .3s}
+.estado.ok{background:var(--verde-t);color:var(--verde)}.estado.no{background:var(--vermelho-t);color:var(--vermelho)}
+.folha-wrap{overflow-x:auto}
+.folha{border-collapse:collapse;font:500 12.5px var(--mono);width:100%}
+.folha th,.folha td{border:1px solid var(--grade);padding:4px 7px;text-align:left}
+.folha th{background:var(--creme);font-weight:700}
+.folha tr.ex td{color:var(--muted)}.folha tr.novo td{background:var(--marca);animation:entra .4s both}
+#docs,#logs{display:grid;gap:8px}
+.doc{background:var(--creme);border:2px solid var(--grade);border-radius:10px;padding:8px 11px;font:500 13px/1.4 var(--body);animation:entra .4s both;display:grid;gap:2px}
+.doc b{font-weight:800}.doc.ex{opacity:.55}
+.lg{display:flex;gap:8px;align-items:baseline;font:500 12.5px/1.4 var(--body);animation:entra .4s both}.lg.ex{opacity:.55}
+.lg .estado{flex:none}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--papel);border:3px solid var(--grade);border-radius:18px;padding:16px;display:grid;gap:12px;align-content:start;min-width:0}
+.card.largo{grid-column:1/-1}
+.card h3{margin:0;font:400 22px/1.1 var(--display)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.carimbo{display:inline-block;border:4px solid currentColor;border-radius:10px;padding:4px 12px;font:700 19px var(--mao);transform:rotate(-6deg);animation:carimbo .35s ease-out both}
+.carimbo.ok{color:var(--verde)}.carimbo.no{color:var(--vermelho)}
+@keyframes carimbo{0%{opacity:0;transform:scale(1.6) rotate(-14deg)}100%{opacity:1;transform:scale(1) rotate(-6deg)}}
+.res{min-height:70px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font:600 14px var(--body)}
+.par{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.par li{display:grid;grid-template-columns:1fr 34px 1fr;gap:8px;align-items:center;cursor:pointer}
+.par .a,.par .b{background:var(--creme);border:3px solid var(--grade);border-radius:12px;padding:8px 12px;font:600 14px var(--body);transition:border-color .25s,background .25s;min-width:0}
+.par .s{font:700 20px var(--mao);color:var(--laranja);text-align:center}
+.par li.on .a,.par li.on .b{border-color:var(--laranja);background:var(--marca)}
+@media (max-width:620px){.par li{grid-template-columns:1fr}.par .s{transform:rotate(90deg)}}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.num{background:var(--creme);border:3px solid var(--grade);border-radius:14px;padding:10px;display:grid;gap:2px}
+.num b{font:400 30px/1 var(--display);font-variant-numeric:tabular-nums}.num span{font:600 12.5px var(--body);color:var(--muted)}
+.ent{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ent button{width:100%;text-align:left;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:var(--creme);border:3px solid var(--grade);border-radius:16px;padding:12px 14px;cursor:pointer;color:var(--tinta);font:700 15px var(--body)}
+.ent button[aria-expanded="true"]{border-color:var(--laranja)}
+.ent .n{font:400 22px var(--display);color:var(--laranja)}
+.ent .v{font:400 18px var(--display);font-variant-numeric:tabular-nums}
+.ent .q{font:500 14px/1.5 var(--body);padding:8px 14px 2px;color:var(--tinta)}
+.ent .q b{font:700 13px var(--mao);color:var(--laranja)}
+.total{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:baseline;justify-content:space-between;border-top:3px dashed var(--grade);padding-top:12px}
+.total b{font:400 34px var(--display)}
+.selos{display:flex;flex-wrap:wrap;gap:8px}
+.selo{font:700 13px var(--mao);border:2px solid var(--laranja);border-radius:999px;padding:4px 12px}
+.rodape{font:600 12.5px var(--body);color:var(--muted);text-align:center}
+.cta{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.cta-res{display:grid;gap:10px;font:600 15px/1.45 var(--body)}.cta-res:empty{display:none}
+.cta-res .ok{background:var(--verde-t);color:var(--verde);border-radius:14px;padding:12px 14px;font-weight:700}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+  <header style="display:grid;gap:10px;justify-items:center;text-align:center">
+    <span class="tag">Dispatch Assistant · version 0</span>
+    <h1>Your dispatcher in Slack, already working.</h1>
+    <span class="caps">Fictional brokerage · example data · simulated screens</span>
+  </header>
+
+  <nav class="rail" aria-label="Steps">
+    <button class="dot" data-p="0" aria-current="step"><b>1</b>Try it</button>
+    <!-- proposta:inicio -->
+    <button class="dot" data-p="1"><b>2</b>Where it breaks</button>
+    <button class="dot" data-p="2"><b>3</b>Already built</button>
+    <button class="dot" data-p="3"><b>4</b>Plan and price</button>
+    <!-- proposta:fim -->
+  </nav>
+
+  <!-- STEP 1 -->
+  <section class="palco" id="p0">
+    <div class="topo">
+      <p class="fala">Ask in Slack. Watch the load appear in EasyLoader.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn lar chamar" id="exemplo">See an example <span class="clique">(click here)</span></button><button class="btn" id="recomecar">Restart</button></div>
+    </div>
+    <div class="sim">
+      <div class="lado-cel">
+        <div class="celular">
+          <div class="site" id="site">
+            <div class="site-top"><span class="ava" aria-hidden="true">DA</span><strong># dispatch<small>Dispatch Assistant · Summit Freight (fictional)</small></strong></div>
+            <div class="chat" id="chat" aria-live="polite"></div>
+            <form class="entrada" id="f-chat">
+              <input id="txt" autocomplete="off" placeholder="Message #dispatch" aria-label="Message">
+              <button class="btn lar" type="submit">Send</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="bast">
+        <div class="fluxo" aria-label="Path of a request">
+          <span id="fx0">Slack</span><i>→</i><span id="fx1">Lookup</span><i>→</i><span id="fx2">EasyLoader draft</span><i>→</i><span id="fx3">Rate confirmations</span><i>→</i><span id="fx4">Your approval</span>
+        </div>
+        <div class="board">
+          <div class="pn largo" id="pn-lookup">
+            <h3>Customers and carriers <em>EasyLoader lookup</em></h3>
+            <div class="folha-wrap"><table class="folha"><thead><tr><th>Name</th><th>Type</th><th>Result</th></tr></thead><tbody id="linhas"></tbody></table></div>
+          </div>
+          <div class="pn" id="pn-tms">
+            <h3>Draft load <span class="estado" id="estado">waiting</span></h3>
+            <dl class="ficha" id="ficha"></dl>
+          </div>
+          <div class="pn" id="pn-docs">
+            <h3>Rate confirmations <em>drafts</em></h3>
+            <div id="docs"></div>
+          </div>
+          <div class="pn largo" id="pn-log">
+            <h3>Run log <em>done · failed · don't know</em></h3>
+            <div id="logs"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- proposta:inicio -->
+  <!-- STEP 2 -->
+  <section class="palco" id="p1" hidden>
+    <div class="topo"><p class="fala">Three things that usually go wrong. Try each.</p></div>
+    <div class="grid2">
+      <div class="card">
+        <h3>No API? The screen changes</h3>
+        <p style="margin:0">It stops instead of guessing a click.</p>
+        <div class="chips">
+          <button class="chip" id="s-ok" aria-pressed="true">Normal day</button>
+          <button class="chip" id="s-mov" aria-pressed="false">Save button moved</button>
+        </div>
+        <div class="res" id="scr-res"></div>
+      </div>
+      <div class="card">
+        <h3>Same load twice</h3>
+        <p style="margin:0">A duplicate is caught before it exists.</p>
+        <div class="chips" id="dup-ex">
+          <button class="chip" data-d="igual">Same load again</button>
+          <button class="chip" data-d="data">Same route, next week</button>
+          <button class="chip" data-d="outro">Other customer</button>
+        </div>
+        <div class="res" id="dup-res"></div>
+      </div>
+      <div class="card largo">
+        <h3>Insurance certificate</h3>
+        <p style="margin:0">A document read is never the final clearance.</p>
+        <div class="chips" id="ins-ex">
+          <button class="chip" data-c="xyz">XYZ Trucking</button>
+          <button class="chip" data-c="blue">Blue Line Carriers</button>
+          <button class="chip" data-c="apex">Apex Haulers</button>
+        </div>
+        <div class="res" id="ins-res"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="palco" id="p2" hidden>
+    <div class="topo"><p class="fala">I already built the pieces this needs.</p></div>
+    <div class="nums">
+      <div class="num"><b>125</b><span>real runs measured</span></div>
+      <div class="num"><b>812</b><span>records saved, zero errors</span></div>
+      <div class="num"><b>95</b><span>group chats held, not answered</span></div>
+    </div>
+    <ul class="par" id="par">
+      <li data-k="0"><div class="a">Slack approve, edit, reject</div><div class="s">↔</div><div class="b">An agent team in Slack: you approve every message first</div></li>
+      <li data-k="1"><div class="a">Create and update records</div><div class="s">↔</div><div class="b">A sales agent saving leads to a CRM, 812 saves with no error</div></li>
+      <li data-k="2"><div class="a">Read documents</div><div class="s">↔</div><div class="b">It reads customer photos, voice notes and videos</div></li>
+      <li data-k="3"><div class="a">Approval before action</div><div class="s">↔</div><div class="b">Owner approves on WhatsApp; a second agent applies it, with lock and rollback</div></li>
+      <li data-k="4"><div class="a">Browser automation, no API</div><div class="s">↔</div><div class="b">A Playwright scanner that opens real sites and records what loads</div></li>
+      <li data-k="5"><div class="a">Failures that can't hide</div><div class="s">↔</div><div class="b">Every run ends done, failed or "don't know"</div></li>
+    </ul>
+    <p class="rodape" id="par-dica">Click a row. Step 1 starts by mapping your EasyLoader screens.</p>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="palco" id="p3" hidden>
+    <div class="topo"><p class="fala">Start small. Pay after you see it work.</p></div>
+    <ul class="ent" id="ent">
+      <li><button aria-expanded="true"><span class="n">1</span><span>Slack to draft load in EasyLoader, with approval</span><span class="v">$150</span></button>
+        <div class="q"><b>How you confirm:</b> type a real load in Slack. A draft appears. Nothing dispatches until you approve.</div></li>
+      <li><button aria-expanded="false"><span class="n">2</span><span>Carrier onboarding and insurance check</span><span class="v">quoted after 1</span></button>
+        <div class="q" hidden><b>How you confirm:</b> three real certificates, flagged correctly, with the insurer request drafted.</div></li>
+      <li><button aria-expanded="false"><span class="n">3</span><span>Documents and daily summary</span><span class="v">quoted after 1</span></button>
+        <div class="q" hidden><b>How you confirm:</b> a day of real paperwork sorted by load, gaps flagged in Slack.</div></li>
+    </ul>
+    <div class="total">
+      <span class="caps">Step 1 fixed price · about 10 days</span>
+      <b>$150</b>
+    </div>
+    <div class="selos"><span class="selo">your accounts, your code</span><span class="selo">failed runs alert you</span><span class="selo">I map your screens first</span></div>
+    <div class="cta">
+      <button class="btn lar" type="button" id="cta-quero" data-cta="quero">I want to go ahead</button>
+      <button class="btn" type="button" id="cta-marcar" data-cta="marcar">Book 15 minutes</button>
+    </div>
+    <div class="cta-res" id="cta-res" aria-live="polite"></div>
+  </section>
+
+  <p class="rodape">Made by Lucas for DMV Hotshots · the assistant follows written rules, no paid AI runs on this page</p>
+  <!-- proposta:fim -->
+</div>
+
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  // ---------- steps ----------
+  const passos = [...document.querySelectorAll('.palco')];
+  document.querySelectorAll('.dot').forEach((d) => d.addEventListener('click', () => {
+    const i = +d.dataset.p;
+    passos.forEach((p, k) => { p.hidden = k !== i; });
+    document.querySelectorAll('.dot').forEach((x) => x.removeAttribute('aria-current'));
+    d.setAttribute('aria-current', 'step');
+  }));
+
+  // ---------- example load (all fictional) ----------
+  const MES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const DIA = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const fmt = (d) => `${DIA[d.getDay()]} ${MES[d.getMonth()]} ${d.getDate()}`;
+  const amanha = () => { const d = new Date(); d.setDate(d.getDate() + 1); return d; };
+  const sexta = () => { const d = amanha(); do { d.setDate(d.getDate() + 1); } while (d.getDay() !== 5); return d; };
+  const CMD = 'Create a dispatch for ABC Construction. Pickup in Baltimore tomorrow, delivery in Atlanta Friday. Customer rate $2,500, carrier rate $1,900. Assign XYZ Trucking and prepare the rate confirmation.';
+  const CARGA = 'Steel pipe, 38,000 lb, pickup 8:00 AM';
+  const ID = 'D-20418';
+  const usd = (n) => '$' + Math.round(n).toLocaleString('en-US');
+
+  // ---------- backstage ----------
+  let lead = {}; let fichaAnt = []; let geracao = 0;
+  const ROT = { customer: 'customer', carrier: 'carrier', pickup: 'pickup', delivery: 'delivery', freight: 'freight', crate: 'customer rate', krate: 'carrier rate', margem: 'margin', status: 'status' };
+  const EXEMPLOS = [['Delta Steel', 'customer', 'found'], ['Ridge Carriers', 'carrier', 'found · insurance valid']];
+  function resetBast() {
+    $('#linhas').innerHTML = EXEMPLOS.map((r) => `<tr class="ex"><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('');
+    $('#docs').innerHTML = `<div class="doc ex"><b>Customer rate confirmation</b><span>Delta Steel · example</span></div>`;
+    $('#logs').innerHTML = `<div class="lg ex"><span class="estado ok">done</span><span>Daily summary posted to #dispatch (example)</span></div>`;
+    for (let i = 0; i < 5; i++) $('#fx' + i).classList.remove('on', 'agora');
+    $('#fx0').classList.add('on');
+    lead = {}; fichaAnt = []; desenharFicha('waiting', '');
+  }
+  function desenharFicha(estado, cls) {
+    const ks = Object.keys(ROT).filter((k) => lead[k]);
+    const novos = ks.filter((k) => !fichaAnt.includes(k));
+    $('#ficha').innerHTML = ks.length ? ks.map((k) => { const a = novos.includes(k) ? ' class="acende"' : ''; return `<dt${a}>${ROT[k]}</dt><dd${a}>${esc(lead[k])}</dd>`; }).join('') : '<dt>—</dt><dd>waiting for a request</dd>';
+    const e = $('#estado'); e.textContent = estado; e.className = 'estado ' + cls;
+    if (novos.length) holofote('#pn-tms', ritmo().bastidor * 1.6);
+    fichaAnt = ks;
+  }
+  const timers = new Map();
+  function holofote(sel, ms) {
+    const el = $(sel); const bast = el.closest('.bast');
+    clearTimeout(timers.get(sel));
+    el.classList.add('foco'); if (bast) bast.classList.add('holofote');
+    timers.set(sel, setTimeout(() => {
+      el.classList.remove('foco');
+      if (bast && !bast.querySelector('.pn.foco')) bast.classList.remove('holofote');
+    }, ms));
+  }
+  function acender(fx) {
+    document.querySelectorAll('.fluxo span').forEach((s) => s.classList.remove('agora'));
+    if (fx) $(fx).classList.add('on', 'agora');
+  }
+  function log(estado, texto) {
+    const rot = estado === 'done' ? ['ok', 'done'] : estado === 'failed' ? ['no', 'failed'] : ['', "don't know"];
+    $('#logs').insertAdjacentHTML('afterbegin', `<div class="lg"><span class="estado ${rot[0]}">${rot[1]}</span><span>${esc(texto)}</span></div>`);
+    holofote('#pn-log', ritmo().bastidor * 1.6);
+  }
+  function linha(nome, tipo, res) {
+    $('#linhas').insertAdjacentHTML('beforeend', `<tr class="novo"><td>${esc(nome)}</td><td>${tipo}</td><td>${esc(res)}</td></tr>`);
+    holofote('#pn-lookup', ritmo().bastidor * 1.6);
+  }
+  const cola = (fs) => { const g = geracao; const p = ritmo().bastidor; fs.forEach((f, i) => setTimeout(() => { if (g === geracao) f(); }, p * (i + 1))); return p * fs.length; };
+
+  // ---------- chat ----------
+  const chat = $('#chat');
+  let modoExemplo = false; let etapa = 'livre';
+  const ritmo = () => (modoExemplo ? { resposta: 1400, bastidor: 1100 } : { resposta: 550, bastidor: 700 });
+  function diz(texto, opcoes) {
+    const m = document.createElement('div'); m.className = 'msg ag'; m.textContent = texto; chat.appendChild(m);
+    if (opcoes && opcoes.length) {
+      const o = document.createElement('div'); o.className = 'opcoes';
+      opcoes.forEach((x) => { const t = typeof x === 'string' ? { l: x, v: x } : x; const b = document.createElement('button'); b.className = 'chip'; b.type = 'button'; b.textContent = t.l; b.addEventListener('click', () => responder(t.v)); o.appendChild(b); });
+      chat.appendChild(o);
+    }
+    chat.scrollTop = chat.scrollHeight;
+  }
+  function eu(texto) {
+    chat.querySelectorAll('.opcoes').forEach((o) => o.remove());
+    const m = document.createElement('div'); m.className = 'msg eu'; m.textContent = texto; chat.appendChild(m);
+    chat.scrollTop = chat.scrollHeight;
+  }
+  function sistema(texto) { const m = document.createElement('div'); m.className = 'msg sis'; m.textContent = texto; chat.appendChild(m); }
+
+  function iniciar() {
+    geracao++; chat.innerHTML = ''; etapa = 'livre'; resetBast();
+    diz('Hi, I\'m the Dispatch Assistant. Tell me the load in plain words. I look things up first and ask when something is missing.', [{ l: 'Create a dispatch for ABC Construction…', v: CMD }, 'Is XYZ Trucking insured?']);
+  }
+  function responder(t) {
+    t = t.trim(); if (!t) return; eu(t);
+    const e = document.createElement('div'); e.className = 'msg ag escrevendo'; e.textContent = 'typing…'; chat.appendChild(e); chat.scrollTop = chat.scrollHeight;
+    const g = geracao;
+    setTimeout(() => { e.remove(); if (g === geracao) processar(t); }, ritmo().resposta);
+  }
+  function processar(t) {
+    if (etapa === 'fim') {
+      if (/restart/i.test(t)) return iniciar();
+      if (/abc construction/i.test(t) && /dispatch|load|create/i.test(t)) return duplicado();
+      return diz('That load is done. Restart to try another.', ['Restart']);
+    }
+    if (etapa === 'faltam') return faltam(t);
+    if (etapa === 'aprovar') return aprovar(t);
+    if (etapa === 'editar') return editar(t);
+    if (etapa === 'trabalhando') return diz('One moment, I\'m still filling the draft.');
+    if (/use abc/i.test(t)) return comecar();
+    if (/yes, flag/i.test(t)) { log('unknown', 'Question outside the written rules, flagged for a person'); return diz('Flagged in #dispatch for a person. Anything else?'); }
+    if (/\b(dispatch|load)\b/i.test(t) && /create|new|make|book/i.test(t)) return /abc construction/i.test(t) ? comecar() : clienteNovo();
+    if (/insur|coi|certificate/i.test(t)) return seguro();
+    diz('I\'m not sure about that one, and I\'d rather not guess. Want me to flag it for your team?', ['Yes, flag it']);
+  }
+  function clienteNovo() {
+    log('unknown', 'Customer not found in EasyLoader, asked you instead of guessing');
+    diz('I can\'t find that customer in EasyLoader, and I won\'t guess. To create the record I need the MC number and a billing email.', ['Use ABC Construction instead']);
+  }
+  function seguro() {
+    log('unknown', 'Insurance read from the certificate, insurer confirmation still pending');
+    diz('XYZ Trucking\'s certificate lists $1,000,000 liability, valid to Dec 31. Fine on paper, but clearance needs the insurer\'s confirmation. I drafted that request.');
+  }
+  function comecar() {
+    etapa = 'trabalhando';
+    lead = { customer: 'ABC Construction', carrier: 'XYZ Trucking', pickup: 'Baltimore, MD · ' + fmt(amanha()), delivery: 'Atlanta, GA · ' + fmt(sexta()), crate: '$2,500', krate: '$1,900' };
+    diz('On it. Looking up ABC Construction and XYZ Trucking in EasyLoader.');
+    acender('#fx1');
+    cola([
+      () => linha('ABC Construction', 'customer', 'found'),
+      () => { linha('XYZ Trucking', 'carrier', 'found · insurance valid to Dec 31'); log('done', 'Customer and carrier found, none created'); },
+      () => { etapa = 'faltam'; diz('Found both. Two things I can\'t guess: what is the freight (commodity and weight), and the pickup time?', [CARGA]); },
+    ]);
+  }
+  function faltam(t) {
+    const peso = t.match(/(\d[\d,]*)\s*(?:lb|lbs|pounds)\b/i); const hora = t.match(/\b\d{1,2}(?::\d\d)?\s*[ap]m\b/i);
+    if (!peso) return diz('I still need the weight in pounds.');
+    if (!hora) return diz('And what time is the pickup?');
+    let frete = t.replace(peso[0], ' ').replace(hora[0], ' ').replace(/\bpickup\b|\bat\b|,|\./gi, ' ').replace(/\s+/g, ' ').trim();
+    frete = frete.length >= 2 ? frete.charAt(0).toUpperCase() + frete.slice(1) : 'General freight';
+    lead.freight = `${frete} · ${peso[1]} lb`; lead.pickup += ' ' + hora[0].toUpperCase().replace(/\s+/g, ' ');
+    executar();
+  }
+  function executar() {
+    etapa = 'trabalhando';
+    const margem = 600;
+    diz('Got it. Filling the draft load in EasyLoader. Nothing is saved yet.');
+    const full = { ...lead };
+    lead = { customer: full.customer, pickup: full.pickup, delivery: full.delivery, freight: full.freight };
+    cola([
+      () => { acender('#fx2'); desenharFicha('draft', ''); },
+      () => { lead = { ...full, carrier: full.carrier, margem: `${usd(margem)} (${Math.round(margem / 2500 * 100)}%)`, status: 'draft, not dispatched' }; desenharFicha('draft', ''); },
+      () => {
+        acender('#fx3'); holofote('#pn-docs', ritmo().bastidor * 1.6);
+        $('#docs').insertAdjacentHTML('afterbegin', `<div class="doc"><b>Customer rate confirmation</b><span>ABC Construction · ${esc(full.crate)}</span></div><div class="doc"><b>Carrier rate confirmation</b><span>XYZ Trucking · ${esc(full.krate)}</span></div>`);
+      },
+      () => {
+        acender('#fx4'); log('done', 'Draft filled and two rate confirmations prepared, not sent');
+        etapa = 'aprovar';
+        diz(`Draft ready. Margin ${usd(margem)} (24%). Both rate confirmations are prepared, not sent. Nothing is saved in EasyLoader until you approve.`, ['Approve', 'Edit', 'Reject']);
+      },
+    ]);
+  }
+  function aprovar(t) {
+    if (/approve|yes|^ok/i.test(t)) {
+      etapa = 'trabalhando';
+      cola([
+        () => { acender('#fx2'); lead.status = `saved as ${ID}, not dispatched`; desenharFicha('saved', 'ok'); log('done', `Saved draft ${ID}, read back from EasyLoader: every field matches`); },
+        () => { acender(null); etapa = 'fim'; diz(`Saved as draft ${ID}. Nothing is dispatched. The rate confirmations wait for you to send them.`, ['Restart']); },
+      ]);
+      return;
+    }
+    if (/edit|change/i.test(t)) { etapa = 'editar'; return diz('Sure. What should I change? For example: "carrier rate $2,000".'); }
+    if (/reject|cancel|^no/i.test(t)) { log('done', 'You rejected the draft, nothing was created in EasyLoader'); etapa = 'fim'; return diz('Discarded. Nothing was created in EasyLoader.', ['Restart']); }
+    diz('Use the buttons: Approve, Edit or Reject.', ['Approve', 'Edit', 'Reject']);
+  }
+  function editar(t) {
+    const m = t.match(/\$?\s?(\d[\d,]*)/);
+    if (!m || !/carrier/i.test(t)) return diz('I can change the carrier rate. Try "carrier rate $2,000".');
+    const n = +m[1].replace(/,/g, ''); const margem = 2500 - n;
+    lead.krate = usd(n); lead.margem = `${usd(margem)} (${Math.round(margem / 2500 * 100)}%)`; desenharFicha('draft', '');
+    etapa = 'aprovar'; diz(`Updated. Carrier rate ${usd(n)}, margin ${usd(margem)}. Approve?`, ['Approve', 'Edit', 'Reject']);
+  }
+  function duplicado() {
+    log('failed', `Second ${ID} blocked: same customer, route and pickup date`);
+    diz(`That looks like ${ID} (same customer, route and pickup date). I did not create a second one. Want me to change that load instead?`, ['Restart']);
+  }
+
+  $('#f-chat').addEventListener('submit', (e) => { e.preventDefault(); const v = $('#txt').value; $('#txt').value = ''; responder(v); });
+  $('#recomecar').addEventListener('click', iniciar);
+
+  // ---------- steps 2 to 4: proposal version only ----------
+  if ($('#p1')) {
+    const sel = (a, b, on) => { $(a).setAttribute('aria-pressed', on); $(b).setAttribute('aria-pressed', !on); };
+    function tela(ok) {
+      sel('#s-ok', '#s-mov', ok);
+      $('#scr-res').innerHTML = ok
+        ? '<span class="carimbo ok">saved</span><span>The draft is saved, then read back from EasyLoader. Every field matches.</span>'
+        : '<span class="carimbo no">stopped</span><span>Save button not found. Run marked failed, you get a Slack alert, nothing was created.</span>';
+    }
+    $('#s-ok').addEventListener('click', () => tela(true));
+    $('#s-mov').addEventListener('click', () => tela(false));
+    tela(true);
+
+    const DUP = {
+      igual: ['no', 'blocked', `Same customer, route and pickup date as ${ID}. No second load. It asks you instead.`],
+      data: ['ok', 'new load', 'Same route, different date. Created as a draft, waiting for your approval.'],
+      outro: ['ok', 'new load', 'Same route, different customer. Created as a draft, waiting for your approval.'],
+    };
+    function dup(k) { const r = DUP[k]; $('#dup-res').innerHTML = `<span class="carimbo ${r[0]}">${r[1]}</span><span>${r[2]}</span>`; }
+    $('#dup-ex').addEventListener('click', (e) => { const b = e.target.closest('[data-d]'); if (b) dup(b.dataset.d); });
+    dup('igual');
+
+    const INS = {
+      xyz: ['ok', 'ok on paper', '$1,000,000 liability, valid to Dec 31. Clearance still waits for the insurer.'],
+      blue: ['no', 'flagged', 'Policy expired Aug 3. Onboarding paused, request to the insurance agent drafted.'],
+      apex: ['no', 'flagged', 'Coverage $500,000, you require $1,000,000. Nothing approved.'],
+    };
+    function ins(k) { const r = INS[k]; $('#ins-res').innerHTML = `<span class="carimbo ${r[0]}">${r[1]}</span><span>${r[2]}</span>`; }
+    $('#ins-ex').addEventListener('click', (e) => { const b = e.target.closest('[data-c]'); if (b) ins(b.dataset.c); });
+    ins('blue');
+
+    $('#par').addEventListener('click', (e) => { const li = e.target.closest('li'); if (!li) return; document.querySelectorAll('#par li').forEach((x) => x.classList.toggle('on', x === li)); });
+    document.querySelector('#par li').classList.add('on');
+
+    document.querySelectorAll('#ent button').forEach((b) => b.addEventListener('click', () => {
+      const aberto = b.getAttribute('aria-expanded') === 'true';
+      b.setAttribute('aria-expanded', !aberto); b.nextElementSibling.hidden = aberto;
+    }));
+
+    // botões de ação: a página não envia nada; o registro de visitas leva o data-cta pro Telegram do dono
+    const DIAS_LONGOS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    $('#cta-quero').addEventListener('click', () => {
+      $('#cta-res').innerHTML = '<div class="ok">Great. Reply "go" in the Upwork chat and I\'ll send the contract today.</div>';
+    });
+    $('#cta-marcar').addEventListener('click', () => {
+      const d = new Date(); const horas = ['8:30 AM', '9:00 AM', '9:30 AM']; const ops = [];
+      while (ops.length < 3) { d.setDate(d.getDate() + 1); if (d.getDay() === 0 || d.getDay() === 6) continue; ops.push({ curto: DIA[d.getDay()] + ' ' + (d.getMonth() + 1) + '/' + d.getDate() + ' ' + horas[ops.length], longo: DIAS_LONGOS[d.getDay()] + ', ' + MES[d.getMonth()] + ' ' + d.getDate() + ' at ' + horas[ops.length] }); }
+      $('#cta-res').innerHTML = '<span>Pick a time (Pacific time):</span><div class="chips">' + ops.map((o) => '<button class="chip" type="button" data-cta="marcar ' + o.curto + '" data-longo="' + o.longo + '">' + o.longo + '</button>').join('') + '</div>';
+    });
+    $('#cta-res').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-longo]'); if (!b) return;
+      $('#cta-res').innerHTML = '<div class="ok">Noted: ' + b.dataset.longo + ' (Pacific). Confirm it in the Upwork chat and I\'ll send the invite.</div>';
+    });
+  }
+
+  // ---------- abre parada; o exemplo só toca no botão ----------
+  iniciar();
+  let rodada = 0;
+  const parar = () => { rodada++; modoExemplo = false; };
+  $('#recomecar').addEventListener('click', parar, { capture: true });
+  $('#f-chat').addEventListener('submit', parar, { capture: true });
+  chat.addEventListener('click', (e) => { if (e.isTrusted) parar(); }, { capture: true });
+  const espera = (cond, ms) => new Promise((ok) => { const t0 = Date.now(); (function v() { if (cond() || Date.now() - t0 > ms) ok(); else setTimeout(v, 150); })(); });
+  $('#exemplo').addEventListener('click', async () => {
+    $('#exemplo').classList.remove('chamar');
+    const minha = ++rodada; iniciar(); modoExemplo = true;
+    const vivo = () => minha === rodada;
+    await new Promise((r) => setTimeout(r, 1800)); if (!vivo()) return;
+    responder(CMD);
+    await espera(() => etapa === 'faltam' || !vivo(), 15000); if (!vivo()) return;
+    await new Promise((r) => setTimeout(r, 2200)); if (!vivo()) return;
+    responder(CARGA);
+    await espera(() => etapa === 'aprovar' || !vivo(), 20000); if (!vivo()) return;
+    await new Promise((r) => setTimeout(r, 2600)); if (!vivo()) return;
+    const ok = [...chat.querySelectorAll('.opcoes .chip')].find((c) => c.textContent === 'Approve'); if (ok) ok.click();
+    await espera(() => etapa === 'fim' || !vivo(), 8000);
+    if (vivo()) modoExemplo = false;
+  });
+})();
+</script>
+
+<script>
+// registro de visitas: sem nome, sem e-mail; só a demo, o evento, o passo e o tempo.
+(() => {
+  if (location.protocol === 'file:') return;
+  const DEMO = "dispatch-slack", URL = "https://n8n-kf1l.srv1863913.hstgr.cloud/webhook/demo-visita";
+  let eu = false;
+  try { if (new URLSearchParams(location.search).has('eu')) localStorage.setItem('demo_eu', '1'); eu = localStorage.getItem('demo_eu') === '1'; } catch (e) {}
+  const sessao = Math.random().toString(36).slice(2, 10), t0 = Date.now(), vistos = new Set(); let maior = 0;
+  function manda(evento, passo) {
+    const d = new URLSearchParams({ demo: DEMO, evento, passo: String(passo || 0), sessao, interno: eu ? '1' : '0', segundos: String(Math.round((Date.now() - t0) / 1000)) });
+    try { navigator.sendBeacon(URL, new Blob([d.toString()], { type: 'application/x-www-form-urlencoded' })); } catch (e) {}
+  }
+  const umaVez = (k, f) => { if (!vistos.has(k)) { vistos.add(k); f(); } };
+  manda('abriu', 0);
+  document.addEventListener('click', (e) => {
+    const dot = e.target.closest('.dot[data-p]');
+    if (dot) { const n = +dot.dataset.p; maior = Math.max(maior, n); umaVez('p' + n, () => manda('passo', n)); }
+    if (e.target.closest('#exemplo')) umaVez('ex', () => manda('exemplo', maior));
+    if (e.target.closest('#chat .chip')) umaVez('conversa', () => manda('conversou', maior));
+    const cta = e.target.closest('[data-cta]'); if (cta) manda('cta-' + cta.dataset.cta, maior);
+  }, true);
+  document.addEventListener('submit', () => umaVez('conversa', () => manda('conversou', maior)), true);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') manda('saiu', maior); });
+})();
+</script>
+</body>
+</html>
