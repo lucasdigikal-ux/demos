@@ -22,7 +22,7 @@
 <body>
 <!-- gerado por scripts/nova-demo.mjs a partir de demos/lusia/demo.json; edite a configuração, não este arquivo -->
 <style>
-/* Layout: caderno quadriculado; trilho de 4 passos; um palco por passo. No passo 1, a conversa do agente à esquerda e os bastidores (base, folha, WhatsApp, email) a encherem-se à direita. Design system claro do Lucas Digital. */
+
 :root{
   --papel:#F5EFE7; --grade:#E7D3C4; --creme:#FFFDF9; --tinta:#1C1B18; --muted:#6B6459; --laranja:#D97757;
   --verde:#2F7D4F; --verde-t:#E3F0E6; --vermelho:#B4402F; --vermelho-t:#F7E1DB; --marca:#F6D3A8; --wa:#DCF3D6; --moldura:#1C1B18; --wa-topo:#0B6E61; --wa-fundo:#EFE7DE; --wa-eu:#D9FDD3;
@@ -54,7 +54,7 @@ h1{font:400 clamp(30px,5vw,52px)/1.04 var(--display);margin:6px 0 0;text-wrap:ba
 @keyframes chama{0%,100%{box-shadow:0 0 0 0 var(--marca)}50%{box-shadow:0 0 0 7px var(--marca)}}
 .msg.escrevendo{font:600 13px var(--mao);color:var(--muted);font-style:italic}.btn.lar{background:var(--laranja);border-color:var(--laranja);color:#1C1B18}
 .sim{display:grid;grid-template-columns:minmax(0,390px) minmax(0,1fr);gap:22px;align-items:start}@media (max-width:860px){.sim{grid-template-columns:1fr}}
-/* Moldura de celular (15/10, ideia 4): o cliente vê o que o cliente DELE recebe. Chave WhatsApp/Site troca a pele. */
+
 .lado-cel{display:grid;gap:10px;justify-items:center;min-width:0}
 .celular{width:100%;max-width:390px;background:var(--moldura);border-radius:44px;padding:26px 10px 14px;position:relative;box-shadow:0 22px 44px -20px rgba(0,0,0,.5)}
 .celular::before{content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);width:84px;height:7px;border-radius:99px;background:var(--grade)}
@@ -101,7 +101,7 @@ input,select{font:600 15px var(--body);color:var(--tinta);background:var(--creme
 .pn h3 em{font:500 11.5px var(--mono);font-style:normal;color:var(--muted)}
 .pulso{border-color:var(--laranja);box-shadow:0 0 0 4px var(--marca);animation:pulsa .9s ease-out}
 @keyframes pulsa{0%{transform:scale(.985)}60%{transform:scale(1.01)}100%{transform:none}}
-/* Holofote: o lugar que acabou de mudar acende e os outros painéis recuam, pra levar o olhar junto com o fluxo. */
+
 .pn{transition:border-color .35s,box-shadow .35s,opacity .35s,transform .35s}
 .pn.foco{border-color:var(--laranja);box-shadow:0 0 0 5px var(--marca),0 14px 30px -10px var(--laranja);transform:translateY(-3px)}
 .bast.holofote .pn:not(.foco){opacity:.42}
@@ -166,12 +166,27 @@ input,select{font:600 15px var(--body);color:var(--tinta);background:var(--creme
 .selos{display:flex;flex-wrap:wrap;gap:8px}
 .selo{font:700 13px var(--mao);border:2px solid var(--laranja);border-radius:999px;padding:4px 12px}
 .rodape{font:600 12.5px var(--body);color:var(--muted);text-align:center}
-/* Botões de ação no plano (ideia 2): o clique vira aviso no Telegram do dono. */
+
 .cta{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .link-cli{font:700 13.5px var(--mao);color:var(--laranja);margin-left:auto}
 .cta-res{display:grid;gap:10px;font:600 15px/1.45 var(--body)}.cta-res:empty{display:none}
 .cta-res .ok{background:var(--verde-t);color:var(--verde);border-radius:14px;padding:12px 14px;font-weight:700}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}@media (max-width:760px){.calc{grid-template-columns:1fr}}
+.calc-campos{display:grid;gap:14px}
+.calc label{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font:700 14px var(--body)}
+.calc label input{grid-column:1/-1}
+.calc output{font:700 15px var(--mono);font-variant-numeric:tabular-nums;color:var(--laranja)}
+input[type=range]{-webkit-appearance:none;appearance:none;padding:0;border:0;background:transparent;height:28px;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:10px;border-radius:99px;background:var(--grade);border:2px solid var(--tinta)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-9px;border-radius:50%;background:var(--laranja);border:3px solid var(--tinta)}
+input[type=range]::-moz-range-track{height:10px;border-radius:99px;background:var(--grade);border:2px solid var(--tinta)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--laranja);border:3px solid var(--tinta)}
+.calc-rot{margin:0;font:800 13px var(--body)}
+.calc-out{grid-template-columns:1fr;gap:12px}
+.calc-out .num b{font-size:34px;transition:color .3s}
+.calc-out .num.vivo b{color:var(--laranja)}
 </style>
 
 <div class="wrap">
@@ -255,21 +270,13 @@ input,select{font:600 15px var(--body);color:var(--tinta);background:var(--creme
 </div>
 
 <script>
-const D = {"idioma":"pt-PT","titulo":"Demo LusIA","textos":{"etiqueta":"Assistente de atendimento","titulo":"Atende, qualifica e marca. Sozinho.","caps":"Empresa fictícia · dados de exemplo","passos":"Passos","passo1":"Experimente","fala1":"Fale com o agente como um cliente. Os bastidores enchem-se sozinhos.","verExemplo":"Ver um exemplo","clique":"(clique aqui)","recomecar":"Recomeçar","verComo":"Ver como","canalWa":"WhatsApp","canalSite":"Site","online":"online","abaChat":"Assistente","abaForm":"Formulário","placeholder":"Escreva aqui… (ex.: quanto custa?)","mensagem":"Mensagem","enviar":"Enviar","caminho":"Caminho do lead","aviso":"aviso","aRecolher":"a recolher","gravado":"gravado","esperaConversa":"à espera da conversa","escrevendo":"a escrever…","recusado":"recusado em código: nada foi gravado","podeConfirmar":"Pode confirmar?","naoPercebiNome":"Desculpe, não percebi o nome. Como se chama?","fimJaRegistado":"Já fica tudo registado. Quer recomeçar a demo?","pedidoContacto":"pedido de contacto","origemAssistente":"assistente","origemFormulario":"formulário","agora":"agora","exemplo":"exemplo","temps":{"quente":"quente","morno":"morno","frio":"frio"},"cartao":{"visita":"Visita: {visita}","semVisita":"Sem visita marcada: ligar","tel":"Tel.","novoLead":"Novo lead: {nome}","visitaAgenda":"Visita na agenda: {visita}","contactoSemVisita":"Pedido de contacto, sem visita"},"carimboOk":"gravado","carimboNo":"recusado","telSegue":"{num} segue para a folha e para o comercial.","nadaGravado":"Nada foi gravado."},"empresa":{"nome":"Limpezas Tejo","sigla":"LT","hero":"Limpeza de casas e escritórios na Grande Lisboa","heroNota":"página de entrada · versão de teste"},"agente":{"saudacao":"Olá! Sou a assistente da Limpezas Tejo. Posso esclarecer dúvidas ou marcar uma visita de orçamento gratuita. Em que posso ajudar?","menu":["Quanto custa?","Em que zonas trabalham?","Quero marcar uma visita"],"gatilhoMarcar":"marcar|visita|agendar|reuni|contratar|quero (uma )?limpeza","gatilhoHumano":"pessoa|humano|falar com|ligar|telefonar","introQualificacao":"Com todo o gosto.","faq":[["pre[cç]o|custa|valor|quanto|or[cç]amento|caro","Uma limpeza regular de um T2 costuma ficar entre 45 € e 60 €, conforme a área e a frequência. O valor certo sai na visita de orçamento, que é gratuita."],["zona|onde|lisboa|oeiras|cascais|almada|amadora|sintra|loures|seixal","Trabalhamos em Lisboa, Oeiras, Cascais, Amadora e Almada."],["hor[aá]rio|que horas|s[aá]bado|domingo|fim de semana|quando","Fazemos limpezas de segunda a sábado, das 8h às 19h."],["produto|aspirador|equipamento|material|detergente","Levamos os produtos e o equipamento. Se preferir que usemos os seus, é só dizer."],["fatura|factura|nif|recibo|seguro","Sim, passamos fatura com NIF e temos seguro de responsabilidade civil."]],"aposFaq":{"texto":"Quer marcar a visita de orçamento?","opcoes":["Quero marcar uma visita","Tenho outra dúvida"]},"outraDuvidaGatilho":"outra d[uú]vida","outraDuvida":"Diga, por favor.","naoSei":{"texto":"Essa não sei responder com certeza, e prefiro não inventar. Quer que um colega lhe ligue?","opcoes":["Sim, liguem-me","Não, obrigado"],"sim":"^s"},"humanoSim":"Claro. Como se chama?","humanoNao":"Sem problema. Posso ajudar com mais alguma coisa?","humanoDireto":"Claro, um colega liga-lhe. Como se chama?"},"qualificacao":[{"campo":"servico","pergunta":"Que tipo de limpeza procura?","opcoes":["Casa","Escritório","Pós-obra"]},{"campo":"tamanho","perguntaPor":{"campo":"servico","mapa":{"Escritório":"Qual é a área do escritório?"},"padrao":"Qual é a tipologia da casa?"},"opcoesPor":{"campo":"servico","mapa":{"Escritório":["Até 100 m²","100 a 300 m²","Mais de 300 m²"]},"padrao":["T0 ou T1","T2 ou T3","T4 ou maior"]}},{"campo":"freq","pergunta":"E com que frequência?","opcoes":["Só uma vez","Semanal","Quinzenal"],"minusculas":true}],"zona":{"campo":"zona","pergunta":"Em que zona fica?","dentro":["Lisboa","Oeiras","Cascais","Amadora","Almada"],"foraOpcao":"Outra zona","foraRotulo":"fora da área","foraTexto":"Ainda não trabalhamos aí. Posso deixar o seu contacto registado para quando chegarmos? Como se chama?","dentroTexto":"Perfeito, trabalhamos aí. Para marcar a visita, como se chama?"},"temperatura":{"campo":"freq","quentes":["semanal","quinzenal"]},"nome":{"pergunta":"Para marcar a visita, como se chama?","agradece":"Obrigada, {nome}. E qual é o seu telemóvel? O nosso comercial usa-o para confirmar."},"telefone":{"pais":"pt","erroFixo":"É um fixo. O aviso segue por WhatsApp, por isso preciso do telemóvel.","erroInvalido":"Não parece um telemóvel português (9 dígitos, começa por 91, 92, 93 ou 96)."},"datas":{"ordem":"dd/mm","dias":["dom","seg","ter","qua","qui","sex","sáb"],"diasLongos":["domingo","segunda","terça","quarta","quinta","sexta","sábado"],"formato":"{dia}, {data} às {hora}"},"vagas":{"pergunta":"Tenho estas vagas para a visita de orçamento:","escolha":"Escolha uma das vagas, por favor:","horas":["10:00","14:30","17:00"],"confirma":"Está marcado: {vaga}. O Rui, da nossa equipa, liga-lhe na véspera para confirmar. Obrigada, {nome}!"},"fimHumano":"Combinado. Um colega liga-lhe ainda hoje. Obrigada!","fimFora":"Ficou registado. Avisamos assim que chegarmos à sua zona. Obrigada!","formulario":{"nome":{"rotulo":"Nome","valor":"Joana Ferreira"},"tel":{"rotulo":"Telemóvel","valor":"936 112 448"},"tipo":{"rotulo":"O que precisa?","opcoes":["Limpeza de casa","Limpeza de escritório","Limpeza pós-obra"]},"botao":"Pedir contacto","erroNome":"Falta o nome."},"bastidores":{"caminho":["Voiceflow","Make.com","Supabase","Google Sheets","WhatsApp e email"],"paineis":{"ficha":"Ficha do lead","folha":"Folha de leads","folhaFerramenta":"Google Sheets","wa":"WhatsApp do comercial","mail":"Email e agenda"},"ficha":{"nome":"nome","tel":"telemóvel","servico":"serviço","tamanho":"tamanho","freq":"frequência","zona":"zona","temp":"lead","visita":"visita","origem":"origem"},"colunas":[{"campo":"data","rotulo":"Data"},{"campo":"nome","rotulo":"Nome"},{"campo":"tel","rotulo":"Telemóvel"},{"campo":"pedido","rotulo":"Pedido"},{"campo":"lead","rotulo":"Lead"},{"campo":"visita","rotulo":"Visita"}],"exemplos":[["13/10","Rui Matos","913 554 210","Escritório · semanal · Oeiras","quente","ter, 14/10 às 10:00"],["14/10","Ana Costa","962 870 031","Casa · T2 ou T3 · só uma vez","morno","—"]],"exemploCartao":{"temp":"quente","nome":"Rui Matos","pedido":"Escritório · semanal · Oeiras","visita":"ter, 14/10 às 10:00","tel":"913 554 210"}},"roteiro":["Quanto custa?","Quero marcar uma visita","Casa","T2 ou T3","Semanal","Oeiras","Maria Silva","912 345 678"],"passos":{"riscos":{"rotulo":"Onde costuma travar","fala":"Os dois pontos que atrasam este projeto, já resolvidos.","cards":[{"tipo":"alternar","titulo":"WhatsApp oficial","texto":"A Meta pode demorar dias a verificar a empresa. A demo não fica à espera.","padrao":1,"opcoes":[{"rotulo":"Esperar pela Meta","classe":"duv","left":"34%","width":"66%","texto":"quando a Meta aprovar?"},{"rotulo":"Número de teste da Meta","classe":"ok","left":"0","width":"100%","texto":"até 5 telemóveis: o seu e 3 clientes"}],"semanas":["Semana 1","Semana 2","Semana 3"],"linhas":[{"rotulo":"Site","classe":"ok","left":"0","width":"100%","texto":"agente no site desde a semana 1"},{"rotulo":"WhatsApp","variavel":true}]},{"tipo":"testar-telefone","titulo":"Dado errado não entra","texto":"O telemóvel é conferido em código antes de gravar.","exemplos":["912 345 678","+351 931 234 567","21 345 6789","91234"],"inicial":"21 345 6789","placeholder":"Ou escreva um número","botao":"Testar"}]},"construi":{"rotulo":"Já construí isto","fala":"Já construí este agente, em português, para uma empresa de limpezas real.","numeros":[{"n":"125","rotulo":"execuções reais medidas"},{"n":"812","rotulo":"registos gravados sem erro"},{"n":"95","rotulo":"mensagens de grupo seguradas"}],"pares":[["Responder dúvidas","Respondia clientes no WhatsApp, 24 horas"],["Qualificar o lead","Classificava o pedido em código antes do modelo responder"],["Recolher dados e fechar","Orçava por foto e fechava o serviço"],["Avisar uma pessoa","Chamava um humano quando o cliente ficava ambíguo"],["Não inventar respostas","Auditor conferia cada resposta antes de sair"]],"dica":"Clique numa linha: à esquerda o seu pedido, à direita o que já funcionou."},"plano":{"rotulo":"Plano e preço","fala":"Três entregas. Cada uma paga depois de a ver a funcionar.","comoConfirma":"Como confirma:","entregas":[{"titulo":"Agente no site + página em português","valor":"US$300","confirma":"abre a página, conversa com o agente, marca uma visita e vê o lead na folha."},{"titulo":"Make.com, Supabase, avisos e agenda","valor":"US$300","confirma":"marca uma visita de teste e o comercial recebe WhatsApp e email em menos de um minuto."},{"titulo":"WhatsApp, guia e vídeo de 10 minutos","valor":"US$200","confirma":"muda sozinho uma resposta do agente, seguindo o guia, sem me chamar."}],"totalRotulo":"Preço fechado · 2 a 3 semanas","total":"US$800","selos":["contas em seu nome","se passar das horas, é por minha conta","tudo em português"],"cta":{"quero":"Quero avançar","queroResposta":"Combinado. Escreva «avançar» na conversa do Upwork e envio hoje o contrato com as três entregas.","marcar":"Marcar 15 minutos","marcarPergunta":"Escolha um horário (hora de Lisboa):","horas":["14:00","16:00","18:00"],"marcarConfirma":"Fica anotado: {horario} (Lisboa). Confirme na conversa do Upwork e envio o convite.","linkClientes":"Versão sem preço para os seus clientes →"}}},"rodape":"Feito por Lucas para o projeto LusIA · as respostas do agente seguem regras escritas, sem IA paga nesta página","testes":{"temperaturaEsperada":"quente","caminho":["Quero marcar uma visita","Casa","T0 ou T1","Semanal","Lisboa","Pedro Lopes"],"telInvalido":"21 345 6789","telValido":"931 234 567","perguntaDesconhecida":"vocês limpam piscinas?"}};
-// Motor da demo de proposta (molde da skill demo-interativa-proposta, 15/10/2026).
-// Lê tudo de `D` (a configuração da demo, injetada antes por scripts/nova-demo.mjs).
-// Nada aqui é específico de um cliente: textos, perguntas, regras e bastidores
-// vêm de D. Comportamento herdado da demo LusIA, onde cada parte foi pedida e
-// conferida pelo dono (abre parada, exemplo em ritmo de leitura, holofote,
-// avisos em linhas curtas, moldura de celular, botões de ação).
+const D = {"idioma":"pt-PT","titulo":"Demo LusIA","textos":{"etiqueta":"Assistente de atendimento","titulo":"Atende, qualifica e marca. Sozinho.","caps":"Empresa fictícia · dados de exemplo","passos":"Passos","passo1":"Experimente","fala1":"Fale com o agente como um cliente. Os bastidores enchem-se sozinhos.","verExemplo":"Ver um exemplo","clique":"(clique aqui)","recomecar":"Recomeçar","verComo":"Ver como","canalWa":"WhatsApp","canalSite":"Site","online":"online","abaChat":"Assistente","abaForm":"Formulário","placeholder":"Escreva aqui… (ex.: quanto custa?)","mensagem":"Mensagem","enviar":"Enviar","caminho":"Caminho do lead","aviso":"aviso","aRecolher":"a recolher","gravado":"gravado","esperaConversa":"à espera da conversa","escrevendo":"a escrever…","recusado":"recusado em código: nada foi gravado","podeConfirmar":"Pode confirmar?","naoPercebiNome":"Desculpe, não percebi o nome. Como se chama?","fimJaRegistado":"Já fica tudo registado. Quer recomeçar a demo?","pedidoContacto":"pedido de contacto","origemAssistente":"assistente","origemFormulario":"formulário","agora":"agora","exemplo":"exemplo","temps":{"quente":"quente","morno":"morno","frio":"frio"},"cartao":{"visita":"Visita: {visita}","semVisita":"Sem visita marcada: ligar","tel":"Tel.","novoLead":"Novo lead: {nome}","visitaAgenda":"Visita na agenda: {visita}","contactoSemVisita":"Pedido de contacto, sem visita"},"carimboOk":"gravado","carimboNo":"recusado","telSegue":"{num} segue para a folha e para o comercial.","nadaGravado":"Nada foi gravado."},"empresa":{"nome":"Limpezas Tejo","sigla":"LT","hero":"Limpeza de casas e escritórios na Grande Lisboa","heroNota":"página de entrada · versão de teste"},"agente":{"saudacao":"Olá! Sou a assistente da Limpezas Tejo. Posso esclarecer dúvidas ou marcar uma visita de orçamento gratuita. Em que posso ajudar?","menu":["Quanto custa?","Em que zonas trabalham?","Quero marcar uma visita"],"gatilhoMarcar":"marcar|visita|agendar|reuni|contratar|quero (uma )?limpeza","gatilhoHumano":"pessoa|humano|falar com|ligar|telefonar","introQualificacao":"Com todo o gosto.","faq":[["pre[cç]o|custa|valor|quanto|or[cç]amento|caro","Uma limpeza regular de um T2 costuma ficar entre 45 € e 60 €, conforme a área e a frequência. O valor certo sai na visita de orçamento, que é gratuita."],["zona|onde|lisboa|oeiras|cascais|almada|amadora|sintra|loures|seixal","Trabalhamos em Lisboa, Oeiras, Cascais, Amadora e Almada."],["hor[aá]rio|que horas|s[aá]bado|domingo|fim de semana|quando","Fazemos limpezas de segunda a sábado, das 8h às 19h."],["produto|aspirador|equipamento|material|detergente","Levamos os produtos e o equipamento. Se preferir que usemos os seus, é só dizer."],["fatura|factura|nif|recibo|seguro","Sim, passamos fatura com NIF e temos seguro de responsabilidade civil."]],"aposFaq":{"texto":"Quer marcar a visita de orçamento?","opcoes":["Quero marcar uma visita","Tenho outra dúvida"]},"outraDuvidaGatilho":"outra d[uú]vida","outraDuvida":"Diga, por favor.","naoSei":{"texto":"Essa não sei responder com certeza, e prefiro não inventar. Quer que um colega lhe ligue?","opcoes":["Sim, liguem-me","Não, obrigado"],"sim":"^s"},"humanoSim":"Claro. Como se chama?","humanoNao":"Sem problema. Posso ajudar com mais alguma coisa?","humanoDireto":"Claro, um colega liga-lhe. Como se chama?"},"qualificacao":[{"campo":"servico","pergunta":"Que tipo de limpeza procura?","opcoes":["Casa","Escritório","Pós-obra"]},{"campo":"tamanho","perguntaPor":{"campo":"servico","mapa":{"Escritório":"Qual é a área do escritório?"},"padrao":"Qual é a tipologia da casa?"},"opcoesPor":{"campo":"servico","mapa":{"Escritório":["Até 100 m²","100 a 300 m²","Mais de 300 m²"]},"padrao":["T0 ou T1","T2 ou T3","T4 ou maior"]}},{"campo":"freq","pergunta":"E com que frequência?","opcoes":["Só uma vez","Semanal","Quinzenal"],"minusculas":true}],"zona":{"campo":"zona","pergunta":"Em que zona fica?","dentro":["Lisboa","Oeiras","Cascais","Amadora","Almada"],"foraOpcao":"Outra zona","foraRotulo":"fora da área","foraTexto":"Ainda não trabalhamos aí. Posso deixar o seu contacto registado para quando chegarmos? Como se chama?","dentroTexto":"Perfeito, trabalhamos aí. Para marcar a visita, como se chama?"},"temperatura":{"campo":"freq","quentes":["semanal","quinzenal"]},"nome":{"pergunta":"Para marcar a visita, como se chama?","agradece":"Obrigada, {nome}. E qual é o seu telemóvel? O nosso comercial usa-o para confirmar."},"telefone":{"pais":"pt","erroFixo":"É um fixo. O aviso segue por WhatsApp, por isso preciso do telemóvel.","erroInvalido":"Não parece um telemóvel português (9 dígitos, começa por 91, 92, 93 ou 96)."},"datas":{"ordem":"dd/mm","dias":["dom","seg","ter","qua","qui","sex","sáb"],"diasLongos":["domingo","segunda","terça","quarta","quinta","sexta","sábado"],"formato":"{dia}, {data} às {hora}"},"vagas":{"pergunta":"Tenho estas vagas para a visita de orçamento:","escolha":"Escolha uma das vagas, por favor:","horas":["10:00","14:30","17:00"],"confirma":"Está marcado: {vaga}. O Rui, da nossa equipa, liga-lhe na véspera para confirmar. Obrigada, {nome}!"},"fimHumano":"Combinado. Um colega liga-lhe ainda hoje. Obrigada!","fimFora":"Ficou registado. Avisamos assim que chegarmos à sua zona. Obrigada!","formulario":{"nome":{"rotulo":"Nome","valor":"Joana Ferreira"},"tel":{"rotulo":"Telemóvel","valor":"936 112 448"},"tipo":{"rotulo":"O que precisa?","opcoes":["Limpeza de casa","Limpeza de escritório","Limpeza pós-obra"]},"botao":"Pedir contacto","erroNome":"Falta o nome."},"bastidores":{"caminho":["Voiceflow","Make.com","Supabase","Google Sheets","WhatsApp e email"],"paineis":{"ficha":"Ficha do lead","folha":"Folha de leads","folhaFerramenta":"Google Sheets","wa":"WhatsApp do comercial","mail":"Email e agenda"},"ficha":{"nome":"nome","tel":"telemóvel","servico":"serviço","tamanho":"tamanho","freq":"frequência","zona":"zona","temp":"lead","visita":"visita","origem":"origem"},"colunas":[{"campo":"data","rotulo":"Data"},{"campo":"nome","rotulo":"Nome"},{"campo":"tel","rotulo":"Telemóvel"},{"campo":"pedido","rotulo":"Pedido"},{"campo":"lead","rotulo":"Lead"},{"campo":"visita","rotulo":"Visita"}],"exemplos":[["13/10","Rui Matos","913 554 210","Escritório · semanal · Oeiras","quente","ter, 14/10 às 10:00"],["14/10","Ana Costa","962 870 031","Casa · T2 ou T3 · só uma vez","morno","—"]],"exemploCartao":{"temp":"quente","nome":"Rui Matos","pedido":"Escritório · semanal · Oeiras","visita":"ter, 14/10 às 10:00","tel":"913 554 210"}},"roteiro":["Quanto custa?","Quero marcar uma visita","Casa","T2 ou T3","Semanal","Oeiras","Maria Silva","912 345 678"]};
 (() => {
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const fmt = (t, v = {}) => String(t).replace(/\{(\w+)\}/g, (_, k) => (v[k] ?? ''));
   const T = D.textos; const A = D.agente;
   const re = (s) => new RegExp(s, 'i');
-
-  // ---------- passos ----------
   const passos = [...document.querySelectorAll('.palco')];
   document.querySelectorAll('.dot').forEach((d) => d.addEventListener('click', () => {
     const i = +d.dataset.p;
@@ -277,8 +284,6 @@ const D = {"idioma":"pt-PT","titulo":"Demo LusIA","textos":{"etiqueta":"Assisten
     document.querySelectorAll('.dot').forEach((x) => x.removeAttribute('aria-current'));
     d.setAttribute('aria-current', 'step');
   }));
-
-  // ---------- telefone: conferido em código, por país ----------
   const TEL = {
     pt: (d) => {
       d = d.replace(/^(\+|00)351/, '');
@@ -309,8 +314,6 @@ const D = {"idioma":"pt-PT","titulo":"Demo LusIA","textos":{"etiqueta":"Assisten
     },
   };
   const conferirTel = (s) => TEL[D.telefone.pais](String(s).replace(/[\s.\-()]/g, ''));
-
-  // ---------- datas ----------
   const p2 = (n) => String(n).padStart(2, '0');
   const diaMes = (d) => (D.datas.ordem === 'mm/dd' ? `${p2(d.getMonth() + 1)}/${p2(d.getDate())}` : `${p2(d.getDate())}/${p2(d.getMonth() + 1)}`);
   function proximosUteis(horas, curto) {
@@ -324,8 +327,6 @@ const D = {"idioma":"pt-PT","titulo":"Demo LusIA","textos":{"etiqueta":"Assisten
   }
   const vagas = () => proximosUteis(D.vagas.horas, true).map((v) => fmt(D.datas.formato, { dia: v.dia, data: diaMes(v.d), hora: v.hora }));
   const hojeTxt = () => diaMes(new Date());
-
-  // ---------- bastidores ----------
   const B = D.bastidores;
   const nFx = B.caminho.length;
   let lead = {};
@@ -390,8 +391,6 @@ const D = {"idioma":"pt-PT","titulo":"Demo LusIA","textos":{"etiqueta":"Assisten
     ];
     etapas.forEach((f, i) => setTimeout(f, fica * (i + 1)));
   }
-
-  // ---------- conversa ----------
   const chat = $('#chat');
   let modoExemplo = false;
   const ritmo = () => (modoExemplo ? { resposta: 1400, bastidor: 1100, turno: 3200 } : { resposta: 550, bastidor: 700, turno: 0 });
@@ -417,7 +416,6 @@ const D = {"idioma":"pt-PT","titulo":"Demo LusIA","textos":{"etiqueta":"Assisten
     chat.innerHTML = ''; etapa = 'livre'; motivo = ''; iq = 0; resetBast();
     diz(A.saudacao, A.menu);
   }
-  // a pergunta e as opções de cada etapa podem depender da resposta anterior
   const deQ = (q, chave) => {
     const por = q[chave + 'Por'];
     if (por) { const v = lead[por.campo]; return (por.mapa && por.mapa[v]) || por.padrao; }
@@ -489,7 +487,6 @@ const D = {"idioma":"pt-PT","titulo":"Demo LusIA","textos":{"etiqueta":"Assisten
       if (re(A.naoSei.sim).test(t)) { motivo = 'humano'; lead.servico = T.pedidoContacto; etapa = 'nome'; diz(A.humanoSim); return; }
       etapa = 'livre'; diz(A.humanoNao, A.menu); return;
     }
-    // livre
     if (re(A.gatilhoMarcar).test(t)) return iniciarQualificacao();
     if (re(A.gatilhoHumano).test(t)) { motivo = 'humano'; lead.servico = T.pedidoContacto; etapa = 'nome'; diz(A.humanoDireto); return; }
     faqOuNada(t, () => diz(A.aposFaq.texto, A.aposFaq.opcoes));
@@ -527,8 +524,6 @@ const D = {"idioma":"pt-PT","titulo":"Demo LusIA","textos":{"etiqueta":"Assisten
     lead = { nome, tel: r.num, servico: $('#ff-tipo').value, temp: 'morno', origem: T.origemFormulario };
     desenharFicha(T.aRecolher, ''); gravar();
   });
-
-  // ---------- passos 2 a 4: só na versão da proposta ----------
   if ($('#p1')) {
     document.querySelectorAll('[data-alternar]').forEach((card) => {
       const cfg = D.passos.riscos.cards[+card.dataset.alternar];
@@ -557,6 +552,28 @@ const D = {"idioma":"pt-PT","titulo":"Demo LusIA","textos":{"etiqueta":"Assisten
       const aberto = b.getAttribute('aria-expanded') === 'true';
       b.setAttribute('aria-expanded', !aberto); b.nextElementSibling.hidden = aberto;
     }));
+    const R = D.passos.retorno;
+    if (R) {
+      const moeda = new Intl.NumberFormat(R.moeda.locale, { style: 'currency', currency: R.moeda.codigo, maximumFractionDigits: 0 });
+      const numero = new Intl.NumberFormat(R.moeda.locale, { maximumFractionDigits: 1 });
+      let cen = R.cenarios.padrao;
+      const val = (id) => +document.querySelector(`[data-calc="${id}"]`).value;
+      const mostra = (id, txt) => { const el = document.querySelector(`[data-res="${id}"]`); if (el.textContent !== txt) { el.textContent = txt; el.closest('.num').classList.add('vivo'); setTimeout(() => el.closest('.num').classList.remove('vivo'), 600); } };
+      function calcular() {
+        for (const c of R.campos) { const v = val(c.id); document.querySelector(`[data-out="${c.id}"]`).textContent = c.moeda ? moeda.format(v) : numero.format(v) + (c.sufixo || ''); }
+        const clientes = val('contatos') * (val('perdidos') / 100) * (cen / 100) * (val('fecho') / 100);
+        const receita = clientes * val('valor');
+        const semanas = receita > 0 ? Math.ceil(R.precoNumero / (receita / 4.33)) : Infinity;
+        mostra('recuperado', moeda.format(receita));
+        mostra('clientes', numero.format(clientes));
+        mostra('payback', semanas > 104 ? R.saidas.naoSePaga : semanas <= 1 ? R.saidas.semana : fmt(R.saidas.semanas, { n: semanas }));
+      }
+      document.querySelectorAll('[data-calc]').forEach((i) => i.addEventListener('input', calcular));
+      document.querySelectorAll('[data-cen]').forEach((b) => b.addEventListener('click', () => {
+        cen = +b.dataset.cen; document.querySelectorAll('[data-cen]').forEach((x) => x.setAttribute('aria-pressed', x === b)); calcular();
+      }));
+      calcular();
+    }
     const C = D.passos.plano.cta;
     if (C && $('#cta-quero')) {
       $('#cta-quero').addEventListener('click', () => { $('#cta-res').innerHTML = `<div class="ok">${esc(C.queroResposta)}</div>`; });
@@ -574,8 +591,6 @@ const D = {"idioma":"pt-PT","titulo":"Demo LusIA","textos":{"etiqueta":"Assisten
       });
     }
   }
-
-  // ---------- abre parada; o exemplo só toca no botão ----------
   iniciar();
   let rodada = 0;
   const parar = () => { rodada++; modoExemplo = false; };
@@ -619,6 +634,8 @@ const D = {"idioma":"pt-PT","titulo":"Demo LusIA","textos":{"etiqueta":"Assisten
     if (e.target.closest('#chat .chip')) umaVez('conversa', () => manda('conversou', maior));
     const cta = e.target.closest('[data-cta]'); if (cta) manda('cta-' + cta.dataset.cta, maior);
   }, true);
+  document.addEventListener('input', (e) => { if (e.target.closest('[data-calc]')) umaVez('calc', () => manda('calculou', maior)); }, true);
+  document.addEventListener('click', (e) => { if (e.target.closest('[data-cen]')) umaVez('calc', () => manda('calculou', maior)); }, true);
   document.addEventListener('submit', () => umaVez('conversa', () => manda('conversou', maior)), true);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') manda('saiu', maior); });
 })();
