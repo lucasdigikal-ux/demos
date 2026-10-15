@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Document Desk demo</title>
+<meta name="description" content="A messy inbox read, named, filed and logged, with a person reviewing the unsure ones. Then what a complete handoff includes.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lucasdigikal-ux.github.io/demos/able-business/">
+<meta property="og:title" content="From workflow to handoff">
+<meta property="og:description" content="A messy inbox read, named, filed and logged, with a person reviewing the unsure ones. Then what a complete handoff includes.">
+<meta property="og:image" content="https://lucasdigikal-ux.github.io/demos/able-business/capa.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://lucasdigikal-ux.github.io/demos/able-business/capa.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Montserrat:wght@400;500;600;700;800&family=Shantell+Sans:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+<meta name="demo:dado" content=".doc,.docbtn,.site-top,.ava">
+<style>
+/* Layout: caderno quadriculado; trilho de 5 passos. Passo 1: caixa de entrada numa moldura de celular à esquerda, bastidores (leitura, Drive, fila de revisão, registro) a encherem-se à direita. Design system claro do Lucas Digital. */
+:root{
+  --papel:#F5EFE7; --grade:#E7D3C4; --creme:#FFFDF9; --tinta:#1C1B18; --muted:#6B6459; --laranja:#D97757;
+  --verde:#2F7D4F; --verde-t:#E3F0E6; --vermelho:#B4402F; --vermelho-t:#F7E1DB; --marca:#F6D3A8; --moldura:#1C1B18; --topo:#2B2722; --fundo-app:#FFFFFF;
+  --display:"Archivo Black",Impact,system-ui,sans-serif; --body:"Montserrat",system-ui,sans-serif; --mao:"Shantell Sans","Comic Sans MS",cursive; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--papel:#1D1A16;--grade:#2E2822;--creme:#26221D;--tinta:#F2ECE3;--muted:#B5AA9C;--laranja:#E58A6B;--verde:#6CC08E;--verde-t:#1E3326;--vermelho:#F08A78;--vermelho-t:#3B211C;--marca:#6B4A22;--moldura:#0E0D0B;--topo:#14120F;--fundo-app:#1A1D21;color-scheme:dark}}
+:root[data-theme="dark"]{--papel:#1D1A16;--grade:#2E2822;--creme:#26221D;--tinta:#F2ECE3;--muted:#B5AA9C;--laranja:#E58A6B;--verde:#6CC08E;--verde-t:#1E3326;--vermelho:#F08A78;--vermelho-t:#3B211C;--marca:#6B4A22;--moldura:#0E0D0B;--topo:#14120F;--fundo-app:#1A1D21;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;color:var(--tinta);font:16px/1.5 var(--body);background-color:var(--papel);
+  background-image:linear-gradient(var(--grade) 2px,transparent 2px),linear-gradient(90deg,var(--grade) 2px,transparent 2px);background-size:56px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.wrap{max-width:1120px;margin:0 auto;display:grid;gap:22px}
+.tag{display:inline-block;background:var(--laranja);color:#1C1B18;font:700 clamp(18px,2.4vw,24px)/1.15 var(--mao);padding:8px 16px;border-radius:8px;transform:rotate(-1.5deg);box-shadow:0 3px 0 rgba(0,0,0,.08)}
+.caps{font:800 12px var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+h1{font:400 clamp(30px,5vw,52px)/1.04 var(--display);margin:6px 0 0;text-wrap:balance}
+.rail{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.dot{border:3px solid var(--laranja);background:var(--creme);color:var(--tinta);font:800 14px var(--body);cursor:pointer;border-radius:999px;padding:9px 16px;display:flex;gap:8px;align-items:center}
+.dot b{width:24px;height:24px;border-radius:50%;background:var(--laranja);color:#1C1B18;display:grid;place-items:center;font-size:13px}
+.dot[aria-current="step"]{background:var(--laranja);color:#1C1B18}.dot[aria-current="step"] b{background:var(--creme);color:var(--tinta)}
+.dot:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--tinta);outline-offset:3px}
+.palco{background:var(--creme);border:6px solid var(--grade);border-radius:28px;padding:clamp(14px,3vw,30px);display:grid;gap:18px}
+.topo{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.fala{font:700 clamp(19px,2.4vw,26px)/1.25 var(--mao);margin:0;max-width:34ch}
+.btn{font:800 14px var(--body);border:3px solid var(--tinta);background:var(--creme);color:var(--tinta);border-radius:14px;padding:10px 18px;cursor:pointer}
+.btn:active{transform:translateY(2px)}
+.clique{font:700 13px var(--mao)}
+.chamar{animation:chama 1.8s ease-in-out infinite}
+@keyframes chama{0%,100%{box-shadow:0 0 0 0 var(--marca)}50%{box-shadow:0 0 0 7px var(--marca)}}
+.btn.lar{background:var(--laranja);border-color:var(--laranja);color:#1C1B18}
+.sim{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:22px;align-items:start}@media (max-width:860px){.sim{grid-template-columns:1fr}}
+.lado-cel{display:grid;gap:10px;justify-items:center;min-width:0}
+.celular{width:100%;max-width:400px;background:var(--moldura);border-radius:44px;padding:26px 10px 14px;position:relative;box-shadow:0 22px 44px -20px rgba(0,0,0,.5)}
+.celular::before{content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);width:84px;height:7px;border-radius:99px;background:var(--grade)}
+.site{border:0;border-radius:30px;overflow:hidden;background:var(--fundo-app);display:grid;min-width:0}
+.site-top{background:var(--topo);color:#fff;padding:12px 16px;display:flex;gap:10px;align-items:center}
+.site-top strong{font:800 16px var(--body)}.site-top small{display:block;font:500 11.5px var(--body);opacity:.8}
+.ava{width:34px;height:34px;border-radius:8px;background:var(--laranja);color:#1C1B18;display:grid;place-items:center;font:800 13px var(--body);flex:none}
+.inbox{padding:14px;display:grid;gap:10px;align-content:start;min-height:420px;background:var(--fundo-app)}
+.docbtn{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;text-align:left;width:100%;background:var(--creme);border:2px solid var(--grade);border-radius:12px;padding:10px 12px;cursor:pointer;color:var(--tinta);font:700 14px var(--body);transition:border-color .25s,background .25s,opacity .25s}
+.docbtn:hover:not(:disabled){border-color:var(--laranja)}
+.docbtn:disabled{opacity:.62;cursor:default}
+.docbtn.sel{border-color:var(--laranja);background:var(--marca)}
+.docbtn .ext{width:38px;height:38px;border-radius:9px;background:var(--laranja);color:#1C1B18;display:grid;place-items:center;font:800 11px var(--body);text-transform:uppercase}
+.docbtn small{display:block;font:500 12px var(--body);color:var(--muted)}
+.docbtn .st{font:700 10.5px var(--body);letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:6px;background:var(--marca);white-space:nowrap}
+.docbtn[data-st="filed"] .st{background:var(--verde-t);color:var(--verde)}
+.docbtn[data-st="duplicate"] .st,.docbtn[data-st="rejected"] .st{background:var(--vermelho-t);color:var(--vermelho)}
+.nota{font:600 12.5px var(--body);color:var(--muted);margin:4px 2px 0}
+.bast{display:grid;gap:12px;min-width:0}
+.fluxo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font:700 12.5px var(--body)}
+.fluxo span{border:2px solid var(--grade);border-radius:999px;padding:4px 10px;background:var(--papel);transition:background .3s,border-color .3s,transform .3s,box-shadow .3s}
+.fluxo span.on{background:var(--laranja);border-color:var(--laranja);color:#1C1B18}
+.fluxo span.agora{transform:scale(1.1);box-shadow:0 0 0 4px var(--marca)}
+.fluxo i{font-style:normal;color:var(--muted)}
+.board{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media (max-width:560px){.board{grid-template-columns:1fr}}
+.pn{background:var(--papel);border:3px solid var(--grade);border-radius:16px;padding:12px;display:grid;gap:8px;align-content:start;min-width:0;transition:border-color .35s,box-shadow .35s,opacity .35s,transform .35s}
+.pn.largo{grid-column:1/-1}
+.pn h3{margin:0;font:800 13px var(--body);display:flex;justify-content:space-between;gap:8px;align-items:center}
+.pn h3 em{font:500 11.5px var(--mono);font-style:normal;color:var(--muted)}
+.pn.foco{border-color:var(--laranja);box-shadow:0 0 0 5px var(--marca),0 14px 30px -10px var(--laranja);transform:translateY(-3px)}
+.bast.holofote .pn:not(.foco){opacity:.42}
+.ficha .acende{animation:acende 2.2s ease-out both;border-radius:4px}
+@keyframes acende{0%{background:var(--laranja);color:#1C1B18}100%{background:transparent}}
+@keyframes entra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.ficha{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font:500 13px var(--mono);margin:0}
+.ficha dt{color:var(--muted)}.ficha dd{margin:0;overflow-wrap:anywhere}
+.estado{font:700 11px var(--body);letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:6px;background:var(--marca);transition:background .3s,color .3s}
+.estado.ok{background:var(--verde-t);color:var(--verde)}.estado.no{background:var(--vermelho-t);color:var(--vermelho)}
+.folha-wrap{overflow-x:auto}
+.folha{border-collapse:collapse;font:500 12.5px var(--mono);width:100%}
+.folha th,.folha td{border:1px solid var(--grade);padding:4px 7px;text-align:left}
+.folha th{background:var(--creme);font-weight:700}
+.folha tr.ex td{color:var(--muted)}.folha tr.novo td{background:var(--marca);animation:entra .4s both}
+#drive,#fila{display:grid;gap:8px}
+.doc{background:var(--creme);border:2px solid var(--grade);border-radius:10px;padding:8px 11px;font:500 13px/1.4 var(--body);animation:entra .4s both;display:grid;gap:3px;overflow-wrap:anywhere}
+.doc b{font-weight:800}.doc.ex{opacity:.55}.doc span{font-family:var(--mono);font-size:12px}
+.doc.rev{border-color:var(--laranja)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--papel);border:3px solid var(--grade);border-radius:18px;padding:16px;display:grid;gap:12px;align-content:start;min-width:0}
+.card.largo{grid-column:1/-1}
+.card h3{margin:0;font:400 22px/1.1 var(--display)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:700 13.5px var(--body);border:2px solid var(--laranja);background:var(--creme);color:var(--tinta);border-radius:999px;padding:6px 12px;cursor:pointer;text-align:left}
+.chip:hover{background:var(--marca)}
+.chip[aria-pressed="true"]{background:var(--laranja);color:#1C1B18}
+.carimbo{display:inline-block;border:4px solid currentColor;border-radius:10px;padding:4px 12px;font:700 19px var(--mao);transform:rotate(-6deg);animation:carimbo .35s ease-out both}
+.carimbo.ok{color:var(--verde)}.carimbo.no{color:var(--vermelho)}.carimbo.nsei{color:var(--laranja)}
+@keyframes carimbo{0%{opacity:0;transform:scale(1.6) rotate(-14deg)}100%{opacity:1;transform:scale(1) rotate(-6deg)}}
+.res{min-height:70px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font:600 14px var(--body)}
+.par{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.par li{display:grid;grid-template-columns:1fr 34px 1fr;gap:8px;align-items:center;cursor:pointer}
+.par .a,.par .b{background:var(--creme);border:3px solid var(--grade);border-radius:12px;padding:8px 12px;font:600 14px var(--body);transition:border-color .25s,background .25s;min-width:0}
+.par .s{font:700 20px var(--mao);color:var(--laranja);text-align:center}
+.par li.on .a,.par li.on .b{border-color:var(--laranja);background:var(--marca)}
+@media (max-width:620px){.par li{grid-template-columns:1fr}.par .s{transform:rotate(90deg)}}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.num{background:var(--creme);border:3px solid var(--grade);border-radius:14px;padding:10px;display:grid;gap:2px}
+.num b{font:400 30px/1 var(--display);font-variant-numeric:tabular-nums}.num span{font:600 12.5px var(--body);color:var(--muted)}
+.ent{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ent button{width:100%;text-align:left;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:var(--creme);border:3px solid var(--grade);border-radius:16px;padding:12px 14px;cursor:pointer;color:var(--tinta);font:700 15px var(--body)}
+.ent button[aria-expanded="true"]{border-color:var(--laranja)}
+.ent .n{font:400 22px var(--display);color:var(--laranja)}
+.ent .v{font:400 16px var(--display);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ent .q{font:500 14px/1.5 var(--body);padding:8px 14px 2px;color:var(--tinta)}
+.ent .q b{font:700 13px var(--mao);color:var(--laranja)}
+.total{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:baseline;justify-content:space-between;border-top:3px dashed var(--grade);padding-top:12px}
+.total b{font:400 34px var(--display)}
+.selos{display:flex;flex-wrap:wrap;gap:8px}
+.selo{font:700 13px var(--mao);border:2px solid var(--laranja);border-radius:999px;padding:4px 12px}
+.rodape{font:600 12.5px var(--body);color:var(--muted);text-align:center}
+.cta{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.cta-res{display:grid;gap:10px;font:600 15px/1.45 var(--body)}.cta-res:empty{display:none}
+.cta-res .ok{background:var(--verde-t);color:var(--verde);border-radius:14px;padding:12px 14px;font-weight:700}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+  <header style="display:grid;gap:10px;justify-items:center;text-align:center">
+    <span class="tag">From workflow to handoff</span>
+    <h1>A messy inbox, read, filed and logged.</h1>
+    <span class="caps">Fictional firm · example data · simulated screens</span>
+  </header>
+
+  <nav class="rail" aria-label="Steps">
+    <button class="dot" data-p="0" aria-current="step"><b>1</b>Try it</button>
+    <!-- proposta:inicio -->
+    <button class="dot" data-p="1"><b>2</b>Where it breaks</button>
+    <button class="dot" data-p="2"><b>3</b>Already built</button>
+    <button class="dot" data-p="3"><b>4</b>The handoff</button>
+    <button class="dot" data-p="4"><b>5</b>Plan and price</button>
+    <!-- proposta:fim -->
+  </nav>
+
+  <!-- STEP 1 -->
+  <section class="palco" id="p0">
+    <div class="topo">
+      <p class="fala">Drop a document. Watch it get read, named, filed and logged.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn lar chamar" id="exemplo">See an example <span class="clique">(click here)</span></button><button class="btn" id="recomecar">Restart</button></div>
+    </div>
+    <div class="sim">
+      <div class="lado-cel">
+        <div class="celular">
+          <div class="site" id="site">
+            <div class="site-top"><span class="ava" aria-hidden="true">IN</span><strong>Incoming<small>Shared folder · Harbor Row Advisory (fictional)</small></strong></div>
+            <div class="inbox" id="inbox">
+              <button class="docbtn" type="button" data-k="a" data-st="waiting"><span class="ext">pdf</span><span>scan_0412.pdf<small>Scanned letter, signed</small></span><span class="st">ready</span></button>
+              <button class="docbtn" type="button" data-k="b" data-st="waiting"><span class="ext">jpg</span><span>IMG_2203.jpg<small>Phone photo of a tax form</small></span><span class="st">ready</span></button>
+              <button class="docbtn" type="button" data-k="c" data-st="waiting"><span class="ext">pdf</span><span>invoice-4471-copy.pdf<small>Invoice, sent twice</small></span><span class="st">ready</span></button>
+              <p class="nota">Click a file to drop it in.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bast">
+        <div class="fluxo" aria-label="Path of a document">
+          <span id="fx0">Intake</span><i>→</i><span id="fx1">Read (Gemini)</span><i>→</i><span id="fx2">Name</span><i>→</i><span id="fx3">File (Drive)</span><i>→</i><span id="fx4">Log (Sheets)</span>
+        </div>
+        <div class="board">
+          <div class="pn" id="pn-read">
+            <h3>What it read <span class="estado" id="estado">waiting</span></h3>
+            <dl class="ficha" id="ficha"></dl>
+          </div>
+          <div class="pn" id="pn-rev">
+            <h3>Review queue <em>a person decides</em></h3>
+            <div id="fila"></div>
+          </div>
+          <div class="pn largo" id="pn-drive">
+            <h3>Google Drive <em>Clients · Vendors</em></h3>
+            <div id="drive"></div>
+          </div>
+          <div class="pn largo" id="pn-log">
+            <h3>Run log <em>Google Sheets · done · failed · don't know</em></h3>
+            <div class="folha-wrap"><table class="folha"><thead><tr><th>Time</th><th>File</th><th>Result</th><th>State</th></tr></thead><tbody id="linhas"></tbody></table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- proposta:inicio -->
+  <!-- STEP 2 -->
+  <section class="palco" id="p1" hidden>
+    <div class="topo"><p class="fala">Three things that usually go wrong. Try each.</p></div>
+    <div class="grid2">
+      <div class="card">
+        <h3>Unsure reads</h3>
+        <p style="margin:0">Under 90% sure, a person decides.</p>
+        <div class="chips" id="inc-ex">
+          <button class="chip" data-c="a">Signed letter, 97%</button>
+          <button class="chip" data-c="b">Blurry W-9, 62%</button>
+          <button class="chip" data-c="c">Odd invoice, 88%</button>
+        </div>
+        <div class="res" id="inc-res"></div>
+      </div>
+      <div class="card">
+        <h3>Same file twice</h3>
+        <p style="margin:0">It compares content, not names.</p>
+        <div class="chips" id="dup-ex">
+          <button class="chip" data-d="igual">Same file again</button>
+          <button class="chip" data-d="nome">Same file, new name</button>
+          <button class="chip" data-d="edit">Edited version</button>
+        </div>
+        <div class="res" id="dup-res"></div>
+      </div>
+      <div class="card largo">
+        <h3>A step fails</h3>
+        <p style="margin:0">Every run ends done, failed or don't know.</p>
+        <div class="chips" id="fal-ex">
+          <button class="chip" data-f="drive">Drive is down</button>
+          <button class="chip" data-f="log">The log can't be written</button>
+          <button class="chip" data-f="tudo">Everything reads unsure</button>
+        </div>
+        <div class="res" id="fal-res"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="palco" id="p2" hidden>
+    <div class="topo"><p class="fala">I already built the pieces this needs.</p></div>
+    <div class="nums">
+      <div class="num"><b>125</b><span>real runs measured</span></div>
+      <div class="num"><b>812</b><span>records saved, zero errors</span></div>
+      <div class="num"><b>95</b><span>group chats held, not answered</span></div>
+    </div>
+    <ul class="par" id="par">
+      <li data-k="0"><div class="a">Review a workflow that half works</div><div class="s">↔</div><div class="b">My own 37-node n8n pipeline was silently throwing away approved, paid output. I traced it from run history.</div></li>
+      <li data-k="1"><div class="a">Show the fix works</div><div class="s">↔</div><div class="b">I replayed the incident against a fake service and counted every node: each fired exactly once.</div></li>
+      <li data-k="2"><div class="a">Read documents, then decide</div><div class="s">↔</div><div class="b">A sales agent reads customers' photos first, and a checker blocks bad replies before they go out.</div></li>
+      <li data-k="3"><div class="a">Duplicates and bad data</div><div class="s">↔</div><div class="b">A guard checks every field an AI wants to write into GoHighLevel against the conversation. Tested on its real API in a sandbox.</div></li>
+      <li data-k="4"><div class="a">Failures that can't hide</div><div class="s">↔</div><div class="b">Every run ends done, failed or "don't know". Silence counts as a bug.</div></li>
+    </ul>
+    <p class="rodape" id="par-dica">Click a row: your request on the left, what I already did on the right.</p>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="palco" id="p3" hidden>
+    <div class="topo"><p class="fala">A complete handoff is eight things. Open each.</p></div>
+    <ul class="ent" id="hand">
+      <li><button aria-expanded="true"><span class="n">1</span><span>Map of what it does today</span><span class="v">▾</span></button>
+        <div class="q"><b>You check it:</b> a teammate reads it and predicts the next step.</div></li>
+      <li><button aria-expanded="false"><span class="n">2</span><span>Keep, repair or replace, with reasons</span><span class="v">▾</span></button>
+        <div class="q" hidden><b>You check it:</b> every line has a reason and an hour estimate.</div></li>
+      <li><button aria-expanded="false"><span class="n">3</span><span>Access list, all in your accounts</span><span class="v">▾</span></button>
+        <div class="q" hidden><b>You check it:</b> nothing depends on my login.</div></li>
+      <li><button aria-expanded="false"><span class="n">4</span><span>Run book</span><span class="v">▾</span></button>
+        <div class="q" hidden><b>You check it:</b> a teammate re-runs one failed file alone.</div></li>
+      <li><button aria-expanded="false"><span class="n">5</span><span>Failure list and alerts</span><span class="v">▾</span></button>
+        <div class="q" hidden><b>You check it:</b> break one thing on purpose and the right person is alerted.</div></li>
+      <li><button aria-expanded="false"><span class="n">6</span><span>Tests, bad cases included</span><span class="v">▾</span></button>
+        <div class="q" hidden><b>You check it:</b> blurry, duplicate, empty and wrong-type files, with results.</div></li>
+      <li><button aria-expanded="false"><span class="n">7</span><span>Change log</span><span class="v">▾</span></button>
+        <div class="q" hidden><b>You check it:</b> every change says why, and how to undo it.</div></li>
+      <li><button aria-expanded="false"><span class="n">8</span><span>Ten-minute walkthrough</span><span class="v">▾</span></button>
+        <div class="q" hidden><b>You check it:</b> your team runs it while I stay quiet.</div></li>
+    </ul>
+  </section>
+
+  <!-- STEP 5 -->
+  <section class="palco" id="p4" hidden>
+    <div class="topo"><p class="fala">Start small, paid by the hour, with a ceiling.</p></div>
+    <ul class="ent" id="ent">
+      <li><button aria-expanded="true"><span class="n">1</span><span>Review one workflow and map it</span><span class="v">up to 6 h</span></button>
+        <div class="q"><b>You check it:</b> the map, and a keep, repair or replace list with hours.</div></li>
+      <li><button aria-expanded="false"><span class="n">2</span><span>Implement one approved fix</span><span class="v">up to 6 h</span></button>
+        <div class="q" hidden><b>You check it:</b> I demo it, failures included, on your account.</div></li>
+      <li><button aria-expanded="false"><span class="n">3</span><span>Handoff pack</span><span class="v">up to 3 h</span></button>
+        <div class="q" hidden><b>You check it:</b> a teammate operates it from the run book.</div></li>
+    </ul>
+    <div class="total">
+      <span class="caps">First project · $20/h · 15 h ceiling</span>
+      <b>$300</b>
+    </div>
+    <div class="selos"><span class="selo">your accounts, your code</span><span class="selo">I stop and ask at each step</span><span class="selo">estimates before work</span></div>
+    <div class="cta">
+      <button class="btn lar" type="button" id="cta-quero" data-cta="quero">I want to go ahead</button>
+      <button class="btn" type="button" id="cta-marcar" data-cta="marcar">Book 15 minutes</button>
+    </div>
+    <div class="cta-res" id="cta-res" aria-live="polite"></div>
+  </section>
+
+  <p class="rodape">Made by Lucas for Able Business Alliance · the page follows written rules, no paid AI runs here</p>
+  <!-- proposta:fim -->
+</div>
+
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  // ---------- steps ----------
+  const passos = [...document.querySelectorAll('.palco')];
+  document.querySelectorAll('.dot').forEach((d) => d.addEventListener('click', () => {
+    const i = +d.dataset.p;
+    passos.forEach((p, k) => { p.hidden = k !== i; });
+    document.querySelectorAll('.dot').forEach((x) => x.removeAttribute('aria-current'));
+    d.setAttribute('aria-current', 'step');
+  }));
+
+  // ---------- example documents (all fictional) ----------
+  const LIMITE = 90;
+  const hoje = new Date(); const p2 = (n) => String(n).padStart(2, '0');
+  const ISO = `${hoje.getFullYear()}-${p2(hoje.getMonth() + 1)}-${p2(hoje.getDate())}`;
+  const DOCS = {
+    a: { arq: 'scan_0412.pdf', tipo: 'Engagement letter', cliente: 'Brightwater Dental', conf: 97, pasta: 'Clients / Brightwater Dental / Contracts', slug: 'Brightwater-Dental_Engagement-Letter', ext: 'pdf' },
+    b: { arq: 'IMG_2203.jpg', tipo: 'W-9', cliente: 'Pine Ridge Supply', conf: 62, pasta: 'Vendors / Pine Ridge Supply / Tax forms', slug: 'Pine-Ridge-Supply_W-9', ext: 'jpg', motivo: 'EIN is blurry' },
+    c: { arq: 'invoice-4471-copy.pdf', tipo: 'Invoice', cliente: 'Delta Supply', conf: 95, igualA: '2026-10-02_Delta-Supply_Invoice_v1.pdf' },
+  };
+  const ROT = { arquivo: 'file', tipo: 'type', cliente: 'client', confianca: 'confidence', rota: 'route', nome: 'new name', pasta: 'folder' };
+  const ST = { waiting: 'ready', reading: 'reading…', filed: 'filed', review: 'in review', duplicate: 'duplicate', rejected: 'returned' };
+
+  let lead = {}; let fichaAnt = []; let geracao = 0; let ocupado = false; let modoExemplo = false; let relogio = 0;
+  const arquivados = {};
+  const ritmo = () => (modoExemplo ? { bastidor: 1100 } : { bastidor: 650 });
+  const esp = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  const timers = new Map();
+  function holofote(sel, ms) {
+    const el = $(sel); const bast = el.closest('.bast');
+    clearTimeout(timers.get(sel));
+    el.classList.add('foco'); if (bast) bast.classList.add('holofote');
+    timers.set(sel, setTimeout(() => {
+      el.classList.remove('foco');
+      if (bast && !bast.querySelector('.pn.foco')) bast.classList.remove('holofote');
+    }, ms));
+  }
+  function acender(fx) {
+    document.querySelectorAll('.fluxo span').forEach((s) => s.classList.remove('agora'));
+    if (fx) $(fx).classList.add('on', 'agora');
+  }
+  function travar(v) { ocupado = v; document.querySelectorAll('.docbtn').forEach((b) => { b.disabled = v; }); }
+  function marcar(k, st) {
+    const b = document.querySelector(`.docbtn[data-k="${k}"]`);
+    b.dataset.st = st; b.querySelector('.st').textContent = ST[st];
+    document.querySelectorAll('.docbtn').forEach((x) => x.classList.toggle('sel', x === b && st === 'reading'));
+  }
+  function desenharFicha(estado, cls) {
+    const ks = Object.keys(ROT).filter((k) => lead[k]);
+    const novos = ks.filter((k) => !fichaAnt.includes(k));
+    $('#ficha').innerHTML = ks.length ? ks.map((k) => { const a = novos.includes(k) ? ' class="acende"' : ''; return `<dt${a}>${ROT[k]}</dt><dd${a}>${esc(lead[k])}</dd>`; }).join('') : '<dt>—</dt><dd>waiting for a file</dd>';
+    const e = $('#estado'); e.textContent = estado; e.className = 'estado ' + cls;
+    if (novos.length) holofote('#pn-read', ritmo().bastidor * 1.6);
+    fichaAnt = ks;
+  }
+  function hora() { relogio += 1; const m = 40 + relogio; return `9:${p2(m % 60)}`; }
+  function log(estado, arquivo, texto) {
+    const rot = estado === 'done' ? ['ok', 'done'] : estado === 'failed' ? ['no', 'failed'] : ['', "don't know"];
+    $('#linhas').insertAdjacentHTML('afterbegin', `<tr class="novo"><td>${hora()}</td><td>${esc(arquivo)}</td><td>${esc(texto)}</td><td><span class="estado ${rot[0]}">${rot[1]}</span></td></tr>`);
+    holofote('#pn-log', ritmo().bastidor * 1.6);
+  }
+  function drive(pasta, nome) {
+    $('#drive').insertAdjacentHTML('afterbegin', `<div class="doc"><b>${esc(pasta)}</b><span>${esc(nome)}</span></div>`);
+    holofote('#pn-drive', ritmo().bastidor * 1.6);
+  }
+  function resetBast() {
+    $('#linhas').innerHTML = '<tr class="ex"><td>9:38</td><td>w9_oak-ave.pdf</td><td>Filed as 2026-10-02_Oak-Avenue-Bakery_W-9_v1.pdf (example)</td><td>done</td></tr>';
+    $('#drive').innerHTML = '<div class="doc ex"><b>Vendors / Delta Supply / Invoices</b><span>2026-10-02_Delta-Supply_Invoice_v1.pdf · example</span></div><div class="doc ex"><b>Clients / Maple Street Bakery / Contracts</b><span>2026-09-28_Maple-Street-Bakery_Engagement-Letter_v1.pdf · example</span></div>';
+    $('#fila').innerHTML = '<div class="doc ex"><b>Nothing waiting</b><span>unsure reads land here · example</span></div>';
+    for (let i = 0; i < 5; i++) $('#fx' + i).classList.remove('on', 'agora');
+    ['a', 'b', 'c'].forEach((k) => marcar(k, 'waiting'));
+    document.querySelectorAll('.docbtn').forEach((x) => x.classList.remove('sel'));
+    lead = {}; fichaAnt = []; relogio = 0; Object.keys(arquivados).forEach((k) => delete arquivados[k]);
+    desenharFicha('waiting', '');
+  }
+
+  // ---------- the run ----------
+  async function passosSeq(g, fns) {
+    for (const f of fns) { await esp(ritmo().bastidor); if (g !== geracao) return false; if ((await f()) === 'parar') return false; }
+    return true;
+  }
+  function igualA(k) { return DOCS[k].igualA || arquivados[k] || null; }
+
+  async function rodar(k) {
+    if (ocupado) return;
+    const d = DOCS[k]; const g = geracao;
+    travar(true); marcar(k, 'reading'); lead = { arquivo: d.arq }; fichaAnt = []; acender('#fx0'); desenharFicha('reading', '');
+    await passosSeq(g, [
+      () => { acender('#fx1'); lead.tipo = d.tipo; lead.cliente = d.cliente; lead.confianca = d.conf + '%'; desenharFicha('reading', ''); },
+      () => {
+        const igual = igualA(k);
+        if (igual) {
+          lead.rota = 'duplicate, stop'; desenharFicha('duplicate', 'no'); marcar(k, 'duplicate');
+          log('done', d.arq, `Same content as ${igual}. Not filed twice.`); acender(null); travar(false); return 'parar';
+        }
+        if (d.conf < LIMITE) {
+          lead.rota = 'human review'; desenharFicha('review', ''); marcar(k, 'review'); acender(null);
+          $('#fila').innerHTML = `<div class="doc rev" data-k="${k}"><b>${esc(d.arq)} · ${esc(d.tipo)}? ${d.conf}%</b><span>${esc(d.motivo || 'unsure')} · ${esc(d.cliente)}?</span><div class="chips"><button class="chip" type="button" data-r="ok">Approve as ${esc(d.tipo)}</button><button class="chip" type="button" data-r="no">Reject</button></div></div>`;
+          holofote('#pn-rev', ritmo().bastidor * 2);
+          log('unknown', d.arq, `${d.motivo || 'Unsure'} (${d.conf}%). Sent to a person.`); travar(false); return 'parar';
+        }
+        lead.rota = 'files itself'; desenharFicha('reading', '');
+      },
+      () => arquivar(k, false),
+    ]);
+  }
+  async function arquivar(k, humano) {
+    const d = DOCS[k]; const g = geracao; travar(true);
+    const nome = `${ISO}_${d.slug}_v1.${d.ext}`;
+    await passosSeq(g, [
+      () => { acender('#fx2'); lead.nome = nome; desenharFicha('reading', ''); },
+      () => { acender('#fx3'); lead.pasta = d.pasta; desenharFicha('reading', ''); drive(d.pasta, nome); },
+      () => { acender('#fx4'); log('done', d.arq, `Filed as ${nome}${humano ? ' (approved by a person)' : ''}`); desenharFicha('filed', 'ok'); marcar(k, 'filed'); arquivados[k] = nome; },
+    ]);
+    if (g === geracao) { acender(null); travar(false); }
+  }
+  $('#inbox').addEventListener('click', (e) => { const b = e.target.closest('.docbtn'); if (b && !b.disabled) rodar(b.dataset.k); });
+  $('#fila').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-r]'); if (!b || ocupado) return;
+    const item = b.closest('.rev'); const k = item.dataset.k; const d = DOCS[k];
+    $('#fila').innerHTML = '<div class="doc ex"><b>Nothing waiting</b><span>unsure reads land here · example</span></div>';
+    if (b.dataset.r === 'ok') { lead.rota = 'approved by a person'; desenharFicha('reading', ''); arquivar(k, true); }
+    else { log('done', d.arq, 'Rejected by a person. Stays in Incoming, nothing filed.'); marcar(k, 'rejected'); desenharFicha('returned', 'no'); }
+  });
+
+  function iniciar() { geracao++; travar(false); resetBast(); }
+  $('#recomecar').addEventListener('click', iniciar);
+
+  // ---------- steps 2 to 5: proposal version only ----------
+  if ($('#p1')) {
+    const mostra = (sel, cls, rot, txt) => { $(sel).innerHTML = `<span class="carimbo ${cls}">${rot}</span><span>${txt}</span>`; };
+    const INC = {
+      a: ['ok', 'filed', 'At 97% it names, files and logs the letter by itself.'],
+      b: ['no', 'review', 'At 62% it asks a person and files nothing. The EIN is unreadable.'],
+      c: ['no', 'review', '88% is under the 90% line, so a person checks. You can move the line.'],
+    };
+    $('#inc-ex').addEventListener('click', (e) => { const b = e.target.closest('[data-c]'); if (b) mostra('#inc-res', ...INC[b.dataset.c]); });
+    mostra('#inc-res', ...INC.b);
+
+    const DUP = {
+      igual: ['no', 'blocked', 'Same content fingerprint as the filed copy. Not filed twice, and logged.'],
+      nome: ['no', 'blocked', 'A renamed copy has the same content, so it is caught anyway.'],
+      edit: ['ok', 'v2', 'The content changed, so it is filed as v2. Version 1 stays.'],
+    };
+    $('#dup-ex').addEventListener('click', (e) => { const b = e.target.closest('[data-d]'); if (b) mostra('#dup-res', ...DUP[b.dataset.d]); });
+    mostra('#dup-res', ...DUP.igual);
+
+    const FAL = {
+      drive: ['no', 'failed', 'Three retries, then the run is marked failed and you get an alert. The file stays in Incoming, nothing half-filed.'],
+      log: ['no', 'stopped', 'The log row is written first. If it fails, the file is not filed.'],
+      tudo: ['nsei', "don't know", 'Many unsure reads at once usually means a scanner change, not 40 bad files. Intake pauses and alerts you.'],
+    };
+    $('#fal-ex').addEventListener('click', (e) => { const b = e.target.closest('[data-f]'); if (b) mostra('#fal-res', ...FAL[b.dataset.f]); });
+    mostra('#fal-res', ...FAL.drive);
+
+    $('#par').addEventListener('click', (e) => { const li = e.target.closest('li'); if (!li) return; document.querySelectorAll('#par li').forEach((x) => x.classList.toggle('on', x === li)); });
+    document.querySelector('#par li').classList.add('on');
+
+    document.querySelectorAll('#hand button, #ent button').forEach((b) => b.addEventListener('click', () => {
+      const aberto = b.getAttribute('aria-expanded') === 'true';
+      b.setAttribute('aria-expanded', !aberto); b.nextElementSibling.hidden = aberto;
+    }));
+
+    // botões de ação: a página não envia nada; o registro de visitas leva o data-cta pro Telegram do dono
+    const DIA = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const MES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const DIAS_LONGOS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    $('#cta-quero').addEventListener('click', () => {
+      $('#cta-res').innerHTML = '<div class="ok">Great. Reply "go" in the Upwork chat and I\'ll send the contract today.</div>';
+    });
+    $('#cta-marcar').addEventListener('click', () => {
+      const d = new Date(); const horas = ['8:00 AM', '9:00 AM', '10:00 AM']; const ops = [];
+      while (ops.length < 3) { d.setDate(d.getDate() + 1); if (d.getDay() === 0 || d.getDay() === 6) continue; ops.push({ curto: DIA[d.getDay()] + ' ' + (d.getMonth() + 1) + '/' + d.getDate() + ' ' + horas[ops.length], longo: DIAS_LONGOS[d.getDay()] + ', ' + MES[d.getMonth()] + ' ' + d.getDate() + ' at ' + horas[ops.length] }); }
+      $('#cta-res').innerHTML = '<span>Pick a time (Central time):</span><div class="chips">' + ops.map((o) => '<button class="chip" type="button" data-cta="marcar ' + o.curto + '" data-longo="' + o.longo + '">' + o.longo + '</button>').join('') + '</div>';
+    });
+    $('#cta-res').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-longo]'); if (!b) return;
+      $('#cta-res').innerHTML = '<div class="ok">Noted: ' + b.dataset.longo + ' (Central). Confirm it in the Upwork chat and I\'ll send the invite.</div>';
+    });
+  }
+
+  // ---------- abre parada; o exemplo só toca no botão ----------
+  iniciar();
+  let rodada = 0;
+  const parar = () => { rodada++; modoExemplo = false; };
+  $('#recomecar').addEventListener('click', parar, { capture: true });
+  $('#inbox').addEventListener('click', (e) => { if (e.isTrusted) parar(); }, { capture: true });
+  $('#fila').addEventListener('click', (e) => { if (e.isTrusted) parar(); }, { capture: true });
+  const espera = (cond, ms) => new Promise((ok) => { const t0 = Date.now(); (function v() { if (cond() || Date.now() - t0 > ms) ok(); else setTimeout(v, 150); })(); });
+  $('#exemplo').addEventListener('click', async () => {
+    $('#exemplo').classList.remove('chamar');
+    const minha = ++rodada; iniciar(); modoExemplo = true;
+    const vivo = () => minha === rodada;
+    const livre = () => !ocupado || !vivo();
+    await esp(1800); if (!vivo()) return;
+    rodar('a'); await esp(300); await espera(livre, 20000); if (!vivo()) return;
+    await esp(2200); if (!vivo()) return;
+    rodar('b'); await esp(300); await espera(() => $('#fila [data-r="ok"]') || !vivo(), 15000); if (!vivo()) return;
+    await esp(2800); if (!vivo()) return;
+    const ok = $('#fila [data-r="ok"]'); if (ok) ok.click();
+    await esp(300); await espera(livre, 20000); if (!vivo()) return;
+    await esp(2200); if (!vivo()) return;
+    rodar('c'); await esp(300); await espera(livre, 15000);
+    if (vivo()) modoExemplo = false;
+  });
+})();
+</script>
+
+<script>
+// registro de visitas: sem nome, sem e-mail; só a demo, o evento, o passo e o tempo.
+(() => {
+  if (location.protocol === 'file:') return;
+  const DEMO = "able-business", URL = "https://n8n-kf1l.srv1863913.hstgr.cloud/webhook/demo-visita";
+  let eu = false;
+  try { if (new URLSearchParams(location.search).has('eu')) localStorage.setItem('demo_eu', '1'); eu = localStorage.getItem('demo_eu') === '1'; } catch (e) {}
+  const sessao = Math.random().toString(36).slice(2, 10), t0 = Date.now(), vistos = new Set(); let maior = 0;
+  function manda(evento, passo) {
+    const d = new URLSearchParams({ demo: DEMO, evento, passo: String(passo || 0), sessao, interno: eu ? '1' : '0', segundos: String(Math.round((Date.now() - t0) / 1000)) });
+    try { navigator.sendBeacon(URL, new Blob([d.toString()], { type: 'application/x-www-form-urlencoded' })); } catch (e) {}
+  }
+  const umaVez = (k, f) => { if (!vistos.has(k)) { vistos.add(k); f(); } };
+  manda('abriu', 0);
+  document.addEventListener('click', (e) => {
+    const dot = e.target.closest('.dot[data-p]');
+    if (dot) { const n = +dot.dataset.p; maior = Math.max(maior, n); umaVez('p' + n, () => manda('passo', n)); }
+    if (e.target.closest('#exemplo')) umaVez('ex', () => manda('exemplo', maior));
+    if (e.target.closest('#chat .chip')) umaVez('conversa', () => manda('conversou', maior));
+    const cta = e.target.closest('[data-cta]'); if (cta) manda('cta-' + cta.dataset.cta, maior);
+  }, true);
+  document.addEventListener('input', (e) => { if (e.target.closest('[data-calc]')) umaVez('calc', () => manda('calculou', maior)); }, true);
+  document.addEventListener('click', (e) => { if (e.target.closest('[data-cen]')) umaVez('calc', () => manda('calculou', maior)); }, true);
+  document.addEventListener('submit', () => umaVez('conversa', () => manda('conversou', maior)), true);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') manda('saiu', maior); });
+})();
+</script>
+</body>
+</html>
