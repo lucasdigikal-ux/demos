@@ -22,6 +22,7 @@
 <body>
 <meta name="demo:dado" content=".doc,.docbtn,.site-top,.ava">
 <style>
+/* Molde FLUXO (demos/_molde-fluxo): caderno quadriculado, trilho de 5 passos, celular à esquerda com a entrada, bastidores à direita. Gerado por scripts/nova-demo-fluxo.mjs, não editar à mão. */
 /* Layout: caderno quadriculado; trilho de 5 passos. Passo 1: caixa de entrada numa moldura de celular à esquerda, bastidores (leitura, Drive, fila de revisão, registro) a encherem-se à direita. Design system claro do Lucas Digital. */
 :root{
   --papel:#F5EFE7; --grade:#E7D3C4; --creme:#FFFDF9; --tinta:#1C1B18; --muted:#6B6459; --laranja:#D97757;
@@ -213,9 +214,9 @@ h1{font:400 clamp(30px,5vw,52px)/1.04 var(--display);margin:6px 0 0;text-wrap:ba
         <h3>Unsure reads</h3>
         <p style="margin:0">Under 90% sure, a person decides.</p>
         <div class="chips" id="inc-ex">
-          <button class="chip" data-c="a">Signed letter, 97%</button>
-          <button class="chip" data-c="b">Blurry W-9, 62%</button>
-          <button class="chip" data-c="c">Odd invoice, 88%</button>
+          <button class="chip" data-k="a">Signed letter, 97%</button>
+          <button class="chip" data-k="b">Blurry W-9, 62%</button>
+          <button class="chip" data-k="c">Odd invoice, 88%</button>
         </div>
         <div class="res" id="inc-res"></div>
       </div>
@@ -223,9 +224,9 @@ h1{font:400 clamp(30px,5vw,52px)/1.04 var(--display);margin:6px 0 0;text-wrap:ba
         <h3>Same file twice</h3>
         <p style="margin:0">It compares content, not names.</p>
         <div class="chips" id="dup-ex">
-          <button class="chip" data-d="igual">Same file again</button>
-          <button class="chip" data-d="nome">Same file, new name</button>
-          <button class="chip" data-d="edit">Edited version</button>
+          <button class="chip" data-k="igual">Same file again</button>
+          <button class="chip" data-k="nome">Same file, new name</button>
+          <button class="chip" data-k="edit">Edited version</button>
         </div>
         <div class="res" id="dup-res"></div>
       </div>
@@ -233,9 +234,9 @@ h1{font:400 clamp(30px,5vw,52px)/1.04 var(--display);margin:6px 0 0;text-wrap:ba
         <h3>A step fails</h3>
         <p style="margin:0">Every run ends done, failed or don't know.</p>
         <div class="chips" id="fal-ex">
-          <button class="chip" data-f="drive">Drive is down</button>
-          <button class="chip" data-f="log">The log can't be written</button>
-          <button class="chip" data-f="tudo">Everything reads unsure</button>
+          <button class="chip" data-k="drive">Drive is down</button>
+          <button class="chip" data-k="log">The log can't be written</button>
+          <button class="chip" data-k="tudo">Everything reads unsure</button>
         </div>
         <div class="res" id="fal-res"></div>
       </div>
@@ -255,7 +256,7 @@ h1{font:400 clamp(30px,5vw,52px)/1.04 var(--display);margin:6px 0 0;text-wrap:ba
       <li data-k="1"><div class="a">Show the fix works</div><div class="s">↔</div><div class="b">I replayed the incident against a fake service and counted every node: the final render fired exactly once.</div></li>
       <li data-k="2"><div class="a">Read documents, then decide</div><div class="s">↔</div><div class="b">A sales agent reads customers' photos first, and a checker blocks bad replies before they go out.</div></li>
       <li data-k="3"><div class="a">Duplicates and bad data</div><div class="s">↔</div><div class="b">A guard checks every field an AI wants to write into GoHighLevel against the conversation. Tested on its real API in a sandbox.</div></li>
-      <li data-k="4"><div class="a">Failures that can't hide</div><div class="s">↔</div><div class="b">Every run ends done, failed or "don't know". Silence counts as a bug.</div></li>
+      <li data-k="4"><div class="a">Failures that can't hide</div><div class="s">↔</div><div class="b">Every run ends done, failed or &quot;don't know&quot;. Silence counts as a bug.</div></li>
     </ul>
     <p class="rodape" id="par-dica">Click a row: your request on the left, what I already did on the right.</p>
   </section>
@@ -311,11 +312,19 @@ h1{font:400 clamp(30px,5vw,52px)/1.04 var(--display);margin:6px 0 0;text-wrap:ba
 </div>
 
 <script>
+const CFG = {"limite":90,"papeis":{"auto":"a","revisao":"b","duplicado":"c"},"docs":{"a":{"arq":"scan_0412.pdf","desc":"Scanned letter, signed","ext":"pdf","tipo":"Engagement letter","cliente":"Brightwater Dental","conf":97,"pasta":"Clients / Brightwater Dental / Contracts","slug":"Brightwater-Dental_Engagement-Letter"},"b":{"arq":"IMG_2203.jpg","desc":"Phone photo of a tax form","ext":"jpg","tipo":"W-9","cliente":"Pine Ridge Supply","conf":62,"pasta":"Vendors / Pine Ridge Supply / Tax forms","slug":"Pine-Ridge-Supply_W-9","motivo":"EIN is blurry"},"c":{"arq":"invoice-4471-copy.pdf","desc":"Invoice, sent twice","ext":"pdf","tipo":"Invoice","cliente":"Delta Supply","conf":95,"igualA":"2026-10-02_Delta-Supply_Invoice_v1.pdf"}},"rot":{"arquivo":"file","tipo":"type","cliente":"client","confianca":"confidence","rota":"route","nome":"new name","pasta":"folder"},"st":{"waiting":"ready","reading":"reading…","filed":"filed","review":"in review","duplicate":"duplicate","rejected":"returned"},"t":{"verExemplo":"See an example","clique":"(click here)","recomecar":"Restart","vocePassa":"You check it:","estadoEspera":"waiting","estadoLendo":"reading","estadoArquivado":"filed","estadoRevisao":"review","estadoDuplicado":"duplicate","estadoDevolvido":"returned","estadoDone":"done","estadoFailed":"failed","estadoUnknown":"don't know","esperaArquivo":"waiting for a file","rotaDuplicado":"duplicate, stop","rotaRevisao":"human review","rotaAuto":"files itself","rotaAprovado":"approved by a person","logDuplicado":"Same content as {igual}. Not filed twice.","logRevisao":"{motivo} ({conf}%). Sent to a person.","logArquivado":"Filed as {nome}","logAprovadoSufixo":" (approved by a person)","logRejeitado":"Rejected by a person. Stays in Incoming, nothing filed.","aprovar":"Approve as {tipo}","rejeitar":"Reject","filaMotivo":"{motivo} · {cliente}?","filaVaziaTitulo":"Nothing waiting","filaVaziaSub":"unsure reads land here · example","exemplo":"example","motivoPadrao":"Unsure","st":{"waiting":"ready","reading":"reading…","filed":"filed","review":"in review","duplicate":"duplicate","rejected":"returned"},"rot":{"arquivo":"file","tipo":"type","cliente":"client","confianca":"confidence","rota":"route","nome":"new name","pasta":"folder"}},"relogio":{"hora":"9","minutoBase":40},"exemplos":{"log":[["9:38","w9_oak-ave.pdf","Filed as 2026-10-02_Oak-Avenue-Bakery_W-9_v1.pdf (example)","done"]],"drive":[["Vendors / Delta Supply / Invoices","2026-10-02_Delta-Supply_Invoice_v1.pdf"],["Clients / Maple Street Bakery / Contracts","2026-09-28_Maple-Street-Bakery_Engagement-Letter_v1.pdf"]]},"cards":[{"id":"inc","inicial":"b"},{"id":"dup","inicial":"igual"},{"id":"fal","inicial":"drive"}],"resultados":{"inc":{"a":["ok","filed","At 97% it names, files and logs the letter by itself."],"b":["no","review","At 62% it asks a person and files nothing. The EIN is unreadable."],"c":["no","review","88% is under the 90% line, so a person checks. You can move the line."]},"dup":{"igual":["no","blocked","Same content fingerprint as the filed copy. Not filed twice, and logged."],"nome":["no","blocked","A renamed copy has the same content, so it is caught anyway."],"edit":["ok","v2","The content changed, so it is filed as v2. Version 1 stays."]},"fal":{"drive":["no","failed","Three retries, then the run is marked failed and you get an alert. The file stays in Incoming, nothing half-filed."],"log":["no","stopped","The log row is written first. If it fails, the file is not filed."],"tudo":["nsei","don't know","Many unsure reads at once usually means a scanner change, not 40 bad files. Intake pauses and alerts you."]}},"cta":{"quero":"I want to go ahead","marcar":"Book 15 minutes","queroResposta":"Great. Reply \"go\" in the Upwork chat and I'll send the contract today.","horas":["8:00 AM","9:00 AM","10:00 AM"],"pergunta":"Pick a time (Central time):","confirma":"Noted: {longo} (Central). Confirm it in the Upwork chat and I'll send the invite.","dias":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],"diasLongos":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"meses":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"em":"at"}};
+// Motor do molde "fluxo": documento (ou registro) entra, é lido, nomeado, arquivado e registrado;
+// leitura incerta vai pra uma pessoa; repetido é bloqueado por conteúdo. Tudo que é texto vem de CFG
+// (injetado pelo scripts/nova-demo-fluxo.mjs a partir de demos/<slug>/fluxo.json).
+// As três regras que o portão (scripts/medir-fluxo.mjs --mutacoes) quebra de propósito são marcadas
+// com "MUT:" — não renomear essas linhas sem atualizar o portão.
 (() => {
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const fmt = (s, o) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
+  const T = CFG.t;
 
-  // ---------- steps ----------
+  // ---------- passos ----------
   const passos = [...document.querySelectorAll('.palco')];
   document.querySelectorAll('.dot').forEach((d) => d.addEventListener('click', () => {
     const i = +d.dataset.p;
@@ -324,17 +333,13 @@ h1{font:400 clamp(30px,5vw,52px)/1.04 var(--display);margin:6px 0 0;text-wrap:ba
     d.setAttribute('aria-current', 'step');
   }));
 
-  // ---------- example documents (all fictional) ----------
-  const LIMITE = 90;
+  // ---------- documentos de exemplo (todos fictícios) ----------
+  const LIMITE = CFG.limite; // MUT: limite de confiança
   const hoje = new Date(); const p2 = (n) => String(n).padStart(2, '0');
   const ISO = `${hoje.getFullYear()}-${p2(hoje.getMonth() + 1)}-${p2(hoje.getDate())}`;
-  const DOCS = {
-    a: { arq: 'scan_0412.pdf', tipo: 'Engagement letter', cliente: 'Brightwater Dental', conf: 97, pasta: 'Clients / Brightwater Dental / Contracts', slug: 'Brightwater-Dental_Engagement-Letter', ext: 'pdf' },
-    b: { arq: 'IMG_2203.jpg', tipo: 'W-9', cliente: 'Pine Ridge Supply', conf: 62, pasta: 'Vendors / Pine Ridge Supply / Tax forms', slug: 'Pine-Ridge-Supply_W-9', ext: 'jpg', motivo: 'EIN is blurry' },
-    c: { arq: 'invoice-4471-copy.pdf', tipo: 'Invoice', cliente: 'Delta Supply', conf: 95, igualA: '2026-10-02_Delta-Supply_Invoice_v1.pdf' },
-  };
-  const ROT = { arquivo: 'file', tipo: 'type', cliente: 'client', confianca: 'confidence', rota: 'route', nome: 'new name', pasta: 'folder' };
-  const ST = { waiting: 'ready', reading: 'reading…', filed: 'filed', review: 'in review', duplicate: 'duplicate', rejected: 'returned' };
+  const DOCS = CFG.docs;
+  const ROT = CFG.rot; const ST = CFG.st;
+  const PAPEL = CFG.papeis; // { auto, revisao, duplicado }
 
   let lead = {}; let fichaAnt = []; let geracao = 0; let ocupado = false; let modoExemplo = false; let relogio = 0;
   const arquivados = {};
@@ -364,33 +369,34 @@ h1{font:400 clamp(30px,5vw,52px)/1.04 var(--display);margin:6px 0 0;text-wrap:ba
   function desenharFicha(estado, cls) {
     const ks = Object.keys(ROT).filter((k) => lead[k]);
     const novos = ks.filter((k) => !fichaAnt.includes(k));
-    $('#ficha').innerHTML = ks.length ? ks.map((k) => { const a = novos.includes(k) ? ' class="acende"' : ''; return `<dt${a}>${ROT[k]}</dt><dd${a}>${esc(lead[k])}</dd>`; }).join('') : '<dt>—</dt><dd>waiting for a file</dd>';
+    $('#ficha').innerHTML = ks.length ? ks.map((k) => { const a = novos.includes(k) ? ' class="acende"' : ''; return `<dt${a}>${esc(ROT[k])}</dt><dd${a}>${esc(lead[k])}</dd>`; }).join('') : `<dt>—</dt><dd>${esc(T.esperaArquivo)}</dd>`;
     const e = $('#estado'); e.textContent = estado; e.className = 'estado ' + cls;
     if (novos.length) holofote('#pn-read', ritmo().bastidor * 1.6);
     fichaAnt = ks;
   }
-  function hora() { relogio += 1; const m = 40 + relogio; return `9:${p2(m % 60)}`; }
+  function hora() { relogio += 1; const m = CFG.relogio.minutoBase + relogio; return `${CFG.relogio.hora}:${p2(m % 60)}`; }
   function log(estado, arquivo, texto) {
-    const rot = estado === 'done' ? ['ok', 'done'] : estado === 'failed' ? ['no', 'failed'] : ['', "don't know"];
-    $('#linhas').insertAdjacentHTML('afterbegin', `<tr class="novo"><td>${hora()}</td><td>${esc(arquivo)}</td><td>${esc(texto)}</td><td><span class="estado ${rot[0]}">${rot[1]}</span></td></tr>`);
+    const rot = estado === 'done' ? ['ok', T.estadoDone] : estado === 'failed' ? ['no', T.estadoFailed] : ['', T.estadoUnknown];
+    $('#linhas').insertAdjacentHTML('afterbegin', `<tr class="novo"><td>${hora()}</td><td>${esc(arquivo)}</td><td>${esc(texto)}</td><td><span class="estado ${rot[0]}">${esc(rot[1])}</span></td></tr>`);
     holofote('#pn-log', ritmo().bastidor * 1.6);
   }
   function drive(pasta, nome) {
     $('#drive').insertAdjacentHTML('afterbegin', `<div class="doc"><b>${esc(pasta)}</b><span>${esc(nome)}</span></div>`);
     holofote('#pn-drive', ritmo().bastidor * 1.6);
   }
+  const filaVazia = () => `<div class="doc ex"><b>${esc(T.filaVaziaTitulo)}</b><span>${esc(T.filaVaziaSub)}</span></div>`;
   function resetBast() {
-    $('#linhas').innerHTML = '<tr class="ex"><td>9:38</td><td>w9_oak-ave.pdf</td><td>Filed as 2026-10-02_Oak-Avenue-Bakery_W-9_v1.pdf (example)</td><td>done</td></tr>';
-    $('#drive').innerHTML = '<div class="doc ex"><b>Vendors / Delta Supply / Invoices</b><span>2026-10-02_Delta-Supply_Invoice_v1.pdf · example</span></div><div class="doc ex"><b>Clients / Maple Street Bakery / Contracts</b><span>2026-09-28_Maple-Street-Bakery_Engagement-Letter_v1.pdf · example</span></div>';
-    $('#fila').innerHTML = '<div class="doc ex"><b>Nothing waiting</b><span>unsure reads land here · example</span></div>';
+    $('#linhas').innerHTML = CFG.exemplos.log.map((r) => `<tr class="ex"><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td></tr>`).join('');
+    $('#drive').innerHTML = CFG.exemplos.drive.map((r) => `<div class="doc ex"><b>${esc(r[0])}</b><span>${esc(r[1])} · ${esc(T.exemplo)}</span></div>`).join('');
+    $('#fila').innerHTML = filaVazia();
     for (let i = 0; i < 5; i++) $('#fx' + i).classList.remove('on', 'agora');
-    ['a', 'b', 'c'].forEach((k) => marcar(k, 'waiting'));
+    Object.keys(DOCS).forEach((k) => marcar(k, 'waiting'));
     document.querySelectorAll('.docbtn').forEach((x) => x.classList.remove('sel'));
     lead = {}; fichaAnt = []; relogio = 0; Object.keys(arquivados).forEach((k) => delete arquivados[k]);
-    desenharFicha('waiting', '');
+    desenharFicha(T.estadoEspera, '');
   }
 
-  // ---------- the run ----------
+  // ---------- a corrida ----------
   async function passosSeq(g, fns) {
     for (const f of fns) { await esp(ritmo().bastidor); if (g !== geracao) return false; if ((await f()) === 'parar') return false; }
     return true;
@@ -400,22 +406,23 @@ h1{font:400 clamp(30px,5vw,52px)/1.04 var(--display);margin:6px 0 0;text-wrap:ba
   async function rodar(k) {
     if (ocupado) return;
     const d = DOCS[k]; const g = geracao;
-    travar(true); marcar(k, 'reading'); lead = { arquivo: d.arq }; fichaAnt = []; acender('#fx0'); desenharFicha('reading', '');
+    travar(true); marcar(k, 'reading'); lead = { arquivo: d.arq }; fichaAnt = []; acender('#fx0'); desenharFicha(T.estadoLendo, '');
     await passosSeq(g, [
-      () => { acender('#fx1'); lead.tipo = d.tipo; lead.cliente = d.cliente; lead.confianca = d.conf + '%'; desenharFicha('reading', ''); },
+      () => { acender('#fx1'); lead.tipo = d.tipo; lead.cliente = d.cliente; lead.confianca = d.conf + '%'; desenharFicha(T.estadoLendo, ''); },
       () => {
         const igual = igualA(k);
-        if (igual) {
-          lead.rota = 'duplicate, stop'; desenharFicha('duplicate', 'no'); marcar(k, 'duplicate');
-          log('done', d.arq, `Same content as ${igual}. Not filed twice.`); acender(null); travar(false); return 'parar';
+        if (igual) { // MUT: duplicata
+          lead.rota = T.rotaDuplicado; desenharFicha(T.estadoDuplicado, 'no'); marcar(k, 'duplicate');
+          log('done', d.arq, fmt(T.logDuplicado, { igual })); acender(null); travar(false); return 'parar';
         }
         if (d.conf < LIMITE) {
-          lead.rota = 'human review'; desenharFicha('review', ''); marcar(k, 'review'); acender(null);
-          $('#fila').innerHTML = `<div class="doc rev" data-k="${k}"><b>${esc(d.arq)} · ${esc(d.tipo)}? ${d.conf}%</b><span>${esc(d.motivo || 'unsure')} · ${esc(d.cliente)}?</span><div class="chips"><button class="chip" type="button" data-r="ok">Approve as ${esc(d.tipo)}</button><button class="chip" type="button" data-r="no">Reject</button></div></div>`;
+          lead.rota = T.rotaRevisao; desenharFicha(T.estadoRevisao, ''); marcar(k, 'review'); acender(null);
+          const motivo = d.motivo || T.motivoPadrao;
+          $('#fila').innerHTML = `<div class="doc rev" data-k="${k}"><b>${esc(d.arq)} · ${esc(d.tipo)}? ${d.conf}%</b><span>${esc(fmt(T.filaMotivo, { motivo, cliente: d.cliente }))}</span><div class="chips"><button class="chip" type="button" data-r="ok">${esc(fmt(T.aprovar, { tipo: d.tipo }))}</button><button class="chip" type="button" data-r="no">${esc(T.rejeitar)}</button></div></div>`;
           holofote('#pn-rev', ritmo().bastidor * 2);
-          log('unknown', d.arq, `${d.motivo || 'Unsure'} (${d.conf}%). Sent to a person.`); travar(false); return 'parar';
+          log('unknown', d.arq, fmt(T.logRevisao, { motivo, conf: d.conf })); travar(false); return 'parar';
         }
-        lead.rota = 'files itself'; desenharFicha('reading', '');
+        lead.rota = T.rotaAuto; desenharFicha(T.estadoLendo, '');
       },
       () => arquivar(k, false),
     ]);
@@ -424,9 +431,9 @@ h1{font:400 clamp(30px,5vw,52px)/1.04 var(--display);margin:6px 0 0;text-wrap:ba
     const d = DOCS[k]; const g = geracao; travar(true);
     const nome = `${ISO}_${d.slug}_v1.${d.ext}`;
     await passosSeq(g, [
-      () => { acender('#fx2'); lead.nome = nome; desenharFicha('reading', ''); },
-      () => { acender('#fx3'); lead.pasta = d.pasta; desenharFicha('reading', ''); drive(d.pasta, nome); },
-      () => { acender('#fx4'); log('done', d.arq, `Filed as ${nome}${humano ? ' (approved by a person)' : ''}`); desenharFicha('filed', 'ok'); marcar(k, 'filed'); arquivados[k] = nome; },
+      () => { acender('#fx2'); lead.nome = nome; desenharFicha(T.estadoLendo, ''); },
+      () => { acender('#fx3'); lead.pasta = d.pasta; desenharFicha(T.estadoLendo, ''); drive(d.pasta, nome); },
+      () => { acender('#fx4'); log('done', d.arq, fmt(T.logArquivado, { nome }) + (humano ? T.logAprovadoSufixo : '')); desenharFicha(T.estadoArquivado, 'ok'); marcar(k, 'filed'); arquivados[k] = nome; },
     ]);
     if (g === geracao) { acender(null); travar(false); }
   }
@@ -434,40 +441,22 @@ h1{font:400 clamp(30px,5vw,52px)/1.04 var(--display);margin:6px 0 0;text-wrap:ba
   $('#fila').addEventListener('click', (e) => {
     const b = e.target.closest('[data-r]'); if (!b || ocupado) return;
     const item = b.closest('.rev'); const k = item.dataset.k; const d = DOCS[k];
-    $('#fila').innerHTML = '<div class="doc ex"><b>Nothing waiting</b><span>unsure reads land here · example</span></div>';
-    if (b.dataset.r === 'ok') { lead.rota = 'approved by a person'; desenharFicha('reading', ''); arquivar(k, true); }
-    else { log('done', d.arq, 'Rejected by a person. Stays in Incoming, nothing filed.'); marcar(k, 'rejected'); desenharFicha('returned', 'no'); }
+    $('#fila').innerHTML = filaVazia();
+    if (b.dataset.r === 'ok') { // MUT: Reject
+      lead.rota = T.rotaAprovado; desenharFicha(T.estadoLendo, ''); arquivar(k, true);
+    } else { log('done', d.arq, T.logRejeitado); marcar(k, 'rejected'); desenharFicha(T.estadoDevolvido, 'no'); }
   });
 
   function iniciar() { geracao++; travar(false); resetBast(); }
   $('#recomecar').addEventListener('click', iniciar);
 
-  // ---------- steps 2 to 5: proposal version only ----------
+  // ---------- passos 2 a 5: só na versão da proposta ----------
   if ($('#p1')) {
-    const mostra = (sel, cls, rot, txt) => { $(sel).innerHTML = `<span class="carimbo ${cls}">${rot}</span><span>${txt}</span>`; };
-    const INC = {
-      a: ['ok', 'filed', 'At 97% it names, files and logs the letter by itself.'],
-      b: ['no', 'review', 'At 62% it asks a person and files nothing. The EIN is unreadable.'],
-      c: ['no', 'review', '88% is under the 90% line, so a person checks. You can move the line.'],
-    };
-    $('#inc-ex').addEventListener('click', (e) => { const b = e.target.closest('[data-c]'); if (b) mostra('#inc-res', ...INC[b.dataset.c]); });
-    mostra('#inc-res', ...INC.b);
-
-    const DUP = {
-      igual: ['no', 'blocked', 'Same content fingerprint as the filed copy. Not filed twice, and logged.'],
-      nome: ['no', 'blocked', 'A renamed copy has the same content, so it is caught anyway.'],
-      edit: ['ok', 'v2', 'The content changed, so it is filed as v2. Version 1 stays.'],
-    };
-    $('#dup-ex').addEventListener('click', (e) => { const b = e.target.closest('[data-d]'); if (b) mostra('#dup-res', ...DUP[b.dataset.d]); });
-    mostra('#dup-res', ...DUP.igual);
-
-    const FAL = {
-      drive: ['no', 'failed', 'Three retries, then the run is marked failed and you get an alert. The file stays in Incoming, nothing half-filed.'],
-      log: ['no', 'stopped', 'The log row is written first. If it fails, the file is not filed.'],
-      tudo: ['nsei', "don't know", 'Many unsure reads at once usually means a scanner change, not 40 bad files. Intake pauses and alerts you.'],
-    };
-    $('#fal-ex').addEventListener('click', (e) => { const b = e.target.closest('[data-f]'); if (b) mostra('#fal-res', ...FAL[b.dataset.f]); });
-    mostra('#fal-res', ...FAL.drive);
+    const mostra = (sel, cls, rot, txt) => { $(sel).innerHTML = `<span class="carimbo ${cls}">${esc(rot)}</span><span>${esc(txt)}</span>`; };
+    CFG.cards.forEach((c) => {
+      $(`#${c.id}-ex`).addEventListener('click', (e) => { const b = e.target.closest('[data-k]'); if (b) mostra(`#${c.id}-res`, ...CFG.resultados[c.id][b.dataset.k]); });
+      mostra(`#${c.id}-res`, ...CFG.resultados[c.id][c.inicial]);
+    });
 
     $('#par').addEventListener('click', (e) => { const li = e.target.closest('li'); if (!li) return; document.querySelectorAll('#par li').forEach((x) => x.classList.toggle('on', x === li)); });
     document.querySelector('#par li').classList.add('on');
@@ -478,20 +467,16 @@ h1{font:400 clamp(30px,5vw,52px)/1.04 var(--display);margin:6px 0 0;text-wrap:ba
     }));
 
     // botões de ação: a página não envia nada; o registro de visitas leva o data-cta pro Telegram do dono
-    const DIA = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const MES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const DIAS_LONGOS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    $('#cta-quero').addEventListener('click', () => {
-      $('#cta-res').innerHTML = '<div class="ok">Great. Reply "go" in the Upwork chat and I\'ll send the contract today.</div>';
-    });
+    const C = CFG.cta;
+    $('#cta-quero').addEventListener('click', () => { $('#cta-res').innerHTML = `<div class="ok">${esc(C.queroResposta)}</div>`; });
     $('#cta-marcar').addEventListener('click', () => {
-      const d = new Date(); const horas = ['8:00 AM', '9:00 AM', '10:00 AM']; const ops = [];
-      while (ops.length < 3) { d.setDate(d.getDate() + 1); if (d.getDay() === 0 || d.getDay() === 6) continue; ops.push({ curto: DIA[d.getDay()] + ' ' + (d.getMonth() + 1) + '/' + d.getDate() + ' ' + horas[ops.length], longo: DIAS_LONGOS[d.getDay()] + ', ' + MES[d.getMonth()] + ' ' + d.getDate() + ' at ' + horas[ops.length] }); }
-      $('#cta-res').innerHTML = '<span>Pick a time (Central time):</span><div class="chips">' + ops.map((o) => '<button class="chip" type="button" data-cta="marcar ' + o.curto + '" data-longo="' + o.longo + '">' + o.longo + '</button>').join('') + '</div>';
+      const d = new Date(); const ops = [];
+      while (ops.length < 3) { d.setDate(d.getDate() + 1); if (d.getDay() === 0 || d.getDay() === 6) continue; ops.push({ curto: C.dias[d.getDay()] + ' ' + (d.getMonth() + 1) + '/' + d.getDate() + ' ' + C.horas[ops.length], longo: C.diasLongos[d.getDay()] + ', ' + C.meses[d.getMonth()] + ' ' + d.getDate() + ' ' + C.em + ' ' + C.horas[ops.length] }); }
+      $('#cta-res').innerHTML = `<span>${esc(C.pergunta)}</span><div class="chips">` + ops.map((o) => '<button class="chip" type="button" data-cta="marcar ' + esc(o.curto) + '" data-longo="' + esc(o.longo) + '">' + esc(o.longo) + '</button>').join('') + '</div>';
     });
     $('#cta-res').addEventListener('click', (e) => {
       const b = e.target.closest('[data-longo]'); if (!b) return;
-      $('#cta-res').innerHTML = '<div class="ok">Noted: ' + b.dataset.longo + ' (Central). Confirm it in the Upwork chat and I\'ll send the invite.</div>';
+      $('#cta-res').innerHTML = `<div class="ok">${esc(fmt(C.confirma, { longo: b.dataset.longo }))}</div>`;
     });
   }
 
@@ -509,14 +494,14 @@ h1{font:400 clamp(30px,5vw,52px)/1.04 var(--display);margin:6px 0 0;text-wrap:ba
     const vivo = () => minha === rodada;
     const livre = () => !ocupado || !vivo();
     await esp(1800); if (!vivo()) return;
-    rodar('a'); await esp(300); await espera(livre, 20000); if (!vivo()) return;
+    rodar(PAPEL.auto); await esp(300); await espera(livre, 20000); if (!vivo()) return;
     await esp(2200); if (!vivo()) return;
-    rodar('b'); await esp(300); await espera(() => $('#fila [data-r="ok"]') || !vivo(), 15000); if (!vivo()) return;
+    rodar(PAPEL.revisao); await esp(300); await espera(() => $('#fila [data-r="ok"]') || !vivo(), 15000); if (!vivo()) return;
     await esp(2800); if (!vivo()) return;
     const ok = $('#fila [data-r="ok"]'); if (ok) ok.click();
     await esp(300); await espera(livre, 20000); if (!vivo()) return;
     await esp(2200); if (!vivo()) return;
-    rodar('c'); await esp(300); await espera(livre, 15000);
+    rodar(PAPEL.duplicado); await esp(300); await espera(livre, 15000);
     if (vivo()) modoExemplo = false;
   });
 })();
