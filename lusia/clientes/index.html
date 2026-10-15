@@ -20,6 +20,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Montserrat:wght@400;500;600;700;800&family=Shantell+Sans:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
+<!-- gerado por scripts/nova-demo.mjs a partir de demos/lusia/demo.json; edite a configuração, não este arquivo -->
 <style>
 /* Layout: caderno quadriculado; trilho de 4 passos; um palco por passo. No passo 1, a conversa do agente à esquerda e os bastidores (base, folha, WhatsApp, email) a encherem-se à direita. Design system claro do Lucas Digital. */
 :root{
@@ -185,7 +186,6 @@ input,select{font:600 15px var(--body);color:var(--tinta);background:var(--creme
     
   </nav>
 
-  <!-- PASSO 1 -->
   <section class="palco" id="p0">
     <div class="topo">
       <p class="fala">Fale com o agente como um cliente. Os bastidores enchem-se sozinhos.</p>
@@ -255,9 +255,19 @@ input,select{font:600 15px var(--body);color:var(--tinta);background:var(--creme
 </div>
 
 <script>
+const D = {"idioma":"pt-PT","titulo":"Demo LusIA","textos":{"etiqueta":"Assistente de atendimento","titulo":"Atende, qualifica e marca. Sozinho.","caps":"Empresa fictícia · dados de exemplo","passos":"Passos","passo1":"Experimente","fala1":"Fale com o agente como um cliente. Os bastidores enchem-se sozinhos.","verExemplo":"Ver um exemplo","clique":"(clique aqui)","recomecar":"Recomeçar","verComo":"Ver como","canalWa":"WhatsApp","canalSite":"Site","online":"online","abaChat":"Assistente","abaForm":"Formulário","placeholder":"Escreva aqui… (ex.: quanto custa?)","mensagem":"Mensagem","enviar":"Enviar","caminho":"Caminho do lead","aviso":"aviso","aRecolher":"a recolher","gravado":"gravado","esperaConversa":"à espera da conversa","escrevendo":"a escrever…","recusado":"recusado em código: nada foi gravado","podeConfirmar":"Pode confirmar?","naoPercebiNome":"Desculpe, não percebi o nome. Como se chama?","fimJaRegistado":"Já fica tudo registado. Quer recomeçar a demo?","pedidoContacto":"pedido de contacto","origemAssistente":"assistente","origemFormulario":"formulário","agora":"agora","exemplo":"exemplo","temps":{"quente":"quente","morno":"morno","frio":"frio"},"cartao":{"visita":"Visita: {visita}","semVisita":"Sem visita marcada: ligar","tel":"Tel.","novoLead":"Novo lead: {nome}","visitaAgenda":"Visita na agenda: {visita}","contactoSemVisita":"Pedido de contacto, sem visita"},"carimboOk":"gravado","carimboNo":"recusado","telSegue":"{num} segue para a folha e para o comercial.","nadaGravado":"Nada foi gravado."},"empresa":{"nome":"Limpezas Tejo","sigla":"LT","hero":"Limpeza de casas e escritórios na Grande Lisboa","heroNota":"página de entrada · versão de teste"},"agente":{"saudacao":"Olá! Sou a assistente da Limpezas Tejo. Posso esclarecer dúvidas ou marcar uma visita de orçamento gratuita. Em que posso ajudar?","menu":["Quanto custa?","Em que zonas trabalham?","Quero marcar uma visita"],"gatilhoMarcar":"marcar|visita|agendar|reuni|contratar|quero (uma )?limpeza","gatilhoHumano":"pessoa|humano|falar com|ligar|telefonar","introQualificacao":"Com todo o gosto.","faq":[["pre[cç]o|custa|valor|quanto|or[cç]amento|caro","Uma limpeza regular de um T2 costuma ficar entre 45 € e 60 €, conforme a área e a frequência. O valor certo sai na visita de orçamento, que é gratuita."],["zona|onde|lisboa|oeiras|cascais|almada|amadora|sintra|loures|seixal","Trabalhamos em Lisboa, Oeiras, Cascais, Amadora e Almada."],["hor[aá]rio|que horas|s[aá]bado|domingo|fim de semana|quando","Fazemos limpezas de segunda a sábado, das 8h às 19h."],["produto|aspirador|equipamento|material|detergente","Levamos os produtos e o equipamento. Se preferir que usemos os seus, é só dizer."],["fatura|factura|nif|recibo|seguro","Sim, passamos fatura com NIF e temos seguro de responsabilidade civil."]],"aposFaq":{"texto":"Quer marcar a visita de orçamento?","opcoes":["Quero marcar uma visita","Tenho outra dúvida"]},"outraDuvidaGatilho":"outra d[uú]vida","outraDuvida":"Diga, por favor.","naoSei":{"texto":"Essa não sei responder com certeza, e prefiro não inventar. Quer que um colega lhe ligue?","opcoes":["Sim, liguem-me","Não, obrigado"],"sim":"^s"},"humanoSim":"Claro. Como se chama?","humanoNao":"Sem problema. Posso ajudar com mais alguma coisa?","humanoDireto":"Claro, um colega liga-lhe. Como se chama?"},"qualificacao":[{"campo":"servico","pergunta":"Que tipo de limpeza procura?","opcoes":["Casa","Escritório","Pós-obra"]},{"campo":"tamanho","perguntaPor":{"campo":"servico","mapa":{"Escritório":"Qual é a área do escritório?"},"padrao":"Qual é a tipologia da casa?"},"opcoesPor":{"campo":"servico","mapa":{"Escritório":["Até 100 m²","100 a 300 m²","Mais de 300 m²"]},"padrao":["T0 ou T1","T2 ou T3","T4 ou maior"]}},{"campo":"freq","pergunta":"E com que frequência?","opcoes":["Só uma vez","Semanal","Quinzenal"],"minusculas":true}],"zona":{"campo":"zona","pergunta":"Em que zona fica?","dentro":["Lisboa","Oeiras","Cascais","Amadora","Almada"],"foraOpcao":"Outra zona","foraRotulo":"fora da área","foraTexto":"Ainda não trabalhamos aí. Posso deixar o seu contacto registado para quando chegarmos? Como se chama?","dentroTexto":"Perfeito, trabalhamos aí. Para marcar a visita, como se chama?"},"temperatura":{"campo":"freq","quentes":["semanal","quinzenal"]},"nome":{"pergunta":"Para marcar a visita, como se chama?","agradece":"Obrigada, {nome}. E qual é o seu telemóvel? O nosso comercial usa-o para confirmar."},"telefone":{"pais":"pt","erroFixo":"É um fixo. O aviso segue por WhatsApp, por isso preciso do telemóvel.","erroInvalido":"Não parece um telemóvel português (9 dígitos, começa por 91, 92, 93 ou 96)."},"datas":{"ordem":"dd/mm","dias":["dom","seg","ter","qua","qui","sex","sáb"],"diasLongos":["domingo","segunda","terça","quarta","quinta","sexta","sábado"],"formato":"{dia}, {data} às {hora}"},"vagas":{"pergunta":"Tenho estas vagas para a visita de orçamento:","escolha":"Escolha uma das vagas, por favor:","horas":["10:00","14:30","17:00"],"confirma":"Está marcado: {vaga}. O Rui, da nossa equipa, liga-lhe na véspera para confirmar. Obrigada, {nome}!"},"fimHumano":"Combinado. Um colega liga-lhe ainda hoje. Obrigada!","fimFora":"Ficou registado. Avisamos assim que chegarmos à sua zona. Obrigada!","formulario":{"nome":{"rotulo":"Nome","valor":"Joana Ferreira"},"tel":{"rotulo":"Telemóvel","valor":"936 112 448"},"tipo":{"rotulo":"O que precisa?","opcoes":["Limpeza de casa","Limpeza de escritório","Limpeza pós-obra"]},"botao":"Pedir contacto","erroNome":"Falta o nome."},"bastidores":{"caminho":["Voiceflow","Make.com","Supabase","Google Sheets","WhatsApp e email"],"paineis":{"ficha":"Ficha do lead","folha":"Folha de leads","folhaFerramenta":"Google Sheets","wa":"WhatsApp do comercial","mail":"Email e agenda"},"ficha":{"nome":"nome","tel":"telemóvel","servico":"serviço","tamanho":"tamanho","freq":"frequência","zona":"zona","temp":"lead","visita":"visita","origem":"origem"},"colunas":[{"campo":"data","rotulo":"Data"},{"campo":"nome","rotulo":"Nome"},{"campo":"tel","rotulo":"Telemóvel"},{"campo":"pedido","rotulo":"Pedido"},{"campo":"lead","rotulo":"Lead"},{"campo":"visita","rotulo":"Visita"}],"exemplos":[["13/10","Rui Matos","913 554 210","Escritório · semanal · Oeiras","quente","ter, 14/10 às 10:00"],["14/10","Ana Costa","962 870 031","Casa · T2 ou T3 · só uma vez","morno","—"]],"exemploCartao":{"temp":"quente","nome":"Rui Matos","pedido":"Escritório · semanal · Oeiras","visita":"ter, 14/10 às 10:00","tel":"913 554 210"}},"roteiro":["Quanto custa?","Quero marcar uma visita","Casa","T2 ou T3","Semanal","Oeiras","Maria Silva","912 345 678"],"passos":{"riscos":{"rotulo":"Onde costuma travar","fala":"Os dois pontos que atrasam este projeto, já resolvidos.","cards":[{"tipo":"alternar","titulo":"WhatsApp oficial","texto":"A Meta pode demorar dias a verificar a empresa. A demo não fica à espera.","padrao":1,"opcoes":[{"rotulo":"Esperar pela Meta","classe":"duv","left":"34%","width":"66%","texto":"quando a Meta aprovar?"},{"rotulo":"Número de teste da Meta","classe":"ok","left":"0","width":"100%","texto":"até 5 telemóveis: o seu e 3 clientes"}],"semanas":["Semana 1","Semana 2","Semana 3"],"linhas":[{"rotulo":"Site","classe":"ok","left":"0","width":"100%","texto":"agente no site desde a semana 1"},{"rotulo":"WhatsApp","variavel":true}]},{"tipo":"testar-telefone","titulo":"Dado errado não entra","texto":"O telemóvel é conferido em código antes de gravar.","exemplos":["912 345 678","+351 931 234 567","21 345 6789","91234"],"inicial":"21 345 6789","placeholder":"Ou escreva um número","botao":"Testar"}]},"construi":{"rotulo":"Já construí isto","fala":"Já construí este agente, em português, para uma empresa de limpezas real.","numeros":[{"n":"125","rotulo":"execuções reais medidas"},{"n":"812","rotulo":"registos gravados sem erro"},{"n":"95","rotulo":"mensagens de grupo seguradas"}],"pares":[["Responder dúvidas","Respondia clientes no WhatsApp, 24 horas"],["Qualificar o lead","Classificava o pedido em código antes do modelo responder"],["Recolher dados e fechar","Orçava por foto e fechava o serviço"],["Avisar uma pessoa","Chamava um humano quando o cliente ficava ambíguo"],["Não inventar respostas","Auditor conferia cada resposta antes de sair"]],"dica":"Clique numa linha: à esquerda o seu pedido, à direita o que já funcionou."},"plano":{"rotulo":"Plano e preço","fala":"Três entregas. Cada uma paga depois de a ver a funcionar.","comoConfirma":"Como confirma:","entregas":[{"titulo":"Agente no site + página em português","valor":"US$300","confirma":"abre a página, conversa com o agente, marca uma visita e vê o lead na folha."},{"titulo":"Make.com, Supabase, avisos e agenda","valor":"US$300","confirma":"marca uma visita de teste e o comercial recebe WhatsApp e email em menos de um minuto."},{"titulo":"WhatsApp, guia e vídeo de 10 minutos","valor":"US$200","confirma":"muda sozinho uma resposta do agente, seguindo o guia, sem me chamar."}],"totalRotulo":"Preço fechado · 2 a 3 semanas","total":"US$800","selos":["contas em seu nome","se passar das horas, é por minha conta","tudo em português"],"cta":{"quero":"Quero avançar","queroResposta":"Combinado. Escreva «avançar» na conversa do Upwork e envio hoje o contrato com as três entregas.","marcar":"Marcar 15 minutos","marcarPergunta":"Escolha um horário (hora de Lisboa):","horas":["14:00","16:00","18:00"],"marcarConfirma":"Fica anotado: {horario} (Lisboa). Confirme na conversa do Upwork e envio o convite.","linkClientes":"Versão sem preço para os seus clientes →"}}},"rodape":"Feito por Lucas para o projeto LusIA · as respostas do agente seguem regras escritas, sem IA paga nesta página","testes":{"temperaturaEsperada":"quente","caminho":["Quero marcar uma visita","Casa","T0 ou T1","Semanal","Lisboa","Pedro Lopes"],"telInvalido":"21 345 6789","telValido":"931 234 567","perguntaDesconhecida":"vocês limpam piscinas?"}};
+// Motor da demo de proposta (molde da skill demo-interativa-proposta, 15/10/2026).
+// Lê tudo de `D` (a configuração da demo, injetada antes por scripts/nova-demo.mjs).
+// Nada aqui é específico de um cliente: textos, perguntas, regras e bastidores
+// vêm de D. Comportamento herdado da demo LusIA, onde cada parte foi pedida e
+// conferida pelo dono (abre parada, exemplo em ritmo de leitura, holofote,
+// avisos em linhas curtas, moldura de celular, botões de ação).
 (() => {
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const fmt = (t, v = {}) => String(t).replace(/\{(\w+)\}/g, (_, k) => (v[k] ?? ''));
+  const T = D.textos; const A = D.agente;
+  const re = (s) => new RegExp(s, 'i');
 
   // ---------- passos ----------
   const passos = [...document.querySelectorAll('.palco')];
@@ -268,69 +278,90 @@ input,select{font:600 15px var(--body);color:var(--tinta);background:var(--creme
     d.setAttribute('aria-current', 'step');
   }));
 
-  // ---------- telemóvel ----------
-  function conferirTel(s) {
-    const d = String(s).replace(/[\s.\-()]/g, '').replace(/^(\+|00)351/, '');
-    if (/^9[1236]\d{7}$/.test(d)) return { ok: true, num: d.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') };
-    if (/^2\d{8}$/.test(d)) return { ok: false, motivo: 'É um fixo. O aviso segue por WhatsApp, por isso preciso do telemóvel.' };
-    return { ok: false, motivo: 'Não parece um telemóvel português (9 dígitos, começa por 91, 92, 93 ou 96).' };
-  }
+  // ---------- telefone: conferido em código, por país ----------
+  const TEL = {
+    pt: (d) => {
+      d = d.replace(/^(\+|00)351/, '');
+      if (/^9[1236]\d{7}$/.test(d)) return { ok: true, num: d.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') };
+      if (/^2\d{8}$/.test(d)) return { ok: false, motivo: D.telefone.erroFixo };
+      return { ok: false, motivo: D.telefone.erroInvalido };
+    },
+    us: (d) => {
+      d = d.replace(/^(\+|00)?1(?=\d{10}$)/, '');
+      if (/^[2-9]\d{2}[2-9]\d{6}$/.test(d)) return { ok: true, num: d.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3') };
+      return { ok: false, motivo: D.telefone.erroInvalido };
+    },
+    uk: (d) => {
+      d = d.replace(/^(\+|00)44/, '0');
+      if (/^07\d{9}$/.test(d)) return { ok: true, num: d.replace(/(\d{5})(\d{6})/, '$1 $2') };
+      if (/^0[12]\d{8,9}$/.test(d)) return { ok: false, motivo: D.telefone.erroFixo || D.telefone.erroInvalido };
+      return { ok: false, motivo: D.telefone.erroInvalido };
+    },
+    au: (d) => {
+      d = d.replace(/^(\+|00)61/, '0');
+      if (/^04\d{8}$/.test(d)) return { ok: true, num: d.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3') };
+      return { ok: false, motivo: D.telefone.erroInvalido };
+    },
+    br: (d) => {
+      d = d.replace(/^(\+|00)55/, '');
+      if (/^\d{2}9\d{8}$/.test(d)) return { ok: true, num: d.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3') };
+      return { ok: false, motivo: D.telefone.erroInvalido };
+    },
+  };
+  const conferirTel = (s) => TEL[D.telefone.pais](String(s).replace(/[\s.\-()]/g, ''));
 
-  // ---------- datas de visita ----------
-  const DIAS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
+  // ---------- datas ----------
   const p2 = (n) => String(n).padStart(2, '0');
-  function vagas() {
-    const out = []; const d = new Date(); const horas = ['10:00', '14:30', '17:00'];
-    while (out.length < 3) {
+  const diaMes = (d) => (D.datas.ordem === 'mm/dd' ? `${p2(d.getMonth() + 1)}/${p2(d.getDate())}` : `${p2(d.getDate())}/${p2(d.getMonth() + 1)}`);
+  function proximosUteis(horas, curto) {
+    const out = []; const d = new Date();
+    while (out.length < horas.length) {
       d.setDate(d.getDate() + 1);
       if (d.getDay() === 0 || d.getDay() === 6) continue;
-      out.push(`${DIAS[d.getDay()]}, ${p2(d.getDate())}/${p2(d.getMonth() + 1)} às ${horas[out.length]}`);
+      out.push({ d: new Date(d), hora: horas[out.length], dia: (curto ? D.datas.dias : D.datas.diasLongos)[d.getDay()] });
     }
     return out;
   }
-  const hojeTxt = () => { const d = new Date(); return `${p2(d.getDate())}/${p2(d.getMonth() + 1)}`; };
+  const vagas = () => proximosUteis(D.vagas.horas, true).map((v) => fmt(D.datas.formato, { dia: v.dia, data: diaMes(v.d), hora: v.hora }));
+  const hojeTxt = () => diaMes(new Date());
 
   // ---------- bastidores ----------
-  const EXEMPLOS = [
-    { data: '13/10', nome: 'Rui Matos', tel: '913 554 210', pedido: 'Escritório, semanal', lead: 'quente', visita: 'ter 10:00' },
-    { data: '14/10', nome: 'Ana Costa', tel: '962 870 031', pedido: 'Casa T2, uma vez', lead: 'morno', visita: '—' },
-  ];
-  function resetBast() {
-    $('#linhas').innerHTML = EXEMPLOS.map((r) => `<tr class="ex"><td>${r.data}</td><td>${r.nome}</td><td>${r.tel}</td><td>${r.pedido}</td><td>${r.lead}</td><td>${r.visita}</td></tr>`).join('');
-    const rui = { temp: 'quente', nome: 'Rui Matos', pedido: 'Escritório · semanal · Oeiras', visita: 'ter, 14/10 às 10:00', tel: '913 554 210' };
-    $('#was').innerHTML = cartaoWa(rui, 'exemplo', true);
-    $('#mails').innerHTML = cartaoMail(rui, 'exemplo', true);
-    for (let i = 0; i < 5; i++) $('#fx' + i).classList.remove('on');
-    $('#fx0').classList.add('on');
-    lead = {}; desenharFicha('a recolher', '');
-  }
-  const ROT = { nome: 'nome', tel: 'telemóvel', servico: 'serviço', tamanho: 'tamanho', freq: 'frequência', zona: 'zona', temp: 'lead', visita: 'visita', origem: 'origem' };
+  const B = D.bastidores;
+  const nFx = B.caminho.length;
   let lead = {};
-  // 15/10: o aviso era uma frase corrida e quebrava no meio do telefone; agora
-  // cada informação tem a sua linha (selo, nome, pedido, visita, telefone).
   const resumo = () => ({
     temp: lead.temp, nome: lead.nome, tel: lead.tel, visita: lead.visita,
-    pedido: [lead.servico, lead.tamanho, lead.freq, lead.zona].filter(Boolean).join(' · '),
+    pedido: [...D.qualificacao.map((q) => q.campo), D.zona && D.zona.campo].filter(Boolean).map((c) => lead[c]).filter(Boolean).join(' · ') || lead.servico || '—',
   });
+  const tempTxt = (t) => (T.temps && T.temps[t]) || t;
   function cartaoWa(o, quando, ex) {
-    return `<div class="wa${ex ? ' ex' : ''}"><div class="cab"><span class="temp ${o.temp}">${o.temp}</span>${esc(o.nome)}</div>`
-      + `<div>${esc(o.pedido)}</div><div>${o.visita ? 'Visita: ' + esc(o.visita) : 'Sem visita marcada: ligar'}</div>`
-      + `<div>Tel. <span class="tel">${esc(o.tel)}</span></div><small>${quando}</small></div>`;
+    return `<div class="wa${ex ? ' ex' : ''}"><div class="cab"><span class="temp ${o.temp}">${esc(tempTxt(o.temp))}</span>${esc(o.nome)}</div>`
+      + `<div>${esc(o.pedido)}</div><div>${o.visita ? esc(fmt(T.cartao.visita, { visita: o.visita })) : esc(T.cartao.semVisita)}</div>`
+      + `<div>${esc(T.cartao.tel)} <span class="tel">${esc(o.tel)}</span></div><small>${esc(quando)}</small></div>`;
   }
   function cartaoMail(o, quando, ex) {
-    return `<div class="mail${ex ? ' ex' : ''}"><div class="cab">Novo lead: ${esc(o.nome)}</div>`
-      + `<div>${o.visita ? 'Visita na agenda: ' + esc(o.visita) : 'Pedido de contacto, sem visita'}</div><small>${quando}</small></div>`;
+    return `<div class="mail${ex ? ' ex' : ''}"><div class="cab">${esc(fmt(T.cartao.novoLead, { nome: o.nome }))}</div>`
+      + `<div>${o.visita ? esc(fmt(T.cartao.visitaAgenda, { visita: o.visita })) : esc(T.cartao.contactoSemVisita)}</div><small>${esc(quando)}</small></div>`;
+  }
+  function resetBast() {
+    $('#linhas').innerHTML = B.exemplos.map((r) => `<tr class="ex">${r.map((c) => `<td>${esc(c)}</td>`).join('')}</tr>`).join('');
+    $('#was').innerHTML = cartaoWa(B.exemploCartao, T.exemplo, true);
+    $('#mails').innerHTML = cartaoMail(B.exemploCartao, T.exemplo, true);
+    for (let i = 0; i < nFx; i++) $('#fx' + i).classList.remove('on', 'agora');
+    $('#fx0').classList.add('on');
+    lead = {}; fichaAnt = []; desenharFicha(T.aRecolher, '');
   }
   let fichaAnt = [];
   function desenharFicha(estado, cls) {
-    const ks = Object.keys(ROT).filter((k) => lead[k]);
+    const ks = Object.keys(B.ficha).filter((k) => lead[k]);
     const novos = ks.filter((k) => !fichaAnt.includes(k));
-    $('#ficha').innerHTML = ks.length ? ks.map((k) => { const a = novos.includes(k) ? ' class="acende"' : ''; return `<dt${a}>${ROT[k]}</dt><dd${a}>${esc(lead[k])}</dd>`; }).join('') : '<dt>—</dt><dd>à espera da conversa</dd>';
+    $('#ficha').innerHTML = ks.length
+      ? ks.map((k) => { const a = novos.includes(k) ? ' class="acende"' : ''; return `<dt${a}>${esc(B.ficha[k])}</dt><dd${a}>${esc(k === 'temp' ? tempTxt(lead[k]) : lead[k])}</dd>`; }).join('')
+      : `<dt>—</dt><dd>${esc(T.esperaConversa)}</dd>`;
     const e = $('#estado'); e.textContent = estado; e.className = 'estado ' + cls;
     if (novos.length) holofote('#pn-base', ritmo().bastidor * 1.6);
     fichaAnt = ks;
   }
-  // acende um painel por `ms` e esmaece os outros enquanto ele está aceso
   const timers = new Map();
   function holofote(sel, ms) {
     const el = $(sel); const bast = el.closest('.bast');
@@ -346,34 +377,25 @@ input,select{font:600 15px var(--body);color:var(--tinta);background:var(--creme
     if (fx) $(fx).classList.add('on', 'agora');
   }
   function gravar() {
-    const pedido = [lead.servico, lead.tamanho, lead.freq].filter(Boolean).join(', ') || lead.servico || '—';
-    const visitaCurta = lead.visita ? lead.visita.replace(', ', ' ').replace(' às ', ' ') : '—';
-    const passos = [
-      () => { acender('#fx1'); },
-      () => { acender('#fx2'); desenharFicha('gravado', 'ok'); holofote('#pn-base', fica); },
-      () => { acender('#fx3'); $('#linhas').insertAdjacentHTML('beforeend', `<tr class="novo"><td>${hojeTxt()}</td><td>${esc(lead.nome)}</td><td>${esc(lead.tel)}</td><td>${esc(pedido)}</td><td>${lead.temp}</td><td>${esc(visitaCurta)}</td></tr>`); holofote('#pn-folha', fica); },
-      () => {
-        acender('#fx4');
-        $('#was').insertAdjacentHTML('afterbegin', cartaoWa(resumo(), 'agora'));
-        holofote('#pn-wa', fica);
-      },
-      () => {
-        $('#mails').insertAdjacentHTML('afterbegin', cartaoMail(resumo(), 'agora'));
-        holofote('#pn-mail', fica * 2); setTimeout(() => acender(null), fica * 2);
-      },
+    const r = resumo();
+    const visitaCurta = lead.visita || '—';
+    const linha = B.colunas.map((c) => ({ data: hojeTxt(), nome: lead.nome, tel: lead.tel, pedido: r.pedido, lead: tempTxt(lead.temp), visita: visitaCurta }[c.campo] ?? lead[c.campo] ?? '—'));
+    const fica = ritmo().bastidor;
+    const etapas = [
+      () => acender('#fx1'),
+      () => { acender('#fx2'); desenharFicha(T.gravado, 'ok'); holofote('#pn-base', fica); },
+      () => { acender('#fx3'); $('#linhas').insertAdjacentHTML('beforeend', `<tr class="novo">${linha.map((c) => `<td>${esc(c)}</td>`).join('')}</tr>`); holofote('#pn-folha', fica); },
+      () => { acender('#fx4'); $('#was').insertAdjacentHTML('afterbegin', cartaoWa(r, T.agora)); holofote('#pn-wa', fica); },
+      () => { $('#mails').insertAdjacentHTML('afterbegin', cartaoMail(r, T.agora)); holofote('#pn-mail', fica * 2); setTimeout(() => acender(null), fica * 2); },
     ];
-    const passo = ritmo().bastidor; const fica = passo;
-    passos.forEach((f, i) => setTimeout(f, passo * (i + 1)));
+    etapas.forEach((f, i) => setTimeout(f, fica * (i + 1)));
   }
 
   // ---------- conversa ----------
   const chat = $('#chat');
-  // 15/10: o exemplo corria rápido demais pra acompanhar (pedido do dono). No
-  // exemplo cada fala espera ~3 s e cada aviso nos bastidores ~1 s; quem digita
-  // à mão recebe resposta em meio segundo.
   let modoExemplo = false;
   const ritmo = () => (modoExemplo ? { resposta: 1400, bastidor: 1100, turno: 3200 } : { resposta: 550, bastidor: 700, turno: 0 });
-  let etapa = 'livre'; let motivo = '';
+  let etapa = 'livre'; let motivo = ''; let iq = 0;
   function diz(texto, opcoes) {
     const m = document.createElement('div'); m.className = 'msg ag'; m.textContent = texto; chat.appendChild(m);
     if (opcoes && opcoes.length) {
@@ -389,97 +411,104 @@ input,select{font:600 15px var(--body);color:var(--tinta);background:var(--creme
     chat.scrollTop = chat.scrollHeight;
   }
   function sistema(texto) { const m = document.createElement('div'); m.className = 'msg sis'; m.textContent = texto; chat.appendChild(m); }
-
-  const FAQ = [
-    [/pre[cç]o|custa|valor|quanto|or[cç]amento|caro/i, 'Uma limpeza regular de um T2 costuma ficar entre 45 € e 60 €, conforme a área e a frequência. O valor certo sai na visita de orçamento, que é gratuita.'],
-    [/zona|onde|lisboa|oeiras|cascais|almada|amadora|sintra|loures|seixal/i, 'Trabalhamos em Lisboa, Oeiras, Cascais, Amadora e Almada.'],
-    [/hor[aá]rio|que horas|s[aá]bado|domingo|fim de semana|quando/i, 'Fazemos limpezas de segunda a sábado, das 8h às 19h.'],
-    [/produto|aspirador|equipamento|material|detergente/i, 'Levamos os produtos e o equipamento. Se preferir que usemos os seus, é só dizer.'],
-    [/fatura|factura|nif|recibo|seguro/i, 'Sim, passamos fatura com NIF e temos seguro de responsabilidade civil.'],
-  ];
-  const MENU = ['Quanto custa?', 'Em que zonas trabalham?', 'Quero marcar uma visita'];
+  const FAQ = A.faq.map(([p, r]) => [re(p), r]);
 
   function iniciar() {
-    chat.innerHTML = ''; etapa = 'livre'; motivo = ''; resetBast();
-    diz('Olá! Sou a assistente da Limpezas Tejo. Posso esclarecer dúvidas ou marcar uma visita de orçamento gratuita. Em que posso ajudar?', MENU);
+    chat.innerHTML = ''; etapa = 'livre'; motivo = ''; iq = 0; resetBast();
+    diz(A.saudacao, A.menu);
   }
-  function perguntarServico() { etapa = 'servico'; diz('Com todo o gosto. Que tipo de limpeza procura?', ['Casa', 'Escritório', 'Pós-obra']); }
+  // a pergunta e as opções de cada etapa podem depender da resposta anterior
+  const deQ = (q, chave) => {
+    const por = q[chave + 'Por'];
+    if (por) { const v = lead[por.campo]; return (por.mapa && por.mapa[v]) || por.padrao; }
+    return q[chave];
+  };
+  function perguntarQ(intro) {
+    const q = D.qualificacao[iq]; etapa = 'q';
+    diz((intro ? intro + ' ' : '') + deQ(q, 'pergunta'), deQ(q, 'opcoes'));
+  }
+  function iniciarQualificacao() { iq = 0; perguntarQ(A.introQualificacao); }
+  function depoisDaQualificacao() {
+    if (D.zona) { etapa = 'zona'; diz(D.zona.pergunta, [...D.zona.dentro, D.zona.foraOpcao]); return; }
+    lead.temp = temperatura(); etapa = 'nome'; diz(D.nome.pergunta);
+  }
+  function temperatura() {
+    const t = D.temperatura; if (!t) return 'morno';
+    return t.quentes.map((x) => x.toLowerCase()).includes(String(lead[t.campo] || '').toLowerCase()) ? 'quente' : 'morno';
+  }
 
   function responder(t) {
     t = t.trim(); if (!t) return; eu(t);
-    const e = document.createElement('div'); e.className = 'msg ag escrevendo'; e.textContent = 'a escrever…'; chat.appendChild(e); chat.scrollTop = chat.scrollHeight;
+    const e = document.createElement('div'); e.className = 'msg ag escrevendo'; e.textContent = T.escrevendo; chat.appendChild(e); chat.scrollTop = chat.scrollHeight;
     setTimeout(() => { e.remove(); processar(t); }, ritmo().resposta);
   }
   function processar(t) {
-    if (etapa === 'fim') { if (/recome/i.test(t)) iniciar(); else diz('Já fica tudo registado. Quer recomeçar a demo?', ['Recomeçar']); return; }
+    if (etapa === 'fim') { if (t.toLowerCase() === T.recomecar.toLowerCase()) iniciar(); else diz(T.fimJaRegistado, [T.recomecar]); return; }
     if (etapa === 'nome') {
-      if (!/[A-Za-zÀ-ÿ]{2,}/.test(t)) { diz('Desculpe, não percebi o nome. Como se chama?'); return; }
-      lead.nome = t.replace(/\b\p{L}/gu, (c) => c.toUpperCase()); desenharFicha('a recolher', '');
-      etapa = 'tel'; diz(`Obrigada, ${lead.nome.split(' ')[0]}. E qual é o seu telemóvel? O nosso comercial usa-o para confirmar.`); return;
+      if (!/[A-Za-zÀ-ÿ]{2,}/.test(t)) { diz(T.naoPercebiNome); return; }
+      lead.nome = t.replace(/\b\p{L}/gu, (c) => c.toUpperCase()); desenharFicha(T.aRecolher, '');
+      etapa = 'tel'; diz(fmt(D.nome.agradece, { nome: lead.nome.split(' ')[0] })); return;
     }
     if (etapa === 'tel') {
       const r = conferirTel(t);
-      if (!r.ok) { sistema('recusado em código: nada foi gravado'); diz(r.motivo + ' Pode confirmar?'); return; }
-      lead.tel = r.num; desenharFicha('a recolher', '');
+      if (!r.ok) { sistema(T.recusado); diz(r.motivo + ' ' + T.podeConfirmar); return; }
+      lead.tel = r.num; desenharFicha(T.aRecolher, '');
       if (motivo === 'humano' || motivo === 'fora') {
-        lead.temp = motivo === 'fora' ? 'frio' : 'morno'; lead.origem = 'assistente';
-        etapa = 'fim';
-        diz(motivo === 'fora' ? 'Ficou registado. Avisamos assim que chegarmos à sua zona. Obrigada!' : 'Combinado. Um colega liga-lhe ainda hoje. Obrigada!', ['Recomeçar']);
+        lead.temp = motivo === 'fora' ? 'frio' : 'morno'; lead.origem = T.origemAssistente; etapa = 'fim';
+        diz(motivo === 'fora' ? D.fimFora : D.fimHumano, [T.recomecar]);
         gravar(); return;
       }
-      etapa = 'slot'; diz('Tenho estas vagas para a visita de orçamento:', vagas()); return;
+      etapa = 'slot'; diz(D.vagas.pergunta, vagas()); return;
     }
     if (etapa === 'slot') {
       const v = vagas().find((x) => x === t);
-      if (!v) { diz('Escolha uma das vagas, por favor:', vagas()); return; }
-      lead.visita = v; lead.origem = 'assistente'; etapa = 'fim';
-      diz(`Está marcado: ${v}. O Rui, da nossa equipa, liga-lhe na véspera para confirmar. Obrigada, ${lead.nome.split(' ')[0]}!`, ['Recomeçar']);
+      if (!v) { diz(D.vagas.escolha, vagas()); return; }
+      lead.visita = v; lead.origem = T.origemAssistente; etapa = 'fim';
+      diz(fmt(D.vagas.confirma, { vaga: v, nome: lead.nome.split(' ')[0] }), [T.recomecar]);
       gravar(); return;
     }
-    if (etapa === 'servico') {
-      const s = ['Casa', 'Escritório', 'Pós-obra'].find((x) => x.toLowerCase() === t.toLowerCase());
-      if (!s) return faqOuNada(t, () => perguntarServico());
-      lead.servico = s; desenharFicha('a recolher', ''); etapa = 'tamanho';
-      diz(s === 'Escritório' ? 'Qual é a área do escritório?' : 'Qual é a tipologia da casa?', s === 'Escritório' ? ['Até 100 m²', '100 a 300 m²', 'Mais de 300 m²'] : ['T0 ou T1', 'T2 ou T3', 'T4 ou maior']);
+    if (etapa === 'q') {
+      const q = D.qualificacao[iq]; const ops = deQ(q, 'opcoes');
+      const achou = ops.find((x) => x.toLowerCase() === t.toLowerCase());
+      if (!achou && iq === 0) return faqOuNada(t, () => perguntarQ());
+      lead[q.campo] = q.minusculas ? (achou || t).toLowerCase() : (achou || t); desenharFicha(T.aRecolher, '');
+      iq += 1;
+      if (iq < D.qualificacao.length) perguntarQ(); else depoisDaQualificacao();
       return;
     }
-    if (etapa === 'tamanho') { lead.tamanho = t; desenharFicha('a recolher', ''); etapa = 'freq'; diz('E com que frequência?', ['Só uma vez', 'Semanal', 'Quinzenal']); return; }
-    if (etapa === 'freq') { lead.freq = t.toLowerCase(); desenharFicha('a recolher', ''); etapa = 'zona'; diz('Em que zona fica?', ['Lisboa', 'Oeiras', 'Cascais', 'Amadora', 'Almada', 'Outra zona']); return; }
     if (etapa === 'zona') {
-      const dentro = ['Lisboa', 'Oeiras', 'Cascais', 'Amadora', 'Almada'].find((x) => x.toLowerCase() === t.toLowerCase());
+      const Z = D.zona; const dentro = Z.dentro.find((x) => x.toLowerCase() === t.toLowerCase());
       if (!dentro) {
-        lead.zona = t === 'Outra zona' ? 'fora da área' : t; lead.temp = 'frio'; motivo = 'fora'; desenharFicha('a recolher', '');
-        etapa = 'nome'; diz('Ainda não trabalhamos aí. Posso deixar o seu contacto registado para quando chegarmos? Como se chama?'); return;
+        lead[Z.campo] = t === Z.foraOpcao ? Z.foraRotulo : t; lead.temp = 'frio'; motivo = 'fora'; desenharFicha(T.aRecolher, '');
+        etapa = 'nome'; diz(Z.foraTexto); return;
       }
-      lead.zona = dentro; lead.temp = /semanal|quinzenal/.test(lead.freq) ? 'quente' : 'morno'; desenharFicha('a recolher', '');
-      etapa = 'nome'; diz('Perfeito, trabalhamos aí. Para marcar a visita, como se chama?'); return;
+      lead[Z.campo] = dentro; lead.temp = temperatura(); desenharFicha(T.aRecolher, '');
+      etapa = 'nome'; diz(Z.dentroTexto); return;
     }
     if (etapa === 'humano?') {
-      if (/^s/i.test(t)) { motivo = 'humano'; lead.servico = 'pedido de contacto'; etapa = 'nome'; diz('Claro. Como se chama?'); return; }
-      etapa = 'livre'; diz('Sem problema. Posso ajudar com mais alguma coisa?', MENU); return;
+      if (re(A.naoSei.sim).test(t)) { motivo = 'humano'; lead.servico = T.pedidoContacto; etapa = 'nome'; diz(A.humanoSim); return; }
+      etapa = 'livre'; diz(A.humanoNao, A.menu); return;
     }
     // livre
-    if (/marcar|visita|agendar|reuni|contratar|quero (uma )?limpeza/i.test(t)) return perguntarServico();
-    if (/pessoa|humano|falar com|ligar|telefonar/i.test(t)) { motivo = 'humano'; lead.servico = 'pedido de contacto'; etapa = 'nome'; diz('Claro, um colega liga-lhe. Como se chama?'); return; }
-    faqOuNada(t, () => diz('Quer marcar a visita de orçamento?', ['Quero marcar uma visita', 'Tenho outra dúvida']));
+    if (re(A.gatilhoMarcar).test(t)) return iniciarQualificacao();
+    if (re(A.gatilhoHumano).test(t)) { motivo = 'humano'; lead.servico = T.pedidoContacto; etapa = 'nome'; diz(A.humanoDireto); return; }
+    faqOuNada(t, () => diz(A.aposFaq.texto, A.aposFaq.opcoes));
   }
   function faqOuNada(t, depois) {
-    const f = FAQ.find(([re]) => re.test(t));
+    const f = FAQ.find(([r]) => r.test(t));
     if (f) { diz(f[1]); depois(); return; }
-    if (/outra d[uú]vida/i.test(t)) { diz('Diga, por favor.'); return; }
+    if (re(A.outraDuvidaGatilho).test(t)) { diz(A.outraDuvida); return; }
     etapa = 'humano?';
-    diz('Essa não sei responder com certeza, e prefiro não inventar. Quer que um colega lhe ligue?', ['Sim, liguem-me', 'Não, obrigado']);
+    diz(A.naoSei.texto, A.naoSei.opcoes);
   }
 
   $('#f-chat').addEventListener('submit', (e) => { e.preventDefault(); const v = $('#txt').value; $('#txt').value = ''; responder(v); });
   $('#recomecar').addEventListener('click', iniciar);
 
-  // abas
   function aba(chatOn) {
     $('#aba-chat').setAttribute('aria-selected', chatOn); $('#aba-form').setAttribute('aria-selected', !chatOn);
     $('#vista-chat').hidden = !chatOn; $('#vista-form').hidden = chatOn;
   }
-  // chave WhatsApp/Site: só muda a pele; a conversa e os bastidores são os mesmos
   function canal(wa) {
     $('#site').classList.toggle('pele-wa', wa); $('#c-wa').setAttribute('aria-pressed', wa); $('#c-site').setAttribute('aria-pressed', !wa);
     if (wa) aba(true);
@@ -491,66 +520,63 @@ input,select{font:600 15px var(--body);color:var(--tinta);background:var(--creme
   $('#vista-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const nome = $('#ff-nome').value.trim(); const r = conferirTel($('#ff-tel').value);
-    if (nome.length < 2) { $('#ff-erro').textContent = 'Falta o nome.'; return; }
+    if (nome.length < 2) { $('#ff-erro').textContent = D.formulario.erroNome; return; }
     if (!r.ok) { $('#ff-erro').textContent = r.motivo; return; }
     $('#ff-erro').textContent = '';
     resetBast();
-    lead = { nome, tel: r.num, servico: $('#ff-tipo').value.replace('Limpeza de ', '').replace(/^./, (c) => c.toUpperCase()), temp: 'morno', origem: 'formulário' };
-    desenharFicha('a recolher', ''); gravar();
+    lead = { nome, tel: r.num, servico: $('#ff-tipo').value, temp: 'morno', origem: T.origemFormulario };
+    desenharFicha(T.aRecolher, ''); gravar();
   });
 
   // ---------- passos 2 a 4: só na versão da proposta ----------
   if ($('#p1')) {
-  function wa(teste) {
-    $('#w-teste').setAttribute('aria-pressed', teste); $('#w-esperar').setAttribute('aria-pressed', !teste);
-    const s = $('#seg-wa');
-    if (teste) { s.className = 'seg ok'; s.style.left = '0'; s.style.width = '100%'; s.textContent = 'até 5 telemóveis: o seu e 3 clientes'; }
-    else { s.className = 'seg duv'; s.style.left = '34%'; s.style.width = '66%'; s.textContent = 'quando a Meta aprovar?'; }
+    document.querySelectorAll('[data-alternar]').forEach((card) => {
+      const cfg = D.passos.riscos.cards[+card.dataset.alternar];
+      card.querySelectorAll('[data-op]').forEach((b) => b.addEventListener('click', () => {
+        const op = cfg.opcoes[+b.dataset.op];
+        card.querySelectorAll('[data-op]').forEach((x) => x.setAttribute('aria-pressed', x === b));
+        const s = card.querySelector('.seg-var');
+        s.className = 'seg seg-var ' + op.classe; s.style.left = op.left; s.style.width = op.width; s.textContent = op.texto;
+      }));
+    });
+    const tc = document.querySelector('[data-testar-tel]');
+    if (tc) {
+      const testar = (v) => {
+        const r = conferirTel(v);
+        tc.querySelector('.res').innerHTML = r.ok
+          ? `<span class="carimbo ok">${esc(T.carimboOk)}</span><span>${esc(fmt(T.telSegue, { num: r.num }))}</span>`
+          : `<span class="carimbo no">${esc(T.carimboNo)}</span><span>${esc(r.motivo)} ${esc(T.nadaGravado)}</span>`;
+      };
+      tc.querySelector('.chips').addEventListener('click', (e) => { const b = e.target.closest('[data-t]'); if (b) { tc.querySelector('input').value = b.dataset.t; testar(b.dataset.t); } });
+      tc.querySelector('form').addEventListener('submit', (e) => { e.preventDefault(); testar(tc.querySelector('input').value); });
+      const ini = tc.dataset.testarTel; tc.querySelector('input').value = ini; testar(ini);
+    }
+    $('#par').addEventListener('click', (e) => { const li = e.target.closest('li'); if (!li) return; document.querySelectorAll('#par li').forEach((x) => x.classList.toggle('on', x === li)); });
+    document.querySelector('#par li').classList.add('on');
+    document.querySelectorAll('#ent button').forEach((b) => b.addEventListener('click', () => {
+      const aberto = b.getAttribute('aria-expanded') === 'true';
+      b.setAttribute('aria-expanded', !aberto); b.nextElementSibling.hidden = aberto;
+    }));
+    const C = D.passos.plano.cta;
+    if (C && $('#cta-quero')) {
+      $('#cta-quero').addEventListener('click', () => { $('#cta-res').innerHTML = `<div class="ok">${esc(C.queroResposta)}</div>`; });
+      $('#cta-marcar').addEventListener('click', () => {
+        const ops = proximosUteis(C.horas, true).map((v) => ({
+          curto: `${v.dia} ${diaMes(v.d)} ${v.hora}`,
+          longo: fmt(D.datas.formato, { dia: D.datas.diasLongos[v.d.getDay()], data: diaMes(v.d), hora: v.hora }),
+        }));
+        $('#cta-res').innerHTML = `<span>${esc(C.marcarPergunta)}</span><div class="chips">`
+          + ops.map((o) => `<button class="chip" type="button" data-cta="marcar ${esc(o.curto)}" data-longo="${esc(o.longo)}">${esc(o.longo)}</button>`).join('') + '</div>';
+      });
+      $('#cta-res').addEventListener('click', (e) => {
+        const b = e.target.closest('[data-longo]'); if (!b) return;
+        $('#cta-res').innerHTML = `<div class="ok">${esc(fmt(C.marcarConfirma, { horario: b.dataset.longo }))}</div>`;
+      });
+    }
   }
-  $('#w-teste').addEventListener('click', () => wa(true));
-  $('#w-esperar').addEventListener('click', () => wa(false));
-  function testarTel(v) {
-    const r = conferirTel(v);
-    $('#tel-res').innerHTML = r.ok
-      ? `<span class="carimbo ok">gravado</span><span>${esc(r.num)} segue para a folha e para o comercial.</span>`
-      : `<span class="carimbo no">recusado</span><span>${esc(r.motivo)} Nada foi gravado.</span>`;
-  }
-  $('#tel-ex').addEventListener('click', (e) => { const b = e.target.closest('[data-t]'); if (b) { $('#tel-in').value = b.dataset.t; testarTel(b.dataset.t); } });
-  $('#f-tel').addEventListener('submit', (e) => { e.preventDefault(); testarTel($('#tel-in').value); });
-  testarTel('21 345 6789'); $('#tel-in').value = '21 345 6789';
 
-  // ---------- passo 3 ----------
-  $('#par').addEventListener('click', (e) => { const li = e.target.closest('li'); if (!li) return; document.querySelectorAll('#par li').forEach((x) => x.classList.toggle('on', x === li)); });
-  document.querySelector('#par li').classList.add('on');
-
-  // ---------- passo 4 ----------
-  document.querySelectorAll('#ent button').forEach((b) => b.addEventListener('click', () => {
-    const aberto = b.getAttribute('aria-expanded') === 'true';
-    b.setAttribute('aria-expanded', !aberto); b.nextElementSibling.hidden = aberto;
-  }));
-
-  // ideia 2: botões de ação. A página não envia nada sozinha; o registro de visitas
-  // (só no endereço próprio) leva o data-cta pro Telegram do dono.
-  const DIAS_LONGOS = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
-  $('#cta-quero').addEventListener('click', () => {
-    $('#cta-res').innerHTML = '<div class="ok">Combinado. Escreva «avançar» na conversa do Upwork e envio hoje o contrato com as três entregas.</div>';
-  });
-  $('#cta-marcar').addEventListener('click', () => {
-    const d = new Date(); const horas = ['14:00', '16:00', '18:00']; const ops = [];
-    while (ops.length < 3) { d.setDate(d.getDate() + 1); if (d.getDay() === 0 || d.getDay() === 6) continue; ops.push({ curto: DIAS[d.getDay()] + ' ' + p2(d.getDate()) + '/' + p2(d.getMonth() + 1) + ' ' + horas[ops.length], longo: DIAS_LONGOS[d.getDay()] + ', ' + p2(d.getDate()) + '/' + p2(d.getMonth() + 1) + ' às ' + horas[ops.length] }); }
-    $('#cta-res').innerHTML = '<span>Escolha um horário (hora de Lisboa):</span><div class="chips">' + ops.map((o) => '<button class="chip" type="button" data-cta="marcar ' + o.curto + '" data-longo="' + o.longo + '">' + o.longo + '</button>').join('') + '</div>';
-  });
-  $('#cta-res').addEventListener('click', (e) => {
-    const b = e.target.closest('[data-longo]'); if (!b) return;
-    $('#cta-res').innerHTML = '<div class="ok">Fica anotado: ' + b.dataset.longo + ' (Lisboa). Confirme na conversa do Upwork e envio o convite.</div>';
-  });
-  }
-
-  // ---------- abre parada; a conversa de exemplo só toca no botão ----------
-  // 15/10: tocava sozinha ao abrir e o dono leu como "começou sozinho". A página
-  // já abre com a saudação e as linhas de exemplo nos bastidores, então não fica vazia.
+  // ---------- abre parada; o exemplo só toca no botão ----------
   iniciar();
-  const roteiro = ['Quanto custa?', 'Quero marcar uma visita', 'Casa', 'T2 ou T3', 'Semanal', 'Oeiras', 'Maria Silva', '912 345 678'];
   let rodada = 0;
   const parar = () => { rodada++; modoExemplo = false; };
   $('#recomecar').addEventListener('click', parar, { capture: true });
@@ -561,11 +587,10 @@ input,select{font:600 15px var(--body);color:var(--tinta);background:var(--creme
     const minha = ++rodada; let i = 0; aba(true); iniciar(); modoExemplo = true;
     (function proximo() {
       if (minha !== rodada) return;
-      if (i < roteiro.length) { responder(roteiro[i++]); setTimeout(proximo, ritmo().turno); }
+      if (i < D.roteiro.length) { responder(D.roteiro[i++]); setTimeout(proximo, ritmo().turno); }
       else setTimeout(() => {
         if (minha !== rodada) return;
         const o = chat.querySelector('.opcoes .chip'); if (o) o.click();
-        // os avisos ainda usam o ritmo lento; volta ao normal depois deles
         setTimeout(() => { if (minha === rodada) modoExemplo = false; }, 1400 + 1100 * 6);
       }, 2000);
     })();
