@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Test log demo</title>
+<meta name="description" content="A finished test gets read, called and logged, an unclear one goes to the founders, and a repeat test is caught before it spends.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lucasdigikal-ux.github.io/demos/experiment-operator/">
+<meta property="og:title" content="Test log demo">
+<meta property="og:description" content="A finished test gets read, called and logged, an unclear one goes to the founders, and a repeat test is caught before it spends.">
+<meta property="og:image" content="https://lucasdigikal-ux.github.io/demos/experiment-operator/capa.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://lucasdigikal-ux.github.io/demos/experiment-operator/capa.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Montserrat:wght@400;500;600;700;800&family=Shantell+Sans:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+<meta name="demo:dado" content=".doc,.docbtn,.site-top,.ava">
+<style>
+/* Molde FLUXO (demos/_molde-fluxo): caderno quadriculado, trilho de 5 passos, celular à esquerda com a entrada, bastidores à direita. Gerado por scripts/nova-demo-fluxo.mjs, não editar à mão. */
+/* Layout: caderno quadriculado; trilho de 5 passos. Passo 1: caixa de entrada numa moldura de celular à esquerda, bastidores (leitura, Drive, fila de revisão, registro) a encherem-se à direita. Design system claro do Lucas Digital. */
+:root{
+  --papel:#F5EFE7; --grade:#E7D3C4; --creme:#FFFDF9; --tinta:#1C1B18; --muted:#6B6459; --laranja:#D97757;
+  --verde:#2F7D4F; --verde-t:#E3F0E6; --vermelho:#B4402F; --vermelho-t:#F7E1DB; --marca:#F6D3A8; --moldura:#1C1B18; --topo:#2B2722; --fundo-app:#FFFFFF;
+  --display:"Archivo Black",Impact,system-ui,sans-serif; --body:"Montserrat",system-ui,sans-serif; --mao:"Shantell Sans","Comic Sans MS",cursive; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--papel:#1D1A16;--grade:#2E2822;--creme:#26221D;--tinta:#F2ECE3;--muted:#B5AA9C;--laranja:#E58A6B;--verde:#6CC08E;--verde-t:#1E3326;--vermelho:#F08A78;--vermelho-t:#3B211C;--marca:#6B4A22;--moldura:#0E0D0B;--topo:#14120F;--fundo-app:#1A1D21;color-scheme:dark}}
+:root[data-theme="dark"]{--papel:#1D1A16;--grade:#2E2822;--creme:#26221D;--tinta:#F2ECE3;--muted:#B5AA9C;--laranja:#E58A6B;--verde:#6CC08E;--verde-t:#1E3326;--vermelho:#F08A78;--vermelho-t:#3B211C;--marca:#6B4A22;--moldura:#0E0D0B;--topo:#14120F;--fundo-app:#1A1D21;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;color:var(--tinta);font:16px/1.5 var(--body);background-color:var(--papel);
+  background-image:linear-gradient(var(--grade) 2px,transparent 2px),linear-gradient(90deg,var(--grade) 2px,transparent 2px);background-size:56px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.wrap{max-width:1120px;margin:0 auto;display:grid;gap:22px}
+.tag{display:inline-block;background:var(--laranja);color:#1C1B18;font:700 clamp(18px,2.4vw,24px)/1.15 var(--mao);padding:8px 16px;border-radius:8px;transform:rotate(-1.5deg);box-shadow:0 3px 0 rgba(0,0,0,.08)}
+.caps{font:800 12px var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+h1{font:400 clamp(30px,5vw,52px)/1.04 var(--display);margin:6px 0 0;text-wrap:balance}
+.rail{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.dot{border:3px solid var(--laranja);background:var(--creme);color:var(--tinta);font:800 14px var(--body);cursor:pointer;border-radius:999px;padding:9px 16px;display:flex;gap:8px;align-items:center}
+.dot b{width:24px;height:24px;border-radius:50%;background:var(--laranja);color:#1C1B18;display:grid;place-items:center;font-size:13px}
+.dot[aria-current="step"]{background:var(--laranja);color:#1C1B18}.dot[aria-current="step"] b{background:var(--creme);color:var(--tinta)}
+.dot:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--tinta);outline-offset:3px}
+.palco{background:var(--creme);border:6px solid var(--grade);border-radius:28px;padding:clamp(14px,3vw,30px);display:grid;gap:18px}
+.topo{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.fala{font:700 clamp(19px,2.4vw,26px)/1.25 var(--mao);margin:0;max-width:34ch}
+.btn{font:800 14px var(--body);border:3px solid var(--tinta);background:var(--creme);color:var(--tinta);border-radius:14px;padding:10px 18px;cursor:pointer}
+.btn:active{transform:translateY(2px)}
+.clique{font:700 13px var(--mao)}
+.chamar{animation:chama 1.8s ease-in-out infinite}
+@keyframes chama{0%,100%{box-shadow:0 0 0 0 var(--marca)}50%{box-shadow:0 0 0 7px var(--marca)}}
+.btn.lar{background:var(--laranja);border-color:var(--laranja);color:#1C1B18}
+.sim{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:22px;align-items:start}@media (max-width:860px){.sim{grid-template-columns:1fr}}
+.lado-cel{display:grid;gap:10px;justify-items:center;min-width:0}
+.celular{width:100%;max-width:400px;background:var(--moldura);border-radius:44px;padding:26px 10px 14px;position:relative;box-shadow:0 22px 44px -20px rgba(0,0,0,.5)}
+.celular::before{content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);width:84px;height:7px;border-radius:99px;background:var(--grade)}
+.site{border:0;border-radius:30px;overflow:hidden;background:var(--fundo-app);display:grid;min-width:0}
+.site-top{background:var(--topo);color:#fff;padding:12px 16px;display:flex;gap:10px;align-items:center}
+.site-top strong{font:800 16px var(--body)}.site-top small{display:block;font:500 11.5px var(--body);opacity:.8}
+.ava{width:34px;height:34px;border-radius:8px;background:var(--laranja);color:#1C1B18;display:grid;place-items:center;font:800 13px var(--body);flex:none}
+.inbox{padding:14px;display:grid;gap:10px;align-content:start;min-height:420px;background:var(--fundo-app)}
+.docbtn{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;text-align:left;width:100%;background:var(--creme);border:2px solid var(--grade);border-radius:12px;padding:10px 12px;cursor:pointer;color:var(--tinta);font:700 14px var(--body);transition:border-color .25s,background .25s,opacity .25s}
+.docbtn:hover:not(:disabled){border-color:var(--laranja)}
+.docbtn:disabled{opacity:.62;cursor:default}
+.docbtn.sel{border-color:var(--laranja);background:var(--marca)}
+.docbtn .ext{width:38px;height:38px;border-radius:9px;background:var(--laranja);color:#1C1B18;display:grid;place-items:center;font:800 11px var(--body);text-transform:uppercase}
+.docbtn small{display:block;font:500 12px var(--body);color:var(--muted)}
+.docbtn .st{font:700 10.5px var(--body);letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:6px;background:var(--marca);white-space:nowrap}
+.docbtn[data-st="filed"] .st{background:var(--verde-t);color:var(--verde)}
+.docbtn[data-st="duplicate"] .st,.docbtn[data-st="rejected"] .st{background:var(--vermelho-t);color:var(--vermelho)}
+.nota{font:600 12.5px var(--body);color:var(--muted);margin:4px 2px 0}
+.bast{display:grid;gap:12px;min-width:0}
+.fluxo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font:700 12.5px var(--body)}
+.fluxo span{border:2px solid var(--grade);border-radius:999px;padding:4px 10px;background:var(--papel);transition:background .3s,border-color .3s,transform .3s,box-shadow .3s}
+.fluxo span.on{background:var(--laranja);border-color:var(--laranja);color:#1C1B18}
+.fluxo span.agora{transform:scale(1.1);box-shadow:0 0 0 4px var(--marca)}
+.fluxo i{font-style:normal;color:var(--muted)}
+.board{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media (max-width:560px){.board{grid-template-columns:1fr}}
+.pn{background:var(--papel);border:3px solid var(--grade);border-radius:16px;padding:12px;display:grid;gap:8px;align-content:start;min-width:0;transition:border-color .35s,box-shadow .35s,opacity .35s,transform .35s}
+.pn.largo{grid-column:1/-1}
+.pn h3{margin:0;font:800 13px var(--body);display:flex;justify-content:space-between;gap:8px;align-items:center}
+.pn h3 em{font:500 11.5px var(--mono);font-style:normal;color:var(--muted)}
+.pn.foco{border-color:var(--laranja);box-shadow:0 0 0 5px var(--marca),0 14px 30px -10px var(--laranja);transform:translateY(-3px)}
+.bast.holofote .pn:not(.foco){opacity:.42}
+.ficha .acende{animation:acende 2.2s ease-out both;border-radius:4px}
+@keyframes acende{0%{background:var(--laranja);color:#1C1B18}100%{background:transparent}}
+@keyframes entra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.ficha{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font:500 13px var(--mono);margin:0}
+.ficha dt{color:var(--muted)}.ficha dd{margin:0;overflow-wrap:anywhere}
+.estado{font:700 11px var(--body);letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:6px;background:var(--marca);transition:background .3s,color .3s}
+.estado.ok{background:var(--verde-t);color:var(--verde)}.estado.no{background:var(--vermelho-t);color:var(--vermelho)}
+.folha-wrap{overflow-x:auto}
+.folha{border-collapse:collapse;font:500 12.5px var(--mono);width:100%}
+.folha th,.folha td{border:1px solid var(--grade);padding:4px 7px;text-align:left}
+.folha th{background:var(--creme);font-weight:700}
+.folha tr.ex td{color:var(--muted)}.folha tr.novo td{background:var(--marca);animation:entra .4s both}
+#drive,#fila{display:grid;gap:8px}
+.doc{background:var(--creme);border:2px solid var(--grade);border-radius:10px;padding:8px 11px;font:500 13px/1.4 var(--body);animation:entra .4s both;display:grid;gap:3px;overflow-wrap:anywhere}
+.doc b{font-weight:800}.doc.ex{opacity:.55}.doc span{font-family:var(--mono);font-size:12px}
+.doc.rev{border-color:var(--laranja)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--papel);border:3px solid var(--grade);border-radius:18px;padding:16px;display:grid;gap:12px;align-content:start;min-width:0}
+.card.largo{grid-column:1/-1}
+.card h3{margin:0;font:400 22px/1.1 var(--display)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:700 13.5px var(--body);border:2px solid var(--laranja);background:var(--creme);color:var(--tinta);border-radius:999px;padding:6px 12px;cursor:pointer;text-align:left}
+.chip:hover{background:var(--marca)}
+.chip[aria-pressed="true"]{background:var(--laranja);color:#1C1B18}
+.carimbo{display:inline-block;border:4px solid currentColor;border-radius:10px;padding:4px 12px;font:700 19px var(--mao);transform:rotate(-6deg);animation:carimbo .35s ease-out both}
+.carimbo.ok{color:var(--verde)}.carimbo.no{color:var(--vermelho)}.carimbo.nsei{color:var(--laranja)}
+@keyframes carimbo{0%{opacity:0;transform:scale(1.6) rotate(-14deg)}100%{opacity:1;transform:scale(1) rotate(-6deg)}}
+.res{min-height:70px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font:600 14px var(--body)}
+.par{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.par li{display:grid;grid-template-columns:1fr 34px 1fr;gap:8px;align-items:center;cursor:pointer}
+.par .a,.par .b{background:var(--creme);border:3px solid var(--grade);border-radius:12px;padding:8px 12px;font:600 14px var(--body);transition:border-color .25s,background .25s;min-width:0}
+.par .s{font:700 20px var(--mao);color:var(--laranja);text-align:center}
+.par li.on .a,.par li.on .b{border-color:var(--laranja);background:var(--marca)}
+@media (max-width:620px){.par li{grid-template-columns:1fr}.par .s{transform:rotate(90deg)}}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.num{background:var(--creme);border:3px solid var(--grade);border-radius:14px;padding:10px;display:grid;gap:2px}
+.num b{font:400 30px/1 var(--display);font-variant-numeric:tabular-nums}.num span{font:600 12.5px var(--body);color:var(--muted)}
+.ent{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ent button{width:100%;text-align:left;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:var(--creme);border:3px solid var(--grade);border-radius:16px;padding:12px 14px;cursor:pointer;color:var(--tinta);font:700 15px var(--body)}
+.ent button[aria-expanded="true"]{border-color:var(--laranja)}
+.ent .n{font:400 22px var(--display);color:var(--laranja)}
+.ent .v{font:400 16px var(--display);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ent .q{font:500 14px/1.5 var(--body);padding:8px 14px 2px;color:var(--tinta)}
+.ent .q b{font:700 13px var(--mao);color:var(--laranja)}
+.total{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:baseline;justify-content:space-between;border-top:3px dashed var(--grade);padding-top:12px}
+.total b{font:400 34px var(--display)}
+.selos{display:flex;flex-wrap:wrap;gap:8px}
+.selo{font:700 13px var(--mao);border:2px solid var(--laranja);border-radius:999px;padding:4px 12px}
+.rodape{font:600 12.5px var(--body);color:var(--muted);text-align:center}
+.cta{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.cta-res{display:grid;gap:10px;font:600 15px/1.45 var(--body)}.cta-res:empty{display:none}
+.cta-res .ok{background:var(--verde-t);color:var(--verde);border-radius:14px;padding:12px 14px;font-weight:700}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+  <header style="display:grid;gap:10px;justify-items:center;text-align:center">
+    <span class="tag">Your backlog, running</span>
+    <h1>Ideas in. Verdicts out. Every test logged.</h1>
+    <span class="caps">Fictional tests · example data · simulated screens</span>
+  </header>
+
+  <nav class="rail" aria-label="Steps">
+    <button class="dot" data-p="0" aria-current="step"><b>1</b>Try it</button>
+    <!-- proposta:inicio -->
+    <button class="dot" data-p="1"><b>2</b>Where tests go wrong</button>
+    <button class="dot" data-p="2"><b>3</b>Already done</button>
+    <button class="dot" data-p="3"><b>4</b>What you get</button>
+    <button class="dot" data-p="4"><b>5</b>Plan and rate</button>
+    <!-- proposta:fim -->
+  </nav>
+
+  <!-- STEP 1 -->
+  <section class="palco" id="p0">
+    <div class="topo">
+      <p class="fala">Send a finished test in. Watch it get read, called and logged, with you deciding the unclear one.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn lar chamar" id="exemplo">See an example <span class="clique">(click here)</span></button><button class="btn" id="recomecar">Restart</button></div>
+    </div>
+    <div class="sim">
+      <div class="lado-cel">
+        <div class="celular">
+          <div class="site" id="site">
+            <div class="site-top"><span class="ava" aria-hidden="true">TL</span><strong>Test backlog<small>Supplements on Amazon · exam-prep apps (fictional data)</small></strong></div>
+            <div class="inbox" id="inbox">
+              <button class="docbtn" type="button" data-k="a" data-st="waiting"><span class="ext">A/B</span><span>Bundle offer B · Amazon<small>2-pack vs single tub, same price per serving</small></span><span class="st">finished</span></button>
+              <button class="docbtn" type="button" data-k="b" data-st="waiting"><span class="ext">A/B</span><span>Hands-on hook · app TikTok<small>Hands using the app vs talking head, 3 days</small></span><span class="st">finished</span></button>
+              <button class="docbtn" type="button" data-k="c" data-st="waiting"><span class="ext">A/B</span><span>Bundle offer B · website<small>Same offer, other channel</small></span><span class="st">finished</span></button>
+              <p class="nota">Click a test to send it in.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bast">
+        <div class="fluxo" aria-label="Path of a document">
+          <span id="fx0">Hypothesis</span><i>→</i><span id="fx1">Setup + budget</span><i>→</i><span id="fx2">Run</span><i>→</i><span id="fx3">Read the data</span><i>→</i><span id="fx4">Log + next step</span>
+        </div>
+        <div class="board">
+          <div class="pn" id="pn-read">
+            <h3>What the data says <span class="estado" id="estado">waiting</span></h3>
+            <dl class="ficha" id="ficha"></dl>
+          </div>
+          <div class="pn" id="pn-rev">
+            <h3>You decide <em>unclear result, founders call it</em></h3>
+            <div id="fila"></div>
+          </div>
+          <div class="pn largo" id="pn-drive">
+            <h3>Scale list <em>winners handed to you</em></h3>
+            <div id="drive"></div>
+          </div>
+          <div class="pn largo" id="pn-log">
+            <h3>Test log <em>hypothesis · cost · result · next</em></h3>
+            <div class="folha-wrap"><table class="folha"><thead><tr><th>Time</th><th>Test</th><th>Result</th><th>State</th></tr></thead><tbody id="linhas"></tbody></table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- proposta:inicio -->
+  <!-- STEP 2 -->
+  <section class="palco" id="p1" hidden>
+    <div class="topo"><p class="fala">Three ways test programs waste money. Try each.</p></div>
+    <div class="grid2">
+      <div class="card">
+        <h3>Calling a winner too early</h3>
+        <p style="margin:0">Under 90% sure, you make the call.</p>
+        <div class="chips" id="inc-ex">
+          <button class="chip" data-k="a">Bundle B, 96% sure</button>
+          <button class="chip" data-k="b">Hook test, 61% sure</button>
+          <button class="chip" data-k="c">Price test, 85% sure</button>
+        </div>
+        <div class="res" id="inc-res"></div>
+      </div>
+      <div class="card">
+        <h3>Paying for the same test twice</h3>
+        <p style="margin:0">It matches the idea, not the title.</p>
+        <div class="chips" id="dup-ex">
+          <button class="chip" data-k="igual">Same offer, other channel</button>
+          <button class="chip" data-k="nome">Same idea, new name</button>
+          <button class="chip" data-k="edit">Same offer, new price</button>
+        </div>
+        <div class="res" id="dup-res"></div>
+      </div>
+      <div class="card largo">
+        <h3>Money that burns quietly</h3>
+        <p style="margin:0">Every test ends won, lost or don't know.</p>
+        <div class="chips" id="fal-ex">
+          <button class="chip" data-k="drive">Spend hits the cap</button>
+          <button class="chip" data-k="log">Tracking breaks mid-test</button>
+          <button class="chip" data-k="tudo">Every test looks flat</button>
+        </div>
+        <div class="res" id="fal-res"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="palco" id="p2" hidden>
+    <div class="topo"><p class="fala">I already run tests like this on my own accounts, and log the losses too.</p></div>
+    <div class="nums">
+      <div class="num"><b>8x</b><span>views: same script, hands mixing whey vs walking in a gym</span></div>
+      <div class="num"><b>0</b><span>followers from 131 shares of my card posts, logged as a loss</span></div>
+      <div class="num"><b>13,071</b><span>automated tests in Hades, the sales AI platform we built</span></div>
+    </div>
+    <ul class="par" id="par">
+      <li data-k="0"><div class="a">Grow short-form accounts</div><div class="s">↔</div><div class="b">I run my Instagram as a lab, one variable per test. Hands mixing whey got 1,744 views; walking got 217.</div></li>
+      <li data-k="1"><div class="a">Report a loss without dressing it up</div><div class="s">↔</div><div class="b">Card posts got 131 shares and 0 followers. I logged it, found why, and changed the format.</div></li>
+      <li data-k="2"><div class="a">Paid traffic as one test type</div><div class="s">↔</div><div class="b">I spent R$441 boosting 4 posts for 548 views. Too expensive per view, so I stopped.</div></li>
+      <li data-k="3"><div class="a">AI tools that work in production</div><div class="s">↔</div><div class="b">Hades: live sales-call copilot, follow-ups and tracking, 13,071 automated tests.</div></li>
+      <li data-k="4"><div class="a">Automations, not demos</div><div class="s">↔</div><div class="b">A job radar reads new posts every 5 minutes and rules each one out with a written reason.</div></li>
+    </ul>
+    <p class="rodape" id="par-dica">Click a row: your role on the left, what I already did on the right.</p>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="palco" id="p3" hidden>
+    <div class="topo"><p class="fala">Your post asks for a log of every test. This is what lands each day.</p></div>
+    <ul class="ent" id="hand">
+      <li><button aria-expanded="true"><span class="n">1</span><span>A test log you read in 2 minutes</span><span class="v">▾</span></button>
+        <div class="q"><b>You check it:</b> every row has hypothesis, setup, cost, result and next step.</div></li>
+      <li><button aria-expanded="false"><span class="n">2</span><span>Several tests live at once</span><span class="v">▾</span></button>
+        <div class="q" hidden><b>You check it:</b> new rows in the log every working day.</div></li>
+      <li><button aria-expanded="false"><span class="n">3</span><span>A spend cap on every test</span><span class="v">▾</span></button>
+        <div class="q" hidden><b>You check it:</b> nothing runs past the budget you set.</div></li>
+      <li><button aria-expanded="false"><span class="n">4</span><span>Daily note before your morning</span><span class="v">▾</span></button>
+        <div class="q" hidden><b>You check it:</b> plus a short sync, 5+ hours inside ET.</div></li>
+      <li><button aria-expanded="false"><span class="n">5</span><span>Winners handed over to scale</span><span class="v">▾</span></button>
+        <div class="q" hidden><b>You check it:</b> a one-page setup so you or I can scale it.</div></li>
+    </ul>
+  </section>
+
+  <!-- STEP 5 -->
+  <section class="palco" id="p4" hidden>
+    <div class="topo"><p class="fala">Start this week. Hourly through Upwork, raises tied to results.</p></div>
+    <ul class="ent" id="ent">
+      <li><button aria-expanded="true"><span class="n">1</span><span>Week 1: three tests live</span><span class="v">40 to 50 h</span></button>
+        <div class="q"><b>You check it:</b> one is the Amazon test in my video.</div></li>
+      <li><button aria-expanded="false"><span class="n">2</span><span>Daily log and sync</span><span class="v">every day</span></button>
+        <div class="q" hidden><b>You check it:</b> you see cost and result before I ask for more.</div></li>
+      <li><button aria-expanded="false"><span class="n">3</span><span>Week 2 review</span><span class="v">30 min</span></button>
+        <div class="q" hidden><b>You check it:</b> you keep, change or end each test.</div></li>
+    </ul>
+    <div class="total">
+      <span class="caps">Hourly · 40 to 50 h a week · raises tied to results</span>
+      <b>$30/h</b>
+    </div>
+    <div class="selos"><span class="selo">your accounts, your budget</span><span class="selo">losses reported as losses</span><span class="selo">every number shows its source</span></div>
+    <div class="cta">
+      <button class="btn lar" type="button" id="cta-quero" data-cta="quero">I want to go ahead</button>
+      <button class="btn" type="button" id="cta-marcar" data-cta="marcar">Book 15 minutes</button>
+    </div>
+    <div class="cta-res" id="cta-res" aria-live="polite"></div>
+  </section>
+
+  <p class="rodape">Made by Lucas for your test backlog · the page follows written rules, no paid AI runs here</p>
+  <!-- proposta:fim -->
+</div>
+
+<script>
+const CFG = {"limite":90,"papeis":{"auto":"a","revisao":"b","duplicado":"c"},"docs":{"a":{"arq":"Bundle offer B · Amazon","desc":"2-pack vs single tub, same price per serving","ext":"A/B","tipo":"Offer test","cliente":"Supplements","conf":96,"pasta":"Winner · setup sheet ready to scale","registro":"Bundle offer B → winner, handed over to scale"},"b":{"arq":"Hands-on hook · app TikTok","desc":"Hands using the app vs talking head, 3 days","ext":"A/B","tipo":"Hook test","cliente":"Exam-prep app","conf":61,"motivo":"Sample too small","pasta":"You approved 2 more days · cap stays $40","registro":"Hands-on hook → 2 more days, cap $40"},"c":{"arq":"Bundle offer B · website","desc":"Same offer, other channel","ext":"A/B","tipo":"Offer test","cliente":"Supplements","conf":94,"igualA":"Bundle offer B (already tested on Amazon)"}},"rot":{"arquivo":"test","tipo":"type","cliente":"business","confianca":"confidence","rota":"call","nome":"log row","pasta":"next step"},"st":{"waiting":"finished","reading":"reading…","filed":"logged","review":"in review","duplicate":"skipped","rejected":"stopped"},"t":{"verExemplo":"See an example","clique":"(click here)","recomecar":"Restart","vocePassa":"You check it:","estadoEspera":"waiting","estadoLendo":"reading","estadoArquivado":"logged","estadoRevisao":"review","estadoDuplicado":"already tested","estadoDevolvido":"stopped","estadoDone":"done","estadoFailed":"failed","estadoUnknown":"don't know","esperaArquivo":"waiting for a test","rotaDuplicado":"already tested, skip","rotaRevisao":"you decide","rotaAuto":"clear winner","rotaAprovado":"approved by a person","logDuplicado":"Same hypothesis as {igual}. Budget kept.","logRevisao":"{motivo} ({conf}% sure). Sent to you.","logArquivado":"Logged {nome}","logAprovadoSufixo":" (approved by a person)","logRejeitado":"Rejected by a person. Test stopped, nothing more spent.","aprovar":"Run 2 more days","rejeitar":"Stop it","filaMotivo":"{motivo} · {cliente}?","filaVaziaTitulo":"Nothing waiting","filaVaziaSub":"unclear results land here · example","exemplo":"example","motivoPadrao":"Unsure","st":{"waiting":"finished","reading":"reading…","filed":"logged","review":"in review","duplicate":"skipped","rejected":"stopped"},"rot":{"arquivo":"test","tipo":"type","cliente":"business","confianca":"confidence","rota":"call","nome":"log row","pasta":"next step"}},"relogio":{"hora":"9","minutoBase":40},"exemplos":{"log":[["9:38","Quiz landing page","Quiz page → lost, $62 spent, idea parked (example)","done"]],"drive":[["Winner · rolled out","Subscribe-and-save copy"],["Winner · handed to you","Native ad placement"]]},"cards":[{"id":"inc","inicial":"b"},{"id":"dup","inicial":"igual"},{"id":"fal","inicial":"drive"}],"resultados":{"inc":{"a":["ok","winner","At 96% it is called a winner and handed over with the setup sheet."],"b":["no","review","At 61% nobody calls it. You choose: two more days, or stop."],"c":["no","review","85% is under the 90% line, so you decide. You can move the line."]},"dup":{"igual":["no","skipped","Already tested on Amazon. Logged as a repeat, budget kept."],"nome":["no","skipped","Matched by hypothesis, not by title, so the repeat is caught."],"edit":["ok","new test","The price changed, so it runs as a new test with its own row."]},"fal":{"drive":["no","paused","Spend stops at the cap you set and you get a message. Nothing runs past budget."],"log":["no","stopped","No data, no verdict. The test pauses and the log says why."],"tudo":["nsei","don't know","When every test flatlines at once, I check tracking before blaming the ideas."]}},"cta":{"quero":"I want to go ahead","marcar":"Book 15 minutes","queroResposta":"Great. Reply \"go\" in the Upwork chat and I can start this week.","horas":["9:00 AM","10:30 AM","12:00 PM"],"pergunta":"Pick a time (Eastern time):","confirma":"Noted: {longo} (Eastern). Confirm it in the Upwork chat and I'll send the invite.","dias":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],"diasLongos":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"meses":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"em":"at"}};
+// Motor do molde "fluxo": documento (ou registro) entra, é lido, nomeado, arquivado e registrado;
+// leitura incerta vai pra uma pessoa; repetido é bloqueado por conteúdo. Tudo que é texto vem de CFG
+// (injetado pelo scripts/nova-demo-fluxo.mjs a partir de demos/<slug>/fluxo.json).
+// As três regras que o portão (scripts/medir-fluxo.mjs --mutacoes) quebra de propósito são marcadas
+// com "MUT:" — não renomear essas linhas sem atualizar o portão.
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const fmt = (s, o) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
+  const T = CFG.t;
+
+  // ---------- passos ----------
+  const passos = [...document.querySelectorAll('.palco')];
+  document.querySelectorAll('.dot').forEach((d) => d.addEventListener('click', () => {
+    const i = +d.dataset.p;
+    passos.forEach((p, k) => { p.hidden = k !== i; });
+    document.querySelectorAll('.dot').forEach((x) => x.removeAttribute('aria-current'));
+    d.setAttribute('aria-current', 'step');
+  }));
+
+  // ---------- documentos de exemplo (todos fictícios) ----------
+  const LIMITE = CFG.limite; // MUT: limite de confiança
+  const hoje = new Date(); const p2 = (n) => String(n).padStart(2, '0');
+  const ISO = `${hoje.getFullYear()}-${p2(hoje.getMonth() + 1)}-${p2(hoje.getDate())}`;
+  const DOCS = CFG.docs;
+  const ROT = CFG.rot; const ST = CFG.st;
+  const PAPEL = CFG.papeis; // { auto, revisao, duplicado }
+
+  let lead = {}; let fichaAnt = []; let geracao = 0; let ocupado = false; let modoExemplo = false; let relogio = 0;
+  const arquivados = {};
+  const ritmo = () => (modoExemplo ? { bastidor: 1100 } : { bastidor: 650 });
+  const esp = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  const timers = new Map();
+  function holofote(sel, ms) {
+    const el = $(sel); const bast = el.closest('.bast');
+    clearTimeout(timers.get(sel));
+    el.classList.add('foco'); if (bast) bast.classList.add('holofote');
+    timers.set(sel, setTimeout(() => {
+      el.classList.remove('foco');
+      if (bast && !bast.querySelector('.pn.foco')) bast.classList.remove('holofote');
+    }, ms));
+  }
+  function acender(fx) {
+    document.querySelectorAll('.fluxo span').forEach((s) => s.classList.remove('agora'));
+    if (fx) $(fx).classList.add('on', 'agora');
+  }
+  function travar(v) { ocupado = v; document.querySelectorAll('.docbtn').forEach((b) => { b.disabled = v; }); }
+  function marcar(k, st) {
+    const b = document.querySelector(`.docbtn[data-k="${k}"]`);
+    b.dataset.st = st; b.querySelector('.st').textContent = ST[st];
+    document.querySelectorAll('.docbtn').forEach((x) => x.classList.toggle('sel', x === b && st === 'reading'));
+  }
+  function desenharFicha(estado, cls) {
+    const ks = Object.keys(ROT).filter((k) => lead[k]);
+    const novos = ks.filter((k) => !fichaAnt.includes(k));
+    $('#ficha').innerHTML = ks.length ? ks.map((k) => { const a = novos.includes(k) ? ' class="acende"' : ''; return `<dt${a}>${esc(ROT[k])}</dt><dd${a}>${esc(lead[k])}</dd>`; }).join('') : `<dt>—</dt><dd>${esc(T.esperaArquivo)}</dd>`;
+    const e = $('#estado'); e.textContent = estado; e.className = 'estado ' + cls;
+    if (novos.length) holofote('#pn-read', ritmo().bastidor * 1.6);
+    fichaAnt = ks;
+  }
+  function hora() { relogio += 1; const m = CFG.relogio.minutoBase + relogio; return `${CFG.relogio.hora}:${p2(m % 60)}`; }
+  function log(estado, arquivo, texto) {
+    const rot = estado === 'done' ? ['ok', T.estadoDone] : estado === 'failed' ? ['no', T.estadoFailed] : ['', T.estadoUnknown];
+    $('#linhas').insertAdjacentHTML('afterbegin', `<tr class="novo"><td>${hora()}</td><td>${esc(arquivo)}</td><td>${esc(texto)}</td><td><span class="estado ${rot[0]}">${esc(rot[1])}</span></td></tr>`);
+    holofote('#pn-log', ritmo().bastidor * 1.6);
+  }
+  function drive(pasta, nome) {
+    $('#drive').insertAdjacentHTML('afterbegin', `<div class="doc"><b>${esc(pasta)}</b><span>${esc(nome)}</span></div>`);
+    holofote('#pn-drive', ritmo().bastidor * 1.6);
+  }
+  const filaVazia = () => `<div class="doc ex"><b>${esc(T.filaVaziaTitulo)}</b><span>${esc(T.filaVaziaSub)}</span></div>`;
+  function resetBast() {
+    $('#linhas').innerHTML = CFG.exemplos.log.map((r) => `<tr class="ex"><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td></tr>`).join('');
+    $('#drive').innerHTML = CFG.exemplos.drive.map((r) => `<div class="doc ex"><b>${esc(r[0])}</b><span>${esc(r[1])} · ${esc(T.exemplo)}</span></div>`).join('');
+    $('#fila').innerHTML = filaVazia();
+    for (let i = 0; i < 5; i++) $('#fx' + i).classList.remove('on', 'agora');
+    Object.keys(DOCS).forEach((k) => marcar(k, 'waiting'));
+    document.querySelectorAll('.docbtn').forEach((x) => x.classList.remove('sel'));
+    lead = {}; fichaAnt = []; relogio = 0; Object.keys(arquivados).forEach((k) => delete arquivados[k]);
+    desenharFicha(T.estadoEspera, '');
+  }
+
+  // ---------- a corrida ----------
+  async function passosSeq(g, fns) {
+    for (const f of fns) { await esp(ritmo().bastidor); if (g !== geracao) return false; if ((await f()) === 'parar') return false; }
+    return true;
+  }
+  function igualA(k) { return DOCS[k].igualA || arquivados[k] || null; }
+
+  async function rodar(k) {
+    if (ocupado) return;
+    const d = DOCS[k]; const g = geracao;
+    travar(true); marcar(k, 'reading'); lead = { arquivo: d.arq }; fichaAnt = []; acender('#fx0'); desenharFicha(T.estadoLendo, '');
+    await passosSeq(g, [
+      () => { acender('#fx1'); lead.tipo = d.tipo; lead.cliente = d.cliente; lead.confianca = d.conf + '%'; desenharFicha(T.estadoLendo, ''); },
+      () => {
+        const igual = igualA(k);
+        if (igual) { // MUT: duplicata
+          lead.rota = T.rotaDuplicado; desenharFicha(T.estadoDuplicado, 'no'); marcar(k, 'duplicate');
+          log('done', d.arq, fmt(T.logDuplicado, { igual })); acender(null); travar(false); return 'parar';
+        }
+        if (d.conf < LIMITE) {
+          lead.rota = T.rotaRevisao; desenharFicha(T.estadoRevisao, ''); marcar(k, 'review'); acender(null);
+          const motivo = d.motivo || T.motivoPadrao;
+          $('#fila').innerHTML = `<div class="doc rev" data-k="${k}"><b>${esc(d.arq)} · ${esc(d.tipo)}? ${d.conf}%</b><span>${esc(fmt(T.filaMotivo, { motivo, cliente: d.cliente }))}</span><div class="chips"><button class="chip" type="button" data-r="ok">${esc(fmt(T.aprovar, { tipo: d.tipo }))}</button><button class="chip" type="button" data-r="no">${esc(T.rejeitar)}</button></div></div>`;
+          holofote('#pn-rev', ritmo().bastidor * 2);
+          log('unknown', d.arq, fmt(T.logRevisao, { motivo, conf: d.conf })); travar(false); return 'parar';
+        }
+        lead.rota = T.rotaAuto; desenharFicha(T.estadoLendo, '');
+      },
+      () => arquivar(k, false),
+    ]);
+  }
+  async function arquivar(k, humano) {
+    const d = DOCS[k]; const g = geracao; travar(true);
+    const nome = d.registro || `${ISO}_${d.slug}_v1.${d.ext}`; // registro: nome pronto quando o item não é arquivo (lead, cadastro)
+    await passosSeq(g, [
+      () => { acender('#fx2'); lead.nome = nome; desenharFicha(T.estadoLendo, ''); },
+      () => { acender('#fx3'); lead.pasta = d.pasta; desenharFicha(T.estadoLendo, ''); drive(d.pasta, nome); },
+      () => { acender('#fx4'); log('done', d.arq, fmt(T.logArquivado, { nome }) + (humano ? T.logAprovadoSufixo : '')); desenharFicha(T.estadoArquivado, 'ok'); marcar(k, 'filed'); arquivados[k] = nome; },
+    ]);
+    if (g === geracao) { acender(null); travar(false); }
+  }
+  $('#inbox').addEventListener('click', (e) => { const b = e.target.closest('.docbtn'); if (b && !b.disabled) rodar(b.dataset.k); });
+  $('#fila').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-r]'); if (!b || ocupado) return;
+    const item = b.closest('.rev'); const k = item.dataset.k; const d = DOCS[k];
+    $('#fila').innerHTML = filaVazia();
+    if (b.dataset.r === 'ok') { // MUT: Reject
+      lead.rota = T.rotaAprovado; desenharFicha(T.estadoLendo, ''); arquivar(k, true);
+    } else { log('done', d.arq, T.logRejeitado); marcar(k, 'rejected'); desenharFicha(T.estadoDevolvido, 'no'); }
+  });
+
+  function iniciar() { geracao++; travar(false); resetBast(); }
+  $('#recomecar').addEventListener('click', iniciar);
+
+  // ---------- passos 2 a 5: só na versão da proposta ----------
+  if ($('#p1')) {
+    const mostra = (sel, cls, rot, txt) => { $(sel).innerHTML = `<span class="carimbo ${cls}">${esc(rot)}</span><span>${esc(txt)}</span>`; };
+    CFG.cards.forEach((c) => {
+      $(`#${c.id}-ex`).addEventListener('click', (e) => { const b = e.target.closest('[data-k]'); if (b) mostra(`#${c.id}-res`, ...CFG.resultados[c.id][b.dataset.k]); });
+      mostra(`#${c.id}-res`, ...CFG.resultados[c.id][c.inicial]);
+    });
+
+    $('#par').addEventListener('click', (e) => { const li = e.target.closest('li'); if (!li) return; document.querySelectorAll('#par li').forEach((x) => x.classList.toggle('on', x === li)); });
+    document.querySelector('#par li').classList.add('on');
+
+    document.querySelectorAll('#hand button, #ent button').forEach((b) => b.addEventListener('click', () => {
+      const aberto = b.getAttribute('aria-expanded') === 'true';
+      b.setAttribute('aria-expanded', !aberto); b.nextElementSibling.hidden = aberto;
+    }));
+
+    // botões de ação: a página não envia nada; o registro de visitas leva o data-cta pro Telegram do dono
+    const C = CFG.cta;
+    $('#cta-quero').addEventListener('click', () => { $('#cta-res').innerHTML = `<div class="ok">${esc(C.queroResposta)}</div>`; });
+    $('#cta-marcar').addEventListener('click', () => {
+      const d = new Date(); const ops = [];
+      while (ops.length < 3) { d.setDate(d.getDate() + 1); if (d.getDay() === 0 || d.getDay() === 6) continue; ops.push({ curto: C.dias[d.getDay()] + ' ' + (d.getMonth() + 1) + '/' + d.getDate() + ' ' + C.horas[ops.length], longo: C.diasLongos[d.getDay()] + ', ' + C.meses[d.getMonth()] + ' ' + d.getDate() + ' ' + C.em + ' ' + C.horas[ops.length] }); }
+      $('#cta-res').innerHTML = `<span>${esc(C.pergunta)}</span><div class="chips">` + ops.map((o) => '<button class="chip" type="button" data-cta="marcar ' + esc(o.curto) + '" data-longo="' + esc(o.longo) + '">' + esc(o.longo) + '</button>').join('') + '</div>';
+    });
+    $('#cta-res').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-longo]'); if (!b) return;
+      $('#cta-res').innerHTML = `<div class="ok">${esc(fmt(C.confirma, { longo: b.dataset.longo }))}</div>`;
+    });
+  }
+
+  // ---------- abre parada; o exemplo só toca no botão ----------
+  iniciar();
+  let rodada = 0;
+  const parar = () => { rodada++; modoExemplo = false; };
+  $('#recomecar').addEventListener('click', parar, { capture: true });
+  $('#inbox').addEventListener('click', (e) => { if (e.isTrusted) parar(); }, { capture: true });
+  $('#fila').addEventListener('click', (e) => { if (e.isTrusted) parar(); }, { capture: true });
+  const espera = (cond, ms) => new Promise((ok) => { const t0 = Date.now(); (function v() { if (cond() || Date.now() - t0 > ms) ok(); else setTimeout(v, 150); })(); });
+  $('#exemplo').addEventListener('click', async () => {
+    $('#exemplo').classList.remove('chamar');
+    const minha = ++rodada; iniciar(); modoExemplo = true;
+    const vivo = () => minha === rodada;
+    const livre = () => !ocupado || !vivo();
+    await esp(1800); if (!vivo()) return;
+    rodar(PAPEL.auto); await esp(300); await espera(livre, 20000); if (!vivo()) return;
+    await esp(2200); if (!vivo()) return;
+    rodar(PAPEL.revisao); await esp(300); await espera(() => $('#fila [data-r="ok"]') || !vivo(), 15000); if (!vivo()) return;
+    await esp(2800); if (!vivo()) return;
+    const ok = $('#fila [data-r="ok"]'); if (ok) ok.click();
+    await esp(300); await espera(livre, 20000); if (!vivo()) return;
+    await esp(2200); if (!vivo()) return;
+    rodar(PAPEL.duplicado); await esp(300); await espera(livre, 15000);
+    if (vivo()) modoExemplo = false;
+  });
+})();
+</script>
+
+<script>
+// registro de visitas: sem nome, sem e-mail; só a demo, o evento, o passo e o tempo.
+(() => {
+  if (location.protocol === 'file:') return;
+  const DEMO = "experiment-operator", URL = "https://n8n-kf1l.srv1863913.hstgr.cloud/webhook/demo-visita";
+  let eu = false;
+  try { if (new URLSearchParams(location.search).has('eu')) localStorage.setItem('demo_eu', '1'); eu = localStorage.getItem('demo_eu') === '1'; } catch (e) {}
+  const sessao = Math.random().toString(36).slice(2, 10), t0 = Date.now(), vistos = new Set(); let maior = 0;
+  function manda(evento, passo) {
+    const d = new URLSearchParams({ demo: DEMO, evento, passo: String(passo || 0), sessao, interno: eu ? '1' : '0', segundos: String(Math.round((Date.now() - t0) / 1000)) });
+    try { navigator.sendBeacon(URL, new Blob([d.toString()], { type: 'application/x-www-form-urlencoded' })); } catch (e) {}
+  }
+  const umaVez = (k, f) => { if (!vistos.has(k)) { vistos.add(k); f(); } };
+  manda('abriu', 0);
+  document.addEventListener('click', (e) => {
+    const dot = e.target.closest('.dot[data-p]');
+    if (dot) { const n = +dot.dataset.p; maior = Math.max(maior, n); umaVez('p' + n, () => manda('passo', n)); }
+    if (e.target.closest('#exemplo')) umaVez('ex', () => manda('exemplo', maior));
+    if (e.target.closest('#chat .chip')) umaVez('conversa', () => manda('conversou', maior));
+    const cta = e.target.closest('[data-cta]'); if (cta) manda('cta-' + cta.dataset.cta, maior);
+  }, true);
+  document.addEventListener('input', (e) => { if (e.target.closest('[data-calc]')) umaVez('calc', () => manda('calculou', maior)); }, true);
+  document.addEventListener('click', (e) => { if (e.target.closest('[data-cen]')) umaVez('calc', () => manda('calculou', maior)); }, true);
+  document.addEventListener('submit', () => umaVez('conversa', () => manda('conversou', maior)), true);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') manda('saiu', maior); });
+})();
+</script>
+</body>
+</html>
