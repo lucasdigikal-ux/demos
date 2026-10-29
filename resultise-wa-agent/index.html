@@ -462,11 +462,22 @@ const D = {"idioma":"en-GB","titulo":"WhatsApp AI Agent demo","textos":{"etiquet
       () => { acender('#fx4'); $('#was').insertAdjacentHTML('afterbegin', cartaoWa(r, T.agora)); holofote('#pn-wa', fica); },
       () => { $('#mails').insertAdjacentHTML('afterbegin', cartaoMail(r, T.agora)); holofote('#pn-mail', fica * 2); setTimeout(() => acender(null), fica * 2); },
     ];
-    etapas.forEach((f, i) => setTimeout(f, fica * (i + 1)));
+    if (!modoExemplo) { etapas.forEach((f, i) => setTimeout(f, fica * (i + 1))); return; }
+    gravando = true; let j = 0;
+    const passo = () => { if (j >= etapas.length) { gravando = false; return; } etapas[j++](); setTimeout(passo, Math.max(fica, leitura())); };
+    setTimeout(passo, Math.max(fica, leitura()));
   }
   const chat = $('#chat');
   let modoExemplo = false;
   const ritmo = () => (modoExemplo ? { resposta: 1400, bastidor: 1100, turno: 3200 } : { resposta: 550, bastidor: 700, turno: 0 });
+  const pal = (t) => t.split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w));
+  let marco = ''; let gravando = false;
+  function leitura() {
+    const agora = document.body.innerText; const c = new Map(); let n = 0;
+    for (const w of pal(marco)) c.set(w, (c.get(w) || 0) + 1);
+    for (const w of pal(agora)) { const q = c.get(w) || 0; if (q > 0) c.set(w, q - 1); else n++; }
+    marco = agora; return n ? 1000 + (n / 4) * 1000 + 250 : 0;
+  }
   let etapa = 'livre'; let motivo = ''; let iq = 0;
   function diz(texto, opcoes) {
     const m = document.createElement('div'); m.className = 'msg ag'; m.textContent = texto; chat.appendChild(m);
@@ -511,7 +522,7 @@ const D = {"idioma":"en-GB","titulo":"WhatsApp AI Agent demo","textos":{"etiquet
   function responder(t) {
     t = t.trim(); if (!t) return; eu(t);
     const e = document.createElement('div'); e.className = 'msg ag escrevendo'; e.textContent = T.escrevendo; chat.appendChild(e); chat.scrollTop = chat.scrollHeight;
-    setTimeout(() => { e.remove(); processar(t); }, ritmo().resposta);
+    setTimeout(() => { e.remove(); processar(t); }, modoExemplo ? Math.max(ritmo().resposta, leitura()) : ritmo().resposta);
   }
   function processar(t) {
     if (etapa === 'fim') { if (t.toLowerCase() === T.recomecar.toLowerCase()) iniciar(); else diz(T.fimJaRegistado, [T.recomecar]); return; }
@@ -672,15 +683,15 @@ const D = {"idioma":"en-GB","titulo":"WhatsApp AI Agent demo","textos":{"etiquet
   chat.addEventListener('click', (e) => { if (e.isTrusted) parar(); }, { capture: true });
   $('#exemplo').addEventListener('click', () => {
     $('#exemplo').classList.remove('chamar');
-    const minha = ++rodada; let i = 0; aba(true); iniciar(); modoExemplo = true;
+    const minha = ++rodada; let i = 0; aba(true); iniciar(); modoExemplo = true; marco = document.body.innerText;
+    const quandoCalmo = (fn) => (function v() { if (minha !== rodada) return; if (gravando || chat.querySelector('.escrevendo')) setTimeout(v, 150); else setTimeout(fn, Math.max(1200, leitura())); })();
     (function proximo() {
       if (minha !== rodada) return;
-      if (i < D.roteiro.length) { responder(D.roteiro[i++]); setTimeout(proximo, ritmo().turno); }
-      else setTimeout(() => {
-        if (minha !== rodada) return;
+      if (i < D.roteiro.length) { responder(D.roteiro[i++]); setTimeout(() => quandoCalmo(proximo), 300); }
+      else {
         const o = chat.querySelector('.opcoes .chip'); if (o) o.click();
-        setTimeout(() => { if (minha === rodada) modoExemplo = false; }, 1400 + 1100 * 6);
-      }, 2000);
+        setTimeout(() => quandoCalmo(() => { if (minha === rodada) modoExemplo = false; }), 300);
+      }
     })();
   });
 })();
