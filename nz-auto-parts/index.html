@@ -343,6 +343,17 @@ const CFG = {"limite":85,"papeis":{"auto":"a","revisao":"b","duplicado":"c"},"do
   const arquivados = {};
   const ritmo = () => (modoExemplo ? { bastidor: 1100 } : { bastidor: 650 });
   const esp = (ms) => new Promise((r) => setTimeout(r, ms));
+  // Ritmo de leitura do exemplo (29/10/2026, 2ª queixa de "rápido demais"): cada passo espera
+  // 1 s pra achar onde mudou + 4 palavras/s das palavras NOVAS desde a última pausa. É a mesma
+  // régua do scripts/medir-ritmo-demo.mjs, que reprova o exemplo que não der tempo de ler.
+  const pal = (t) => t.split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w));
+  let marco = '';
+  function leitura() {
+    const agora = document.body.innerText; const c = new Map(); let n = 0;
+    for (const w of pal(marco)) c.set(w, (c.get(w) || 0) + 1);
+    for (const w of pal(agora)) { const q = c.get(w) || 0; if (q > 0) c.set(w, q - 1); else n++; }
+    marco = agora; return n ? 1000 + (n / 4) * 1000 + 250 : 0;
+  }
 
   const timers = new Map();
   function holofote(sel, ms) {
@@ -396,7 +407,7 @@ const CFG = {"limite":85,"papeis":{"auto":"a","revisao":"b","duplicado":"c"},"do
 
   // ---------- a corrida ----------
   async function passosSeq(g, fns) {
-    for (const f of fns) { await esp(ritmo().bastidor); if (g !== geracao) return false; if ((await f()) === 'parar') return false; }
+    for (const f of fns) { await esp(modoExemplo ? Math.max(400, leitura()) : ritmo().bastidor); if (g !== geracao) return false; if ((await f()) === 'parar') return false; }
     return true;
   }
   function igualA(k) { return DOCS[k].igualA || arquivados[k] || null; }
@@ -488,18 +499,18 @@ const CFG = {"limite":85,"papeis":{"auto":"a","revisao":"b","duplicado":"c"},"do
   const espera = (cond, ms) => new Promise((ok) => { const t0 = Date.now(); (function v() { if (cond() || Date.now() - t0 > ms) ok(); else setTimeout(v, 150); })(); });
   $('#exemplo').addEventListener('click', async () => {
     $('#exemplo').classList.remove('chamar');
-    const minha = ++rodada; iniciar(); modoExemplo = true;
+    const minha = ++rodada; iniciar(); modoExemplo = true; marco = document.body.innerText;
     const vivo = () => minha === rodada;
     const livre = () => !ocupado || !vivo();
     await esp(1800); if (!vivo()) return;
-    rodar(PAPEL.auto); await esp(300); await espera(livre, 20000); if (!vivo()) return;
-    await esp(2200); if (!vivo()) return;
-    rodar(PAPEL.revisao); await esp(300); await espera(() => $('#fila [data-r="ok"]') || !vivo(), 15000); if (!vivo()) return;
-    await esp(2800); if (!vivo()) return;
+    rodar(PAPEL.auto); await esp(300); await espera(livre, 90000); if (!vivo()) return;
+    await esp(Math.max(1500, leitura())); if (!vivo()) return;
+    rodar(PAPEL.revisao); await esp(300); await espera(() => $('#fila [data-r="ok"]') || !vivo(), 90000); if (!vivo()) return;
+    await esp(Math.max(2000, leitura())); if (!vivo()) return;
     const ok = $('#fila [data-r="ok"]'); if (ok) ok.click();
-    await esp(300); await espera(livre, 20000); if (!vivo()) return;
-    await esp(2200); if (!vivo()) return;
-    rodar(PAPEL.duplicado); await esp(300); await espera(livre, 15000);
+    await esp(300); await espera(livre, 90000); if (!vivo()) return;
+    await esp(Math.max(1500, leitura())); if (!vivo()) return;
+    rodar(PAPEL.duplicado); await esp(300); await espera(livre, 90000);
     if (vivo()) modoExemplo = false;
   });
 })();
