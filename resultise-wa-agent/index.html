@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>WhatsApp AI Agent demo</title>
+<meta name="description" content="A customer messages a cleaning company on WhatsApp; the AI agent quotes, qualifies and books, while the CRM, calendar and team alert fill in.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lucasdigikal-ux.github.io/demos/resultise-wa-agent/">
+<meta property="og:title" content="WhatsApp AI agent built in n8n">
+<meta property="og:description" content="A customer messages a cleaning company on WhatsApp; the AI agent quotes, qualifies and books, while the CRM, calendar and team alert fill in.">
+<meta property="og:image" content="https://lucasdigikal-ux.github.io/demos/resultise-wa-agent/capa.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://lucasdigikal-ux.github.io/demos/resultise-wa-agent/capa.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Montserrat:wght@400;500;600;700;800&family=Shantell+Sans:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+<!-- gerado por scripts/nova-demo.mjs a partir de demos/resultise-wa-agent/demo.json; edite a configuração, não este arquivo -->
+<style>
+
+:root{
+  --papel:#F5EFE7; --grade:#E7D3C4; --creme:#FFFDF9; --tinta:#1C1B18; --muted:#6B6459; --laranja:#D97757;
+  --verde:#2F7D4F; --verde-t:#E3F0E6; --vermelho:#B4402F; --vermelho-t:#F7E1DB; --marca:#F6D3A8; --wa:#DCF3D6; --moldura:#1C1B18; --wa-topo:#0B6E61; --wa-fundo:#EFE7DE; --wa-eu:#D9FDD3;
+  --display:"Archivo Black",Impact,system-ui,sans-serif; --body:"Montserrat",system-ui,sans-serif; --mao:"Shantell Sans","Comic Sans MS",cursive; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--papel:#1D1A16;--grade:#2E2822;--creme:#26221D;--tinta:#F2ECE3;--muted:#B5AA9C;--laranja:#E58A6B;--verde:#6CC08E;--verde-t:#1E3326;--vermelho:#F08A78;--vermelho-t:#3B211C;--marca:#6B4A22;--wa:#20361F;--moldura:#0E0D0B;--wa-topo:#1F2C34;--wa-fundo:#0B141A;--wa-eu:#005C4B;color-scheme:dark}}
+:root[data-theme="dark"]{--papel:#1D1A16;--grade:#2E2822;--creme:#26221D;--tinta:#F2ECE3;--muted:#B5AA9C;--laranja:#E58A6B;--verde:#6CC08E;--verde-t:#1E3326;--vermelho:#F08A78;--vermelho-t:#3B211C;--marca:#6B4A22;--wa:#20361F;--moldura:#0E0D0B;--wa-topo:#1F2C34;--wa-fundo:#0B141A;--wa-eu:#005C4B;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;color:var(--tinta);font:16px/1.5 var(--body);background-color:var(--papel);
+  background-image:linear-gradient(var(--grade) 2px,transparent 2px),linear-gradient(90deg,var(--grade) 2px,transparent 2px);background-size:56px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.wrap{max-width:1120px;margin:0 auto;display:grid;gap:22px}
+.tag{display:inline-block;background:var(--laranja);color:#1C1B18;font:700 clamp(18px,2.4vw,24px)/1.15 var(--mao);padding:8px 16px;border-radius:8px;transform:rotate(-1.5deg);box-shadow:0 3px 0 rgba(0,0,0,.08)}
+.caps{font:800 12px var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+h1{font:400 clamp(30px,5vw,52px)/1.04 var(--display);margin:6px 0 0;text-wrap:balance}
+.rail{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.dot{border:3px solid var(--laranja);background:var(--creme);color:var(--tinta);font:800 14px var(--body);cursor:pointer;border-radius:999px;padding:9px 16px;display:flex;gap:8px;align-items:center}
+.dot b{width:24px;height:24px;border-radius:50%;background:var(--laranja);color:#1C1B18;display:grid;place-items:center;font-size:13px}
+.dot[aria-current="step"]{background:var(--laranja);color:#1C1B18}.dot[aria-current="step"] b{background:var(--creme);color:var(--tinta)}
+.dot:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--tinta);outline-offset:3px}
+.palco{background:var(--creme);border:6px solid var(--grade);border-radius:28px;padding:clamp(14px,3vw,30px);display:grid;gap:18px}
+.topo{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.fala{font:700 clamp(19px,2.4vw,26px)/1.25 var(--mao);margin:0;max-width:34ch}
+.btn{font:800 14px var(--body);border:3px solid var(--tinta);background:var(--creme);color:var(--tinta);border-radius:14px;padding:10px 18px;cursor:pointer}
+.btn:active{transform:translateY(2px)}
+.clique{font:700 13px var(--mao)}
+.chamar{animation:chama 1.8s ease-in-out infinite}
+@keyframes chama{0%,100%{box-shadow:0 0 0 0 var(--marca)}50%{box-shadow:0 0 0 7px var(--marca)}}
+.msg.escrevendo{font:600 13px var(--mao);color:var(--muted);font-style:italic}.btn.lar{background:var(--laranja);border-color:var(--laranja);color:#1C1B18}
+.sim{display:grid;grid-template-columns:minmax(0,390px) minmax(0,1fr);gap:22px;align-items:start}@media (max-width:860px){.sim{grid-template-columns:1fr}}
+
+.lado-cel{display:grid;gap:10px;justify-items:center;min-width:0}
+.celular{width:100%;max-width:390px;background:var(--moldura);border-radius:44px;padding:26px 10px 14px;position:relative;box-shadow:0 22px 44px -20px rgba(0,0,0,.5)}
+.celular::before{content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);width:84px;height:7px;border-radius:99px;background:var(--grade)}
+.celular .site{border:0;border-radius:30px}
+.ava{width:34px;height:34px;border-radius:50%;background:var(--laranja);color:#1C1B18;display:grid;place-items:center;font:800 13px var(--body);flex:none}
+.site-top strong small{display:block;text-align:left;font:500 11.5px var(--body);letter-spacing:0;opacity:.8}
+.site:not(.pele-wa) .ava,.site:not(.pele-wa) .online{display:none}
+.site.pele-wa .site-top{background:var(--wa-topo);color:#FFFFFF;justify-content:flex-start}
+.site.pele-wa .site-top strong{font:700 16px var(--body)}
+.site.pele-wa .abas,.site.pele-wa .hero{display:none}
+.site.pele-wa .chat{background:var(--wa-fundo)}
+.site.pele-wa .msg.eu{background:var(--wa-eu);color:var(--tinta);font-weight:500}
+.site.pele-wa .msg.ag{border-color:transparent;box-shadow:0 1px 1px rgba(0,0,0,.12)}
+.site.pele-wa .entrada{background:var(--wa-fundo);border-top-color:transparent}
+.site{border:3px solid var(--tinta);border-radius:20px;overflow:hidden;background:var(--papel);display:grid;min-width:0}
+.site-top{background:var(--tinta);color:var(--creme);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.site-top strong{font:400 18px var(--display);letter-spacing:.02em}
+.abas{display:flex;gap:6px}
+.aba{font:700 13px var(--body);border:2px solid var(--creme);background:transparent;color:var(--creme);border-radius:999px;padding:5px 12px;cursor:pointer}
+.aba[aria-selected="true"]{background:var(--creme);color:var(--tinta)}
+.hero{padding:14px 16px 4px;font:700 15px/1.35 var(--body)}.hero small{display:block;font:500 12px var(--mono);color:var(--muted)}
+.chat{height:430px;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+.msg{max-width:86%;padding:9px 13px;border-radius:16px;font:500 15px/1.45 var(--body);animation:entra .3s ease-out both;overflow-wrap:anywhere}
+.msg.ag{background:var(--creme);border:2px solid var(--grade);border-bottom-left-radius:4px;align-self:flex-start}
+.msg.eu{background:var(--laranja);color:#1C1B18;border-bottom-right-radius:4px;align-self:flex-end;font-weight:600}
+.msg.sis{align-self:center;background:transparent;font:600 12px var(--mono);color:var(--vermelho);padding:2px}
+.opcoes{display:flex;flex-wrap:wrap;gap:6px;align-self:flex-start}
+.chip{font:700 13.5px var(--body);border:2px solid var(--laranja);background:var(--creme);color:var(--tinta);border-radius:999px;padding:6px 12px;cursor:pointer}
+.chip:hover{background:var(--marca)}
+.entrada{display:flex;gap:8px;padding:10px;border-top:3px solid var(--grade);background:var(--creme)}
+.entrada input{flex:1;min-width:0}
+input,select{font:600 15px var(--body);color:var(--tinta);background:var(--creme);border:3px solid var(--grade);border-radius:12px;padding:9px 12px;width:100%}
+.form{padding:14px 16px;display:grid;gap:10px}.form label{font:700 13px var(--body);display:grid;gap:4px}
+.erro{color:var(--vermelho);font:700 13px var(--body);min-height:1em}
+.bast{display:grid;gap:12px;min-width:0}
+.fluxo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font:700 12.5px var(--body)}
+.fluxo span{border:2px solid var(--grade);border-radius:999px;padding:4px 10px;background:var(--papel);transition:background .3s,border-color .3s}
+.fluxo span.on{background:var(--laranja);border-color:var(--laranja);color:#1C1B18}
+.fluxo i{font-style:normal;color:var(--muted)}
+.board{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media (max-width:560px){.board{grid-template-columns:1fr}}
+.pn{background:var(--papel);border:3px solid var(--grade);border-radius:16px;padding:12px;display:grid;gap:8px;align-content:start;min-width:0;transition:border-color .3s,box-shadow .3s}
+.pn.largo{grid-column:1/-1}
+.pn h3{margin:0;font:800 13px var(--body);display:flex;justify-content:space-between;gap:8px;align-items:center}
+.pn h3 em{font:500 11.5px var(--mono);font-style:normal;color:var(--muted)}
+.pulso{border-color:var(--laranja);box-shadow:0 0 0 4px var(--marca);animation:pulsa .9s ease-out}
+@keyframes pulsa{0%{transform:scale(.985)}60%{transform:scale(1.01)}100%{transform:none}}
+
+.pn{transition:border-color .35s,box-shadow .35s,opacity .35s,transform .35s}
+.pn.foco{border-color:var(--laranja);box-shadow:0 0 0 5px var(--marca),0 14px 30px -10px var(--laranja);transform:translateY(-3px)}
+.bast.holofote .pn:not(.foco){opacity:.42}
+.fluxo span{transition:background .3s,border-color .3s,transform .3s,box-shadow .3s}
+.fluxo span.agora{transform:scale(1.1);box-shadow:0 0 0 4px var(--marca)}
+.ficha .acende{animation:acende 2.2s ease-out both;border-radius:4px}
+@keyframes acende{0%{background:var(--laranja);color:#1C1B18}100%{background:transparent}}
+.estado{transition:background .3s,color .3s}
+@keyframes entra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.ficha{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font:500 13px var(--mono);margin:0}
+.ficha dt{color:var(--muted)}.ficha dd{margin:0;overflow-wrap:anywhere}
+.estado{font:700 11px var(--body);letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:6px;background:var(--marca)}
+.estado.ok{background:var(--verde-t);color:var(--verde)}.estado.no{background:var(--vermelho-t);color:var(--vermelho)}
+.folha-wrap{overflow-x:auto}
+.folha{border-collapse:collapse;font:500 12.5px var(--mono);width:100%;font-variant-numeric:tabular-nums}
+.folha th,.folha td{border:1px solid var(--grade);padding:4px 7px;text-align:left;white-space:nowrap}
+.folha th{background:var(--creme);font-weight:700}
+.folha tr.ex td{color:var(--muted)}.folha tr.novo td{background:var(--marca);animation:entra .4s both}
+#was,#mails{display:grid;gap:10px}
+.wa{background:var(--wa);border-radius:12px 12px 12px 3px;padding:9px 12px;font:500 13.5px/1.4 var(--body);animation:entra .4s both;display:grid;gap:3px}
+.wa .cab,.mail .cab{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-weight:800}
+.temp{font:800 10.5px var(--body);letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:6px;background:var(--grade);color:var(--tinta)}
+.temp.quente{background:var(--laranja);color:#1C1B18}.temp.morno{background:var(--marca)}
+.tel{font:500 12.5px var(--mono);white-space:nowrap}
+.wa.ex,.mail.ex{opacity:.55}.wa small,.mail small{display:block;text-align:right;font:500 11px var(--mono);color:var(--muted)}
+.mail{font:500 13px/1.45 var(--body);background:var(--creme);border:2px solid var(--grade);border-radius:10px;padding:9px 11px;animation:entra .4s both;display:grid;gap:3px}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--papel);border:3px solid var(--grade);border-radius:18px;padding:16px;display:grid;gap:12px;align-content:start;min-width:0}
+.card h2{margin:0;font:400 22px/1.1 var(--display)}
+.linha{display:grid;gap:6px}
+.sem{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;font:700 11.5px var(--body);color:var(--muted);text-align:center}
+.barra{position:relative;height:30px;border:2px solid var(--grade);border-radius:999px;background:var(--creme);overflow:hidden}
+.barra .seg{position:absolute;top:0;bottom:0;display:flex;align-items:center;padding-inline:10px;font:700 12px var(--body);white-space:nowrap;transition:left .6s cubic-bezier(.2,.8,.2,1),width .6s cubic-bezier(.2,.8,.2,1)}
+.seg.ok{background:var(--laranja);color:#1C1B18}
+.seg.duv{background:repeating-linear-gradient(45deg,var(--marca) 0 8px,var(--creme) 8px 16px);color:var(--tinta)}
+.rot{font:800 13px var(--body)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip[aria-pressed="true"]{background:var(--laranja);color:#1C1B18}
+.carimbo{display:inline-block;border:4px solid currentColor;border-radius:10px;padding:4px 12px;font:700 19px var(--mao);transform:rotate(-6deg);animation:carimbo .35s ease-out both}
+.carimbo.ok{color:var(--verde)}.carimbo.no{color:var(--vermelho)}
+@keyframes carimbo{0%{opacity:0;transform:scale(1.6) rotate(-14deg)}100%{opacity:1;transform:scale(1) rotate(-6deg)}}
+.res{min-height:70px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font:600 14px var(--body)}
+.par{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.par li{display:grid;grid-template-columns:1fr 34px 1fr;gap:8px;align-items:center;cursor:pointer}
+.par .a,.par .b{background:var(--creme);border:3px solid var(--grade);border-radius:12px;padding:8px 12px;font:600 14px var(--body);transition:border-color .25s,background .25s;min-width:0}
+.par .s{font:700 20px var(--mao);color:var(--laranja);text-align:center}
+.par li.on .a,.par li.on .b{border-color:var(--laranja);background:var(--marca)}
+@media (max-width:620px){.par li{grid-template-columns:1fr}.par .s{transform:rotate(90deg)}}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.num{background:var(--creme);border:3px solid var(--grade);border-radius:14px;padding:10px;display:grid;gap:2px}
+.num b{font:400 30px/1 var(--display);font-variant-numeric:tabular-nums}.num span{font:600 12.5px var(--body);color:var(--muted)}
+.ent{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ent button{width:100%;text-align:left;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:var(--creme);border:3px solid var(--grade);border-radius:16px;padding:12px 14px;cursor:pointer;color:var(--tinta);font:700 15px var(--body)}
+.ent button[aria-expanded="true"]{border-color:var(--laranja)}
+.ent .n{font:400 22px var(--display);color:var(--laranja)}
+.ent .v{font:400 20px var(--display);font-variant-numeric:tabular-nums}
+.ent .q{font:500 14px/1.5 var(--body);padding:8px 14px 2px;color:var(--tinta)}
+.ent .q b{font:700 13px var(--mao);color:var(--laranja)}
+.total{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:baseline;justify-content:space-between;border-top:3px dashed var(--grade);padding-top:12px}
+.total b{font:400 34px var(--display)}
+.selos{display:flex;flex-wrap:wrap;gap:8px}
+.selo{font:700 13px var(--mao);border:2px solid var(--laranja);border-radius:999px;padding:4px 12px}
+.rodape{font:600 12.5px var(--body);color:var(--muted);text-align:center}
+
+.cta{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.link-cli{font:700 13.5px var(--mao);color:var(--laranja);margin-left:auto}
+.cta-res{display:grid;gap:10px;font:600 15px/1.45 var(--body)}.cta-res:empty{display:none}
+.cta-res .ok{background:var(--verde-t);color:var(--verde);border-radius:14px;padding:12px 14px;font-weight:700}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}@media (max-width:760px){.calc{grid-template-columns:1fr}}
+.calc-campos{display:grid;gap:14px}
+.calc label{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font:700 14px var(--body)}
+.calc label input{grid-column:1/-1}
+.calc output{font:700 15px var(--mono);font-variant-numeric:tabular-nums;color:var(--laranja)}
+input[type=range]{-webkit-appearance:none;appearance:none;padding:0;border:0;background:transparent;height:28px;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:10px;border-radius:99px;background:var(--grade);border:2px solid var(--tinta)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-9px;border-radius:50%;background:var(--laranja);border:3px solid var(--tinta)}
+input[type=range]::-moz-range-track{height:10px;border-radius:99px;background:var(--grade);border:2px solid var(--tinta)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--laranja);border:3px solid var(--tinta)}
+.calc-rot{margin:0;font:800 13px var(--body)}
+.calc-out{grid-template-columns:1fr;gap:12px}
+.calc-out .num b{font-size:34px;transition:color .3s}
+.calc-out .num.vivo b{color:var(--laranja)}
+</style>
+
+<div class="wrap">
+  <header style="display:grid;gap:10px;justify-items:center;text-align:center">
+    <span class="tag">WhatsApp AI agent, running</span>
+    <h1>A WhatsApp message becomes a booked job.</h1>
+    <span class="caps">Sample brand · example data</span>
+  </header>
+
+  <nav class="rail" aria-label="Steps">
+    <button class="dot" data-p="0" aria-current="step"><b>1</b>Try it</button>
+    <!-- proposta:inicio -->
+    <button class="dot" data-p="1"><b>2</b>Where it usually stalls</button>
+    <button class="dot" data-p="2"><b>3</b>Built before</button>
+    <button class="dot" data-p="3"><b>4</b>Plan and price</button>
+    <!-- proposta:fim -->
+  </nav>
+
+  <section class="palco" id="p0">
+    <div class="topo">
+      <p class="fala">Message the company like a customer would. Send a sofa photo request, get a quote, book. Watch the CRM and alert fill in.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn lar chamar" id="exemplo">Watch an example <span class="clique">(click here)</span></button><button class="btn" id="recomecar">Start over</button></div>
+    </div>
+    <div class="sim">
+      <div class="lado-cel">
+      <div class="chips canal" role="group" aria-label="View as">
+        <button class="chip" type="button" id="c-wa" aria-pressed="true">WhatsApp</button>
+        <button class="chip" type="button" id="c-site" aria-pressed="false">Web chat</button>
+      </div>
+      <div class="celular">
+      <div class="site pele-wa" id="site">
+        <div class="site-top">
+          <span class="ava" aria-hidden="true">BH</span><strong>BrightHome Cleaning<small class="online">online</small></strong>
+          <div class="abas" role="tablist">
+            <button class="aba" role="tab" id="aba-chat" aria-selected="true">Chat agent</button>
+            <button class="aba" role="tab" id="aba-form" aria-selected="false">Form</button>
+          </div>
+        </div>
+        <div class="hero">Upholstery cleaning, fictional brand<small>WhatsApp Business · test version</small></div>
+        <div id="vista-chat">
+          <div class="chat" id="chat" aria-live="polite"></div>
+          <form class="entrada" id="f-chat">
+            <input id="txt" autocomplete="off" placeholder="Type here… (e.g. how much for a 3-seat sofa?)" aria-label="Message">
+            <button class="btn lar" type="submit">Send</button>
+          </form>
+        </div>
+        <form class="form" id="vista-form" hidden>
+          <label>Name<input id="ff-nome" autocomplete="off" value="Emily Carter"></label>
+          <label>Mobile<input id="ff-tel" autocomplete="off" value="07700 900147"></label>
+          <label>Item<select id="ff-tipo"><option>Sofa</option><option>Mattress</option><option>Carpet</option></select></label>
+          <div class="erro" id="ff-erro"></div>
+          <button class="btn lar" type="submit">Request a call back</button>
+        </form>
+      </div>
+      </div>
+      </div>
+
+      <div class="bast">
+        <div class="fluxo" aria-label="Message path">
+          <span id="fx0">WhatsApp</span><i>→</i><span id="fx1">n8n workflow</span><i>→</i><span id="fx2">LLM agent + rules check</span><i>+</i><span id="fx3">CRM + Google Calendar</span><i>+</i><span id="fx4">Human handoff</span>
+        </div>
+        <div class="board">
+          <div class="pn largo" id="pn-base">
+            <h3>Contact in the CRM <span class="estado" id="estado">collecting</span></h3>
+            <dl class="ficha" id="ficha"></dl>
+          </div>
+          <div class="pn largo" id="pn-folha">
+            <h3>Jobs sheet <em>Google Sheets</em></h3>
+            <div class="folha-wrap"><table class="folha"><thead><tr><th>Date</th><th>Name</th><th>Mobile</th><th>Request</th><th>Lead</th><th>Visit</th></tr></thead><tbody id="linhas"></tbody></table></div>
+          </div>
+          <div class="pn" id="pn-wa">
+            <h3>Team alert <em>alert</em></h3>
+            <div id="was"></div>
+          </div>
+          <div class="pn" id="pn-mail">
+            <h3>Calendar and email <em>alert</em></h3>
+            <div id="mails"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- proposta:inicio -->
+  <section class="palco" id="p1" hidden>
+    <div class="topo"><p class="fala">What breaks WhatsApp agents, handled.</p></div>
+    <div class="grid2">
+      <div class="card" data-alternar="0">
+        <h2>If the customer replies after 24 hours</h2>
+        <p style="margin:0">The free reply window closes. Then what?</p>
+        <div class="chips"><button class="chip" type="button" data-op="0" aria-pressed="false">Free text anyway</button><button class="chip" type="button" data-op="1" aria-pressed="true">Approved template first</button></div>
+        <div class="linha">
+          <div class="sem"><span>Hour 1</span><span>Hour 12</span><span>Hour 24+</span></div>
+          <div class="rot">Chat reply</div>
+          <div class="barra"><div class="seg ok" style="left:0;width:100%">agent answers in seconds</div></div>
+          <div class="rot">After 24 h</div>
+          <div class="barra"><div class="seg seg-var ok" style="left:0;width:100%">reminder still goes out</div></div>
+        </div>
+      </div>
+      <div class="card" data-testar-tel="900147">
+        <h2>Bad data stays out</h2>
+        <p style="margin:0">Numbers are checked in code before they reach the CRM.</p>
+        <div class="chips"><button class="chip" type="button" data-t="07700 900147">07700 900147</button><button class="chip" type="button" data-t="+44 7700 900122">+44 7700 900122</button><button class="chip" type="button" data-t="900147">900147</button><button class="chip" type="button" data-t="12345 678901">12345 678901</button></div>
+        <form class="entrada" style="padding:0;border:0;background:none">
+          <input id="tel-in" autocomplete="off" placeholder="Or type a number" aria-label="Or type a number">
+          <button class="btn lar" type="submit">Check</button>
+        </form>
+        <div class="res"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="palco" id="p2" hidden>
+    <div class="topo"><p class="fala">This demo copies a WhatsApp agent I built and ran for a real cleaning company.</p></div>
+    <div class="nums">
+      <div class="num"><b>102</b><span>priced quotes sent in 14 days, nobody typing</span></div>
+      <div class="num"><b>19</b><span>jobs booked from 417 WhatsApp leads</span></div>
+      <div class="num"><b>1,282</b><span>AI messages checked by code; 3 stopped</span></div>
+    </div>
+    <ul class="par" id="par">
+      <li data-k="0"><div class="a">WhatsApp AI agents that qualify and book</div><div class="s">↔</div><div class="b">Power Limpeza: two LLM agents qualify, quote from a sofa photo and close the booking on WhatsApp.</div></li>
+      <li data-k="1"><div class="a">n8n with CRMs, email, calendars, Sheets</div><div class="s">↔</div><div class="b">Hades Copilot pulls leads from forms, Typebot, GoHighLevel and Zapier into one record, with retries.</div></li>
+      <li data-k="2"><div class="a">Good prompts, hand-off to humans</div><div class="s">↔</div><div class="b">An auditor checks every reply before it reaches the customer; unclear cases go to a person.</div></li>
+      <li data-k="3"><div class="a">Clean, maintainable workflows</div><div class="s">↔</div><div class="b">Every run ends done, failed or unknown, so a broken step shows up instead of hiding.</div></li>
+    </ul>
+    <p class="rodape">Click a row: your job post on the left, what I already built on the right.</p>
+  </section>
+
+  <section class="palco" id="p3" hidden>
+    <div class="topo"><p class="fala">Your prices, your scope. I build and keep it running.</p></div>
+    <ul class="ent" id="ent">
+      <li><button aria-expanded="true"><span class="n">1</span><span>First agent (paid trial)</span><span class="v">$275</span></button>
+        <div class="q"><b>How you check it:</b> a test WhatsApp message gets an answer, a booking and a CRM record.</div></li>
+      <li><button aria-expanded="false"><span class="n">2</span><span>Each automation</span><span class="v">$195</span></button>
+        <div class="q" hidden><b>How you check it:</b> one process running, with a short doc of how it works.</div></li>
+      <li><button aria-expanded="false"><span class="n">3</span><span>Every month</span><span class="v">$50 / $35</span></button>
+        <div class="q" hidden><b>How you check it:</b> monitoring and small changes per active agent or automation.</div></li>
+    </ul>
+    <div class="total">
+      <span class="caps">Fixed price per build · recurring care</span>
+      <b>$275</b>
+    </div>
+    <div class="selos"><span class="selo">accounts in your client's name</span><span class="selo">nothing live without your OK</span><span class="selo">every run logged</span></div>
+    <div class="cta">
+      <button class="btn lar" type="button" id="cta-quero" data-cta="quero">Let's start the trial</button>
+      <button class="btn" type="button" id="cta-marcar" data-cta="marcar">Book a 15-minute call</button>
+      <a class="link-cli" href="clientes/" data-cta="versao-clientes">Price-free version to show your clients →</a>
+    </div>
+    <div class="cta-res" id="cta-res" aria-live="polite"></div>
+  </section>
+
+  <p class="rodape">Built by Lucas for the Resultise n8n partner role · the agent follows written rules, no paid AI on this page</p>
+  <!-- proposta:fim -->
+</div>
+
+<script>
+const D = {"idioma":"en-GB","titulo":"WhatsApp AI Agent demo","textos":{"etiqueta":"WhatsApp AI agent, running","titulo":"A WhatsApp message becomes a booked job.","caps":"Sample brand · example data","passos":"Steps","passo1":"Try it","fala1":"Message the company like a customer would. Send a sofa photo request, get a quote, book. Watch the CRM and alert fill in.","verExemplo":"Watch an example","clique":"(click here)","recomecar":"Start over","verComo":"View as","canalWa":"WhatsApp","canalSite":"Web chat","online":"online","abaChat":"Chat agent","abaForm":"Form","placeholder":"Type here… (e.g. how much for a 3-seat sofa?)","mensagem":"Message","enviar":"Send","caminho":"Message path","aviso":"alert","aRecolher":"collecting","gravado":"saved","esperaConversa":"waiting for a conversation","escrevendo":"typing…","recusado":"rejected in code: nothing was saved","podeConfirmar":"Could you check it?","naoPercebiNome":"Sorry, I didn't catch your name. What is it?","fimJaRegistado":"You're all set. Want to restart the demo?","pedidoContacto":"callback request","origemAssistente":"assistant","origemFormulario":"form","agora":"now","exemplo":"example","temps":{"quente":"hot","morno":"warm","frio":"cold"},"cartao":{"visita":"Visit: {visita}","semVisita":"No visit yet: follow up","tel":"Phone","novoLead":"New lead: {nome}","visitaAgenda":"On the calendar: {visita}","contactoSemVisita":"Callback request, no visit booked"},"carimboOk":"saved","carimboNo":"rejected","telSegue":"{num} goes to the CRM and to the team.","nadaGravado":"Nothing was saved."},"empresa":{"nome":"BrightHome Cleaning","sigla":"BH","hero":"Upholstery cleaning, fictional brand","heroNota":"WhatsApp Business · test version"},"agente":{"saudacao":"Hi! I'm the assistant at BrightHome Cleaning. I can quote your sofa or mattress and book a visit. What do you need?","menu":["How much for a sofa?","Book a cleaning","Talk to a person"],"gatilhoMarcar":"book|visit|schedule|appointment","gatilhoHumano":"person|human|call me|talk to|someone","introQualificacao":"Happy to help.","faq":[["sofa|price|cost|how much|quote","A 3-seat sofa is £89. Send a photo and I count the seats for an exact quote."],["photo|picture|image","Send the photo here. I count seats and cushions from it, and the quote comes back in seconds."],["where|area|cover|location","We cover the whole city and nearby towns, with no travel fee."],["hour|open|when","Visits run Monday to Saturday, 8 AM to 6 PM."]],"aposFaq":{"texto":"Want to book a visit?","opcoes":["Book a cleaning","I have another question"]},"outraDuvidaGatilho":"another question","outraDuvida":"Sure, go ahead.","naoSei":{"texto":"I'm not sure about that one, and I'd rather not guess. Want the team to message you?","opcoes":["Yes, message me","No, thanks"],"sim":"^y"},"humanoSim":"Of course. What's your name?","humanoNao":"No problem. Anything else I can help with?","humanoDireto":"Sure, the team will message you. What's your name?"},"qualificacao":[{"campo":"servico","pergunta":"What needs cleaning?","opcoes":["Sofa","Mattress","Carpet"]},{"campo":"paciente","pergunta":"Any stains or pet hair?","opcoes":["Stains","Pet hair","Just a refresh"]},{"campo":"quando","pergunta":"When suits you?","opcoes":["This week","Next week","Just asking"]}],"temperatura":{"campo":"quando","quentes":["This week"]},"nome":{"pergunta":"Great. What's your name?","agradece":"Thanks, {nome}. What's your mobile? The reminder comes here on WhatsApp."},"telefone":{"pais":"uk","erroInvalido":"That doesn't look like a UK mobile (like 07700 900123)."},"datas":{"ordem":"dd/mm","dias":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],"diasLongos":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"formato":"{dia} {data} at {hora}"},"vagas":{"pergunta":"Here are the next openings:","escolha":"Please pick one of these times:","horas":["9:00 AM","11:30 AM","3:00 PM"],"confirma":"Booked: {vaga}. A reminder arrives here the day before. See you then, {nome}!"},"fimHumano":"Got it. The team will message you today. Thanks!","fimFora":"Saved. We'll be in touch. Thanks!","formulario":{"nome":{"rotulo":"Name","valor":"Emily Carter"},"tel":{"rotulo":"Mobile","valor":"07700 900147"},"tipo":{"rotulo":"Item","opcoes":["Sofa","Mattress","Carpet"]},"botao":"Request a call back","erroNome":"Please add your name."},"bastidores":{"caminho":["WhatsApp","n8n workflow","LLM agent + rules check","CRM + Google Calendar","Human handoff"],"paineis":{"ficha":"Contact in the CRM","folha":"Jobs sheet","folhaFerramenta":"Google Sheets","wa":"Team alert","mail":"Calendar and email"},"ficha":{"nome":"name","tel":"mobile","servico":"item","paciente":"condition","quando":"timing","temp":"lead","visita":"visit","origem":"source"},"colunas":[{"campo":"data","rotulo":"Date"},{"campo":"nome","rotulo":"Name"},{"campo":"tel","rotulo":"Mobile"},{"campo":"pedido","rotulo":"Request"},{"campo":"lead","rotulo":"Lead"},{"campo":"visita","rotulo":"Visit"}],"exemplos":[["13/10","James Lee","07700 900198","Sofa · Pet hair · This week","hot","Tue 14/10 at 9:00 AM"],["14/10","Ana Ruiz","07700 900122","Mattress · Stains · Just asking","warm","—"]],"exemploCartao":{"temp":"quente","nome":"James Lee","pedido":"Sofa · Pet hair · This week","visita":"Tue 14/10 at 9:00 AM","tel":"07700 900198"}},"roteiro":["How much for a sofa?","Book a cleaning","Sofa","Pet hair","This week","Sarah Miller","07700 900183"],"passos":{"riscos":{"rotulo":"Where it usually stalls","fala":"What breaks WhatsApp agents, handled.","cards":[{"tipo":"alternar","titulo":"If the customer replies after 24 hours","texto":"The free reply window closes. Then what?","padrao":1,"opcoes":[{"rotulo":"Free text anyway","classe":"duv","left":"34%","width":"66%","texto":"message rejected by WhatsApp"},{"rotulo":"Approved template first","classe":"ok","left":"0","width":"100%","texto":"reminder still goes out"}],"semanas":["Hour 1","Hour 12","Hour 24+"],"linhas":[{"rotulo":"Chat reply","classe":"ok","left":"0","width":"100%","texto":"agent answers in seconds"},{"rotulo":"After 24 h","variavel":true}]},{"tipo":"testar-telefone","titulo":"Bad data stays out","texto":"Numbers are checked in code before they reach the CRM.","exemplos":["07700 900147","+44 7700 900122","900147","12345 678901"],"inicial":"900147","placeholder":"Or type a number","botao":"Check"}]},"construi":{"rotulo":"Built before","fala":"This demo copies a WhatsApp agent I built and ran for a real cleaning company.","numeros":[{"n":"102","rotulo":"priced quotes sent in 14 days, nobody typing"},{"n":"19","rotulo":"jobs booked from 417 WhatsApp leads"},{"n":"1,282","rotulo":"AI messages checked by code; 3 stopped"}],"pares":[["WhatsApp AI agents that qualify and book","Power Limpeza: two LLM agents qualify, quote from a sofa photo and close the booking on WhatsApp."],["n8n with CRMs, email, calendars, Sheets","Hades Copilot pulls leads from forms, Typebot, GoHighLevel and Zapier into one record, with retries."],["Good prompts, hand-off to humans","An auditor checks every reply before it reaches the customer; unclear cases go to a person."],["Clean, maintainable workflows","Every run ends done, failed or unknown, so a broken step shows up instead of hiding."]],"dica":"Click a row: your job post on the left, what I already built on the right."},"plano":{"rotulo":"Plan and price","fala":"Your prices, your scope. I build and keep it running.","comoConfirma":"How you check it:","entregas":[{"titulo":"First agent (paid trial)","valor":"$275","confirma":"a test WhatsApp message gets an answer, a booking and a CRM record."},{"titulo":"Each automation","valor":"$195","confirma":"one process running, with a short doc of how it works."},{"titulo":"Every month","valor":"$50 / $35","confirma":"monitoring and small changes per active agent or automation."}],"totalRotulo":"Fixed price per build · recurring care","total":"$275","selos":["accounts in your client's name","nothing live without your OK","every run logged"],"cta":{"quero":"Let's start the trial","queroResposta":"Great. Send the first scope in the Upwork chat and I can start today.","marcar":"Book a 15-minute call","marcarPergunta":"Pick a time (Spain time):","horas":["3:00 PM","4:00 PM","5:00 PM"],"marcarConfirma":"Noted: {horario} (Spain). Confirm in our Upwork chat and I'll send the invite.","linkClientes":"Price-free version to show your clients →"}}},"rodape":"Built by Lucas for the Resultise n8n partner role · the agent follows written rules, no paid AI on this page","testes":{"temperaturaEsperada":"quente","caminho":["Book a cleaning","Sofa","Pet hair","This week","Mark Davis"],"telInvalido":"900147","telValido":"07700 900122","perguntaDesconhecida":"do you clean leather car seats?"}};
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const fmt = (t, v = {}) => String(t).replace(/\{(\w+)\}/g, (_, k) => (v[k] ?? ''));
+  const T = D.textos; const A = D.agente;
+  const re = (s) => new RegExp(s, 'i');
+  const passos = [...document.querySelectorAll('.palco')];
+  document.querySelectorAll('.dot').forEach((d) => d.addEventListener('click', () => {
+    const i = +d.dataset.p;
+    passos.forEach((p, k) => { p.hidden = k !== i; });
+    document.querySelectorAll('.dot').forEach((x) => x.removeAttribute('aria-current'));
+    d.setAttribute('aria-current', 'step');
+  }));
+  const TEL = {
+    pt: (d) => {
+      d = d.replace(/^(\+|00)351/, '');
+      if (/^9[1236]\d{7}$/.test(d)) return { ok: true, num: d.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') };
+      if (/^2\d{8}$/.test(d)) return { ok: false, motivo: D.telefone.erroFixo };
+      return { ok: false, motivo: D.telefone.erroInvalido };
+    },
+    us: (d) => {
+      d = d.replace(/^(\+|00)?1(?=\d{10}$)/, '');
+      if (/^[2-9]\d{2}[2-9]\d{6}$/.test(d)) return { ok: true, num: d.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3') };
+      return { ok: false, motivo: D.telefone.erroInvalido };
+    },
+    uk: (d) => {
+      d = d.replace(/^(\+|00)44/, '0');
+      if (/^07\d{9}$/.test(d)) return { ok: true, num: d.replace(/(\d{5})(\d{6})/, '$1 $2') };
+      if (/^0[12]\d{8,9}$/.test(d)) return { ok: false, motivo: D.telefone.erroFixo || D.telefone.erroInvalido };
+      return { ok: false, motivo: D.telefone.erroInvalido };
+    },
+    au: (d) => {
+      d = d.replace(/^(\+|00)61/, '0');
+      if (/^04\d{8}$/.test(d)) return { ok: true, num: d.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3') };
+      return { ok: false, motivo: D.telefone.erroInvalido };
+    },
+    br: (d) => {
+      d = d.replace(/^(\+|00)55/, '');
+      if (/^\d{2}9\d{8}$/.test(d)) return { ok: true, num: d.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3') };
+      return { ok: false, motivo: D.telefone.erroInvalido };
+    },
+  };
+  const conferirTel = (s) => TEL[D.telefone.pais](String(s).replace(/[\s.\-()]/g, ''));
+  const p2 = (n) => String(n).padStart(2, '0');
+  const diaMes = (d) => (D.datas.ordem === 'mm/dd' ? `${p2(d.getMonth() + 1)}/${p2(d.getDate())}` : `${p2(d.getDate())}/${p2(d.getMonth() + 1)}`);
+  function proximosUteis(horas, curto) {
+    const out = []; const d = new Date();
+    while (out.length < horas.length) {
+      d.setDate(d.getDate() + 1);
+      if (d.getDay() === 0 || d.getDay() === 6) continue;
+      out.push({ d: new Date(d), hora: horas[out.length], dia: (curto ? D.datas.dias : D.datas.diasLongos)[d.getDay()] });
+    }
+    return out;
+  }
+  const vagas = () => proximosUteis(D.vagas.horas, true).map((v) => fmt(D.datas.formato, { dia: v.dia, data: diaMes(v.d), hora: v.hora }));
+  const hojeTxt = () => diaMes(new Date());
+  const B = D.bastidores;
+  const nFx = B.caminho.length;
+  let lead = {};
+  const resumo = () => ({
+    temp: lead.temp, nome: lead.nome, tel: lead.tel, visita: lead.visita,
+    pedido: [...D.qualificacao.map((q) => q.campo), D.zona && D.zona.campo].filter(Boolean).map((c) => lead[c]).filter(Boolean).join(' · ') || lead.servico || '—',
+  });
+  const tempTxt = (t) => (T.temps && T.temps[t]) || t;
+  function cartaoWa(o, quando, ex) {
+    return `<div class="wa${ex ? ' ex' : ''}"><div class="cab"><span class="temp ${o.temp}">${esc(tempTxt(o.temp))}</span>${esc(o.nome)}</div>`
+      + `<div>${esc(o.pedido)}</div><div>${o.visita ? esc(fmt(T.cartao.visita, { visita: o.visita })) : esc(T.cartao.semVisita)}</div>`
+      + `<div>${esc(T.cartao.tel)} <span class="tel">${esc(o.tel)}</span></div><small>${esc(quando)}</small></div>`;
+  }
+  function cartaoMail(o, quando, ex) {
+    return `<div class="mail${ex ? ' ex' : ''}"><div class="cab">${esc(fmt(T.cartao.novoLead, { nome: o.nome }))}</div>`
+      + `<div>${o.visita ? esc(fmt(T.cartao.visitaAgenda, { visita: o.visita })) : esc(T.cartao.contactoSemVisita)}</div><small>${esc(quando)}</small></div>`;
+  }
+  function resetBast() {
+    $('#linhas').innerHTML = B.exemplos.map((r) => `<tr class="ex">${r.map((c) => `<td>${esc(c)}</td>`).join('')}</tr>`).join('');
+    $('#was').innerHTML = cartaoWa(B.exemploCartao, T.exemplo, true);
+    $('#mails').innerHTML = cartaoMail(B.exemploCartao, T.exemplo, true);
+    for (let i = 0; i < nFx; i++) $('#fx' + i).classList.remove('on', 'agora');
+    $('#fx0').classList.add('on');
+    lead = {}; fichaAnt = []; desenharFicha(T.aRecolher, '');
+  }
+  let fichaAnt = [];
+  function desenharFicha(estado, cls) {
+    const ks = Object.keys(B.ficha).filter((k) => lead[k]);
+    const novos = ks.filter((k) => !fichaAnt.includes(k));
+    $('#ficha').innerHTML = ks.length
+      ? ks.map((k) => { const a = novos.includes(k) ? ' class="acende"' : ''; return `<dt${a}>${esc(B.ficha[k])}</dt><dd${a}>${esc(k === 'temp' ? tempTxt(lead[k]) : lead[k])}</dd>`; }).join('')
+      : `<dt>—</dt><dd>${esc(T.esperaConversa)}</dd>`;
+    const e = $('#estado'); e.textContent = estado; e.className = 'estado ' + cls;
+    if (novos.length) holofote('#pn-base', ritmo().bastidor * 1.6);
+    fichaAnt = ks;
+  }
+  const timers = new Map();
+  function holofote(sel, ms) {
+    const el = $(sel); const bast = el.closest('.bast');
+    clearTimeout(timers.get(sel));
+    el.classList.add('foco'); if (bast) bast.classList.add('holofote');
+    timers.set(sel, setTimeout(() => {
+      el.classList.remove('foco');
+      if (bast && !bast.querySelector('.pn.foco')) bast.classList.remove('holofote');
+    }, ms));
+  }
+  function acender(fx) {
+    document.querySelectorAll('.fluxo span').forEach((s) => s.classList.remove('agora'));
+    if (fx) $(fx).classList.add('on', 'agora');
+  }
+  function gravar() {
+    const r = resumo();
+    const visitaCurta = lead.visita || '—';
+    const linha = B.colunas.map((c) => ({ data: hojeTxt(), nome: lead.nome, tel: lead.tel, pedido: r.pedido, lead: tempTxt(lead.temp), visita: visitaCurta }[c.campo] ?? lead[c.campo] ?? '—'));
+    const fica = ritmo().bastidor;
+    const etapas = [
+      () => acender('#fx1'),
+      () => { acender('#fx2'); desenharFicha(T.gravado, 'ok'); holofote('#pn-base', fica); },
+      () => { acender('#fx3'); $('#linhas').insertAdjacentHTML('beforeend', `<tr class="novo">${linha.map((c) => `<td>${esc(c)}</td>`).join('')}</tr>`); holofote('#pn-folha', fica); },
+      () => { acender('#fx4'); $('#was').insertAdjacentHTML('afterbegin', cartaoWa(r, T.agora)); holofote('#pn-wa', fica); },
+      () => { $('#mails').insertAdjacentHTML('afterbegin', cartaoMail(r, T.agora)); holofote('#pn-mail', fica * 2); setTimeout(() => acender(null), fica * 2); },
+    ];
+    etapas.forEach((f, i) => setTimeout(f, fica * (i + 1)));
+  }
+  const chat = $('#chat');
+  let modoExemplo = false;
+  const ritmo = () => (modoExemplo ? { resposta: 1400, bastidor: 1100, turno: 3200 } : { resposta: 550, bastidor: 700, turno: 0 });
+  let etapa = 'livre'; let motivo = ''; let iq = 0;
+  function diz(texto, opcoes) {
+    const m = document.createElement('div'); m.className = 'msg ag'; m.textContent = texto; chat.appendChild(m);
+    if (opcoes && opcoes.length) {
+      const o = document.createElement('div'); o.className = 'opcoes';
+      opcoes.forEach((t) => { const b = document.createElement('button'); b.className = 'chip'; b.type = 'button'; b.textContent = t; b.addEventListener('click', () => responder(t)); o.appendChild(b); });
+      chat.appendChild(o);
+    }
+    chat.scrollTop = chat.scrollHeight;
+  }
+  function eu(texto) {
+    chat.querySelectorAll('.opcoes').forEach((o) => o.remove());
+    const m = document.createElement('div'); m.className = 'msg eu'; m.textContent = texto; chat.appendChild(m);
+    chat.scrollTop = chat.scrollHeight;
+  }
+  function sistema(texto) { const m = document.createElement('div'); m.className = 'msg sis'; m.textContent = texto; chat.appendChild(m); }
+  const FAQ = A.faq.map(([p, r]) => [re(p), r]);
+
+  function iniciar() {
+    chat.innerHTML = ''; etapa = 'livre'; motivo = ''; iq = 0; resetBast();
+    diz(A.saudacao, A.menu);
+  }
+  const deQ = (q, chave) => {
+    const por = q[chave + 'Por'];
+    if (por) { const v = lead[por.campo]; return (por.mapa && por.mapa[v]) || por.padrao; }
+    return q[chave];
+  };
+  function perguntarQ(intro) {
+    const q = D.qualificacao[iq]; etapa = 'q';
+    diz((intro ? intro + ' ' : '') + deQ(q, 'pergunta'), deQ(q, 'opcoes'));
+  }
+  function iniciarQualificacao() { iq = 0; perguntarQ(A.introQualificacao); }
+  function depoisDaQualificacao() {
+    if (D.zona) { etapa = 'zona'; diz(D.zona.pergunta, [...D.zona.dentro, D.zona.foraOpcao]); return; }
+    lead.temp = temperatura(); etapa = 'nome'; diz(D.nome.pergunta);
+  }
+  function temperatura() {
+    const t = D.temperatura; if (!t) return 'morno';
+    return t.quentes.map((x) => x.toLowerCase()).includes(String(lead[t.campo] || '').toLowerCase()) ? 'quente' : 'morno';
+  }
+
+  function responder(t) {
+    t = t.trim(); if (!t) return; eu(t);
+    const e = document.createElement('div'); e.className = 'msg ag escrevendo'; e.textContent = T.escrevendo; chat.appendChild(e); chat.scrollTop = chat.scrollHeight;
+    setTimeout(() => { e.remove(); processar(t); }, ritmo().resposta);
+  }
+  function processar(t) {
+    if (etapa === 'fim') { if (t.toLowerCase() === T.recomecar.toLowerCase()) iniciar(); else diz(T.fimJaRegistado, [T.recomecar]); return; }
+    if (etapa === 'nome') {
+      if (!/[A-Za-zÀ-ÿ]{2,}/.test(t)) { diz(T.naoPercebiNome); return; }
+      lead.nome = t.replace(/\b\p{L}/gu, (c) => c.toUpperCase()); desenharFicha(T.aRecolher, '');
+      etapa = 'tel'; diz(fmt(D.nome.agradece, { nome: lead.nome.split(' ')[0] })); return;
+    }
+    if (etapa === 'tel') {
+      const r = conferirTel(t);
+      if (!r.ok) { sistema(T.recusado); diz(r.motivo + ' ' + T.podeConfirmar); return; }
+      lead.tel = r.num; desenharFicha(T.aRecolher, '');
+      if (motivo === 'humano' || motivo === 'fora') {
+        lead.temp = motivo === 'fora' ? 'frio' : 'morno'; lead.origem = T.origemAssistente; etapa = 'fim';
+        diz(motivo === 'fora' ? D.fimFora : D.fimHumano, [T.recomecar]);
+        gravar(); return;
+      }
+      etapa = 'slot'; diz(D.vagas.pergunta, vagas()); return;
+    }
+    if (etapa === 'slot') {
+      const v = vagas().find((x) => x === t);
+      if (!v) { diz(D.vagas.escolha, vagas()); return; }
+      lead.visita = v; lead.origem = T.origemAssistente; etapa = 'fim';
+      diz(fmt(D.vagas.confirma, { vaga: v, nome: lead.nome.split(' ')[0] }), [T.recomecar]);
+      gravar(); return;
+    }
+    if (etapa === 'q') {
+      const q = D.qualificacao[iq]; const ops = deQ(q, 'opcoes');
+      const achou = ops.find((x) => x.toLowerCase() === t.toLowerCase());
+      if (!achou && iq === 0) return faqOuNada(t, () => perguntarQ());
+      lead[q.campo] = q.minusculas ? (achou || t).toLowerCase() : (achou || t); desenharFicha(T.aRecolher, '');
+      iq += 1;
+      if (iq < D.qualificacao.length) perguntarQ(); else depoisDaQualificacao();
+      return;
+    }
+    if (etapa === 'zona') {
+      const Z = D.zona; const dentro = Z.dentro.find((x) => x.toLowerCase() === t.toLowerCase());
+      if (!dentro) {
+        lead[Z.campo] = t === Z.foraOpcao ? Z.foraRotulo : t; lead.temp = 'frio'; motivo = 'fora'; desenharFicha(T.aRecolher, '');
+        etapa = 'nome'; diz(Z.foraTexto); return;
+      }
+      lead[Z.campo] = dentro; lead.temp = temperatura(); desenharFicha(T.aRecolher, '');
+      etapa = 'nome'; diz(Z.dentroTexto); return;
+    }
+    if (etapa === 'humano?') {
+      if (re(A.naoSei.sim).test(t)) { motivo = 'humano'; lead.servico = T.pedidoContacto; etapa = 'nome'; diz(A.humanoSim); return; }
+      etapa = 'livre'; diz(A.humanoNao, A.menu); return;
+    }
+    if (re(A.gatilhoMarcar).test(t)) return iniciarQualificacao();
+    if (re(A.gatilhoHumano).test(t)) { motivo = 'humano'; lead.servico = T.pedidoContacto; etapa = 'nome'; diz(A.humanoDireto); return; }
+    faqOuNada(t, () => diz(A.aposFaq.texto, A.aposFaq.opcoes));
+  }
+  function faqOuNada(t, depois) {
+    const f = FAQ.find(([r]) => r.test(t));
+    if (f) { diz(f[1]); depois(); return; }
+    if (re(A.outraDuvidaGatilho).test(t)) { diz(A.outraDuvida); return; }
+    etapa = 'humano?';
+    diz(A.naoSei.texto, A.naoSei.opcoes);
+  }
+
+  $('#f-chat').addEventListener('submit', (e) => { e.preventDefault(); const v = $('#txt').value; $('#txt').value = ''; responder(v); });
+  $('#recomecar').addEventListener('click', iniciar);
+
+  function aba(chatOn) {
+    $('#aba-chat').setAttribute('aria-selected', chatOn); $('#aba-form').setAttribute('aria-selected', !chatOn);
+    $('#vista-chat').hidden = !chatOn; $('#vista-form').hidden = chatOn;
+  }
+  function canal(wa) {
+    $('#site').classList.toggle('pele-wa', wa); $('#c-wa').setAttribute('aria-pressed', wa); $('#c-site').setAttribute('aria-pressed', !wa);
+    if (wa) aba(true);
+  }
+  $('#c-wa').addEventListener('click', () => canal(true));
+  $('#c-site').addEventListener('click', () => canal(false));
+  $('#aba-chat').addEventListener('click', () => aba(true));
+  $('#aba-form').addEventListener('click', () => aba(false));
+  $('#vista-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const nome = $('#ff-nome').value.trim(); const r = conferirTel($('#ff-tel').value);
+    if (nome.length < 2) { $('#ff-erro').textContent = D.formulario.erroNome; return; }
+    if (!r.ok) { $('#ff-erro').textContent = r.motivo; return; }
+    $('#ff-erro').textContent = '';
+    resetBast();
+    lead = { nome, tel: r.num, servico: $('#ff-tipo').value, temp: 'morno', origem: T.origemFormulario };
+    desenharFicha(T.aRecolher, ''); gravar();
+  });
+  if ($('#p1')) {
+    document.querySelectorAll('[data-alternar]').forEach((card) => {
+      const cfg = D.passos.riscos.cards[+card.dataset.alternar];
+      card.querySelectorAll('[data-op]').forEach((b) => b.addEventListener('click', () => {
+        const op = cfg.opcoes[+b.dataset.op];
+        card.querySelectorAll('[data-op]').forEach((x) => x.setAttribute('aria-pressed', x === b));
+        const s = card.querySelector('.seg-var');
+        s.className = 'seg seg-var ' + op.classe; s.style.left = op.left; s.style.width = op.width; s.textContent = op.texto;
+      }));
+    });
+    const tc = document.querySelector('[data-testar-tel]');
+    if (tc) {
+      const testar = (v) => {
+        const r = conferirTel(v);
+        tc.querySelector('.res').innerHTML = r.ok
+          ? `<span class="carimbo ok">${esc(T.carimboOk)}</span><span>${esc(fmt(T.telSegue, { num: r.num }))}</span>`
+          : `<span class="carimbo no">${esc(T.carimboNo)}</span><span>${esc(r.motivo)} ${esc(T.nadaGravado)}</span>`;
+      };
+      tc.querySelector('.chips').addEventListener('click', (e) => { const b = e.target.closest('[data-t]'); if (b) { tc.querySelector('input').value = b.dataset.t; testar(b.dataset.t); } });
+      tc.querySelector('form').addEventListener('submit', (e) => { e.preventDefault(); testar(tc.querySelector('input').value); });
+      const ini = tc.dataset.testarTel; tc.querySelector('input').value = ini; testar(ini);
+    }
+    $('#par').addEventListener('click', (e) => { const li = e.target.closest('li'); if (!li) return; document.querySelectorAll('#par li').forEach((x) => x.classList.toggle('on', x === li)); });
+    document.querySelector('#par li').classList.add('on');
+    document.querySelectorAll('#ent button').forEach((b) => b.addEventListener('click', () => {
+      const aberto = b.getAttribute('aria-expanded') === 'true';
+      b.setAttribute('aria-expanded', !aberto); b.nextElementSibling.hidden = aberto;
+    }));
+    const R = D.passos.retorno;
+    if (R) {
+      const moeda = new Intl.NumberFormat(R.moeda.locale, { style: 'currency', currency: R.moeda.codigo, maximumFractionDigits: 0 });
+      const numero = new Intl.NumberFormat(R.moeda.locale, { maximumFractionDigits: 1 });
+      let cen = R.cenarios.padrao;
+      const val = (id) => +document.querySelector(`[data-calc="${id}"]`).value;
+      const mostra = (id, txt) => { const el = document.querySelector(`[data-res="${id}"]`); if (el.textContent !== txt) { el.textContent = txt; el.closest('.num').classList.add('vivo'); setTimeout(() => el.closest('.num').classList.remove('vivo'), 600); } };
+      function calcular() {
+        for (const c of R.campos) { const v = val(c.id); document.querySelector(`[data-out="${c.id}"]`).textContent = c.moeda ? moeda.format(v) : numero.format(v) + (c.sufixo || ''); }
+        const clientes = val('contatos') * (val('perdidos') / 100) * (cen / 100) * (val('fecho') / 100);
+        const receita = clientes * val('valor');
+        const semanas = receita > 0 ? Math.ceil(R.precoNumero / (receita / 4.33)) : Infinity;
+        mostra('recuperado', moeda.format(receita));
+        mostra('clientes', numero.format(clientes));
+        mostra('payback', semanas > 104 ? R.saidas.naoSePaga : semanas <= 1 ? R.saidas.semana : fmt(R.saidas.semanas, { n: semanas }));
+      }
+      document.querySelectorAll('[data-calc]').forEach((i) => i.addEventListener('input', calcular));
+      document.querySelectorAll('[data-cen]').forEach((b) => b.addEventListener('click', () => {
+        cen = +b.dataset.cen; document.querySelectorAll('[data-cen]').forEach((x) => x.setAttribute('aria-pressed', x === b)); calcular();
+      }));
+      calcular();
+    }
+    const C = D.passos.plano.cta;
+    if (C && $('#cta-quero')) {
+      $('#cta-quero').addEventListener('click', () => { $('#cta-res').innerHTML = `<div class="ok">${esc(C.queroResposta)}</div>`; });
+      $('#cta-marcar').addEventListener('click', () => {
+        const ops = proximosUteis(C.horas, true).map((v) => ({
+          curto: `${v.dia} ${diaMes(v.d)} ${v.hora}`,
+          longo: fmt(D.datas.formato, { dia: D.datas.diasLongos[v.d.getDay()], data: diaMes(v.d), hora: v.hora }),
+        }));
+        $('#cta-res').innerHTML = `<span>${esc(C.marcarPergunta)}</span><div class="chips">`
+          + ops.map((o) => `<button class="chip" type="button" data-cta="marcar ${esc(o.curto)}" data-longo="${esc(o.longo)}">${esc(o.longo)}</button>`).join('') + '</div>';
+      });
+      $('#cta-res').addEventListener('click', (e) => {
+        const b = e.target.closest('[data-longo]'); if (!b) return;
+        $('#cta-res').innerHTML = `<div class="ok">${esc(fmt(C.marcarConfirma, { horario: b.dataset.longo }))}</div>`;
+      });
+    }
+  }
+  iniciar();
+  let rodada = 0;
+  const parar = () => { rodada++; modoExemplo = false; };
+  $('#recomecar').addEventListener('click', parar, { capture: true });
+  $('#f-chat').addEventListener('submit', parar, { capture: true });
+  chat.addEventListener('click', (e) => { if (e.isTrusted) parar(); }, { capture: true });
+  $('#exemplo').addEventListener('click', () => {
+    $('#exemplo').classList.remove('chamar');
+    const minha = ++rodada; let i = 0; aba(true); iniciar(); modoExemplo = true;
+    (function proximo() {
+      if (minha !== rodada) return;
+      if (i < D.roteiro.length) { responder(D.roteiro[i++]); setTimeout(proximo, ritmo().turno); }
+      else setTimeout(() => {
+        if (minha !== rodada) return;
+        const o = chat.querySelector('.opcoes .chip'); if (o) o.click();
+        setTimeout(() => { if (minha === rodada) modoExemplo = false; }, 1400 + 1100 * 6);
+      }, 2000);
+    })();
+  });
+})();
+</script>
+
+<script>
+// registro de visitas: sem nome, sem e-mail; só a demo, o evento, o passo e o tempo.
+(() => {
+  if (location.protocol === 'file:') return;
+  const DEMO = "resultise-wa-agent", URL = "https://n8n-kf1l.srv1863913.hstgr.cloud/webhook/demo-visita";
+  let eu = false;
+  try { if (new URLSearchParams(location.search).has('eu')) localStorage.setItem('demo_eu', '1'); eu = localStorage.getItem('demo_eu') === '1'; } catch (e) {}
+  const sessao = Math.random().toString(36).slice(2, 10), t0 = Date.now(), vistos = new Set(); let maior = 0;
+  function manda(evento, passo) {
+    const d = new URLSearchParams({ demo: DEMO, evento, passo: String(passo || 0), sessao, interno: eu ? '1' : '0', segundos: String(Math.round((Date.now() - t0) / 1000)) });
+    try { navigator.sendBeacon(URL, new Blob([d.toString()], { type: 'application/x-www-form-urlencoded' })); } catch (e) {}
+  }
+  const umaVez = (k, f) => { if (!vistos.has(k)) { vistos.add(k); f(); } };
+  manda('abriu', 0);
+  document.addEventListener('click', (e) => {
+    const dot = e.target.closest('.dot[data-p]');
+    if (dot) { const n = +dot.dataset.p; maior = Math.max(maior, n); umaVez('p' + n, () => manda('passo', n)); }
+    if (e.target.closest('#exemplo')) umaVez('ex', () => manda('exemplo', maior));
+    if (e.target.closest('#chat .chip')) umaVez('conversa', () => manda('conversou', maior));
+    const cta = e.target.closest('[data-cta]'); if (cta) manda('cta-' + cta.dataset.cta, maior);
+  }, true);
+  document.addEventListener('input', (e) => { if (e.target.closest('[data-calc]')) umaVez('calc', () => manda('calculou', maior)); }, true);
+  document.addEventListener('click', (e) => { if (e.target.closest('[data-cen]')) umaVez('calc', () => manda('calculou', maior)); }, true);
+  document.addEventListener('submit', () => umaVez('conversa', () => manda('conversou', maior)), true);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') manda('saiu', maior); });
+})();
+</script>
+</body>
+</html>
