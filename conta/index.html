@@ -16,6 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   *,*::before,*::after{ box-sizing:border-box; }
+  [hidden]{ display:none !important; }
   :root{
     --bg:#F6F1FB; --page:#E9DFF5; --surface:#FFFFFF; --surface-2:#F4EEFB;
     --fg:#1A1023; --muted:#7A6E8C; --line:#E8DFF2;
@@ -335,7 +336,20 @@ try{
     }, 1700);
   });
 
+  function falar(texto){
+    try{
+      if(!('speechSynthesis' in window)) return;
+      var u = new SpeechSynthesisUtterance(texto);
+      u.lang = 'pt-BR';
+      var vozes = speechSynthesis.getVoices();
+      var voz = vozes.find(function(v){ return v.lang === 'pt-BR'; }) || vozes.find(function(v){ return v.lang && v.lang.indexOf('pt') === 0; });
+      if(voz) u.voice = voz;
+      speechSynthesis.speak(u);
+    }catch(e){}
+  }
+
   function revealHome(){
+    falar('Olá, chefe, bem-vindo de volta.');
     val.classList.add('loading');
     setTimeout(function(){ val.classList.remove('loading'); }, 550);
     txItems.forEach(function(item, i){
