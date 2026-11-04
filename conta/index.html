@@ -166,6 +166,9 @@
   .loading-text{ font-size:13px; color:var(--muted); font-weight:600; }
   .pulse{ animation:pulse 1.1s ease-in-out infinite; }
   @keyframes pulse{ 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:.7; transform:scale(.93); } }
+  .greet-text{ font-size:21px; font-weight:800; min-height:2.6em; max-width:280px; }
+  .greet-text::after{ content:"|"; margin-left:2px; color:var(--accent); animation:blink 1s step-start infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
 </style>
 </head>
 <body>
@@ -200,6 +203,13 @@
     <div class="big-mark pulse"></div>
     <div class="loading-bar"><div class="loading-fill" id="loadingFill"></div></div>
     <div class="loading-text">Carregando suas informações…</div>
+  </div>
+</div>
+
+<div class="screen" id="screen-greet" hidden>
+  <div class="screen-center">
+    <div class="big-mark"></div>
+    <div class="greet-text" id="greetText"></div>
   </div>
 </div>
 
@@ -319,37 +329,79 @@ try{
 
   var screenLogin = document.getElementById('screen-login');
   var screenLoading = document.getElementById('screen-loading');
+  var screenGreet = document.getElementById('screen-greet');
   var screenHome = document.getElementById('screen-home');
   var loginForm = document.getElementById('loginForm');
   var loadingFill = document.getElementById('loadingFill');
+  var greetText = document.getElementById('greetText');
   var txItems = document.querySelectorAll('.tx');
 
   loginForm.addEventListener('submit', function(e){
     e.preventDefault();
+    // desbloqueia a síntese de voz: precisa rodar na mesma ação do toque,
+    // senão o iOS recusa em silêncio qualquer fala chamada depois, via setTimeout
+    try{
+      if('speechSynthesis' in window){
+        var destrava = new SpeechSynthesisUtterance('');
+        destrava.volume = 0;
+        speechSynthesis.speak(destrava);
+      }
+    }catch(err){}
+
     screenLogin.hidden = true;
     screenLoading.hidden = false;
     requestAnimationFrame(function(){ loadingFill.style.width = '100%'; });
     setTimeout(function(){
       screenLoading.hidden = true;
-      screenHome.hidden = false;
-      revealHome();
+      screenGreet.hidden = false;
+      saudarComVoz('Olá, chefe, bem-vindo de volta.', function(){
+        screenGreet.hidden = true;
+        screenHome.hidden = false;
+        revealHome();
+      });
     }, 1700);
   });
 
-  function falar(texto){
+  function saudarComVoz(texto, aoTerminar){
+    greetText.textContent = '';
+    var terminouFala = false, terminouDigitacao = false, jaAvancou = false;
+    function checarFim(){
+      if(jaAvancou || !(terminouFala && terminouDigitacao)) return;
+      jaAvancou = true;
+      aoTerminar();
+    }
+
+    var i = 0;
+    (function digitar(){
+      if(i <= texto.length){
+        greetText.textContent = texto.slice(0, i);
+        i++;
+        setTimeout(digitar, 55);
+      } else {
+        terminouDigitacao = true;
+        checarFim();
+      }
+    })();
+
     try{
-      if(!('speechSynthesis' in window)) return;
-      var u = new SpeechSynthesisUtterance(texto);
-      u.lang = 'pt-BR';
-      var vozes = speechSynthesis.getVoices();
-      var voz = vozes.find(function(v){ return v.lang === 'pt-BR'; }) || vozes.find(function(v){ return v.lang && v.lang.indexOf('pt') === 0; });
-      if(voz) u.voice = voz;
-      speechSynthesis.speak(u);
-    }catch(e){}
+      if('speechSynthesis' in window){
+        var u = new SpeechSynthesisUtterance(texto);
+        u.lang = 'pt-BR';
+        var vozes = speechSynthesis.getVoices();
+        var voz = vozes.find(function(v){ return v.lang === 'pt-BR'; }) || vozes.find(function(v){ return v.lang && v.lang.indexOf('pt') === 0; });
+        if(voz) u.voice = voz;
+        u.onend = function(){ terminouFala = true; checarFim(); };
+        u.onerror = function(){ terminouFala = true; checarFim(); };
+        speechSynthesis.speak(u);
+        // salvaguarda: se a fala nunca disparar fim (falha comum em app salvo na tela inicial do iOS), não trava a pegadinha
+        setTimeout(function(){ terminouFala = true; checarFim(); }, 4000);
+      } else {
+        terminouFala = true;
+      }
+    }catch(err){ terminouFala = true; checarFim(); }
   }
 
   function revealHome(){
-    falar('Olá, chefe, bem-vindo de volta.');
     val.classList.add('loading');
     setTimeout(function(){ val.classList.remove('loading'); }, 550);
     txItems.forEach(function(item, i){
